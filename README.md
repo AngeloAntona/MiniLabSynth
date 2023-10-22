@@ -10,7 +10,7 @@ This code implements a small keyboard that can be played through mouse clicks or
 | Pad Sounds                                | :green_circle:  |
 | Mini amplitude display                    | :green_circle:  |
 | MIDI input                                | :red_circle:    |
-| Model View Controller pattern             | :red_circle:    |
+| Model View Controller pattern             | :yellow_circle:    |
 | Modulable distortion                      | :red_circle:    |
 | Different presets of sounds combinations  | :red_circle:    |
 | Playable remotely                         | :red_circle:    |
