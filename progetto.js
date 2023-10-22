@@ -177,7 +177,7 @@ crashPad.addEventListener('mousedown', () => {
 
 // Define a key-to-note mapping object
 const keyToNote = {
-    'z': 1, 's': 2, 'x': 3, 'd': 4, 'c': 5, 'v': 6, 'g': 7, 'b': 8, 'h': 9, 'n': 10, 'j': 11, 'm': 12, ',':13
+    'z': 1, 's': 2, 'x': 3, 'd': 4, 'c': 5, 'v': 6, 'g': 7, 'b': 8, 'h': 9, 'n': 10, 'j': 11, 'm': 12, ',': 13
 };
 
 function getPressedNote(key) {
@@ -191,7 +191,7 @@ document.addEventListener('keydown', (e) => {
     else if (e.key == '4') playCrashCymbal();
     else {
         note = getPressedNote(e.key);
-        if (note&&!pressedKeys[note]) pressedKeys[note] = playNote(note);
+        if (note && !pressedKeys[note]) pressedKeys[note] = playNote(note);
     }
 })
 
@@ -233,7 +233,7 @@ function getAmplitude() { // Function to get the current amplitude
 // Connect the custom analyser node to the audio output
 compressor.connect(analyser);
 analyser.connect(c.destination);
-let octave=1/2;
+let octave = 1 / 2;
 
 
 // PLAYFUNCTIONS -----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -243,7 +243,7 @@ function playNote(note) {
     o.type = "sawtooth";
     var g = c.createGain();
 
-    o.frequency.value = 261.63*octave * Math.pow(2, note / 12);
+    o.frequency.value = 261.63 * octave * Math.pow(2, note / 12);
     o.connect(g);
     g.connect(compressor);
 
