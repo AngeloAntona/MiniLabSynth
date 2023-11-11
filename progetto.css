@@ -13,8 +13,8 @@ body {
     left: 50%;
     transform: translate(-50%, 10%);
     background-color: rgb(34, 34, 34);
-    width: 80vw;
-    height: 40vw;
+    width: 2595.19px;
+    height: 1355.94px;
     border-radius: 10px;
     padding-bottom: 1.8%;
 }
@@ -270,13 +270,11 @@ body {
     left: -1%;
 }
 
-
-
 .knob {
     display: inline-block;
     margin-left: 2.5%;
     width: 10%;
-    height: 32.812%;
+    height: 31.8%;
     background-color: wheat;
     border-radius: 100%;
     margin: 1.1%;

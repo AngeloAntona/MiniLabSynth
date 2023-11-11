@@ -220,14 +220,14 @@ const analyser = c.createAnalyser();
 // Set up the AnalyserNode properties
 analyser.fftSize = 256;
 const bufferLength = analyser.frequencyBinCount;
-const dataArray = new Uint8Array(bufferLength);
+const dataArray = new Uint8Array(bufferLength); //array that will contains the element of the buffer
 function getAmplitude() { // Function to get the current amplitude
     analyser.getByteTimeDomainData(dataArray);
     let sum = 0;
     for (let i = 0; i < bufferLength; i++) {
-        sum += Math.abs(dataArray[i] - 128) / 128; // Normalize the value
+        sum += Math.abs(dataArray[i] - 128) / 128; // Normalize the single value between 1 and -1
     }
-    const amplitude = sum / bufferLength;
+    const amplitude = sum / bufferLength; //normalize the total amplitude in order to get a value between 1 and -1.
     return amplitude;
 }
 // Connect the custom analyser node to the audio output
@@ -414,11 +414,14 @@ knobs.forEach((knob) => {
     let initialValue = 0;
     let currentValue = 0;
 
+    knob.style.transform = `rotate(${0 * 2.7 - 135}deg)`;
     knob.addEventListener('mousedown', (e) => { // 'e' is the event object
         knob_Id = knob.getAttribute('id');
         isDragging = true;
         initialValue = (currentValue || 0) - e.clientY; //e.clientY è la posizione sull'asse y del mouse
     });
+    
+
 
     window.addEventListener('mousemove', (e) => {
         if (isDragging) {
@@ -440,7 +443,9 @@ knobs.forEach((knob) => {
         isDragging = false;
     });
 });
+
 // SINUSOID ------------------------------------------------------------------------------------------------------------------------------------------------
+
 const canvas = document.getElementById('signalCanvas');
 const ctx = canvas.getContext('2d');
 const frequency = 0.02;
