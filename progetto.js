@@ -5,11 +5,74 @@ const defaultString = "MiniLab";
 
 let infoDisplay = document.querySelector('#display');
 
+
+//KNOBS ---------------------------------------------------------------------------------------------------------------------------------------------------
+const knobs = document.querySelectorAll('.knob');
+
+knobs.forEach((knob) => {
+    const knob_Id = knob.getAttribute('id');
+    const knob_Idx=knob.getAttribute('idx');
+
+    let isDragging = false;
+    knob.style.transform = `rotate(${0 * 2.7 - 135}deg)`;
+    knob.addEventListener('mousedown', (e) => { // 'e' is the event object
+        isDragging = true;
+        initialValue = knobs_level[knob_Idx] - e.clientY; //e.clientY è la posizione sull'asse y del mouse
+    });
+
+    knob.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            knobs_level[knob_Idx] = Math.min(100, Math.max(0, initialValue + e.clientY))/100;
+            rotateKnob(knob,knobs_level[knob_Idx]*100);
+        }
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+});
+function rotateKnob(knob,rotation){
+    knob.style.transform = `rotate(${rotation * 2.7 - 135}deg)`;
+}
+
+
 //function that activates and deactivates the single pad.
 function activeLed(id) {
     let led = document.querySelector(id);
     led.children[0].classList.add('activeDot');
     led.children[0].classList.toggle('dot');
+}
+function activeKey(id) {
+    let key = document.querySelector(id);
+    if (key.classList.value == "key") {
+        key.classList.add('key_active');
+        key.classList.toggle('key')
+    }
+    else if (key.classList.value == "key_active") {
+        key.classList.add('key');
+        key.classList.toggle('key_active')
+    }
+    else if (key.classList.value == "blacKey") {
+        key.classList.add('blacKey_active');
+        key.classList.toggle('blacKey');
+    }
+    else {
+        key.classList.add('blacKey');
+        key.classList.toggle('blacKey_active');
+    }
+}
+
+function activePad(id) {
+    let padRow = document.getElementById('padrow');
+    pad = padRow.children[id];
+    if (pad.classList.value == "pad") {
+        pad.classList.add('activePad');
+        pad.classList.toggle('pad');
+    }
+    else if (pad.classList.value == "activePad") {
+        pad.classList.add('pad');
+        pad.classList.toggle('activePad');
+    }
 }
 
 //function that start the sequence of pad lights.
@@ -67,6 +130,8 @@ function startLights(id) {
 // MANAGE INPUT ---------------------------------------------------------------------------------------------------------------------------
 
 const pressedKeys = {};// Object to keep track of pressed keys and their corresponding oscillators
+var pads = [0, 0, 0, 0, 0, 0, 0, 0];
+var knobs_level=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 
 function getNoteByIndex(index) {
     if (index == 1 || index == 1 + 12 || index == 1 + 24) return 'Do';
@@ -85,32 +150,137 @@ function getNoteByIndex(index) {
 
 // Add event listeners to each piano key
 const keys = document.querySelectorAll('.key');
+
+// Initialize Web MIDI API
+navigator.requestMIDIAccess().then((midiAccess) => {
+    const deviceName = "Arturia MiniLab mkII";
+    
+    midiAccess.inputs.forEach((input) => {
+        if (input.name === deviceName) {
+            input.onmidimessage = (event) => {
+                const statusByte = event.data[0] & 0xf0; // Extract the top 4 bits
+
+                if (statusByte === 0x90 || statusByte === 0x80) {
+                    // Note On or Note Off message
+                    const noteNumber = event.data[1];
+                    const velocity = event.data[2];
+
+                    if (noteNumber > 7) {
+                        // Handle MIDI note events for keys
+                        if (statusByte === 0x90 && velocity > 0) {
+                            handleMIDINoteOn(noteNumber);
+                        } else if ((statusByte === 0x80 || (statusByte === 0x90 && velocity === 0))) {
+                            handleMIDINoteOff(noteNumber);
+                        }
+                    } else {
+                        // Handle MIDI note events for pads
+                        if (statusByte === 0x90 && velocity > 0) {
+                            handleMIDIPadOn(noteNumber);
+                        } else if ((statusByte === 0x80 || (statusByte === 0x90 && velocity === 0))) {
+                            handleMIDIPadOff(noteNumber);
+                        }
+                    }
+                } else if (statusByte === 0xB0) {
+                    // Control Change message (knob or slider)
+                    const controllerNumber = event.data[1];
+                    const value = event.data[2];
+
+                    // Handle MIDI control change events (knob rotations)
+                    handleMIDIControlChangeEvent(controllerNumber, value);
+                }
+            };
+        }
+    });
+}).catch((error) => {
+    console.error('Error accessing MIDI:', error);
+});
+
+
+function handleMIDINoteOn(note) {
+    // Handle MIDI Note On event
+    if (!pressedKeys[note]) {
+        pressedKeys[note] = playNote(note);
+        document.getElementById("display").innerHTML = document.getElementById("display").innerHTML + '<br>' + getNoteByIndex(Math.abs(note - 12) % 12 + 1);
+        activeLed('#key' + String(Math.abs(note - 12) % 36 + 1));
+        activeKey('#key' + String(Math.abs(note - 12) % 36 + 1));
+    }
+}
+
+function handleMIDINoteOff(note) {
+    // Handle MIDI Note Off event
+    if (pressedKeys[note]) {
+        stopNote(pressedKeys[note]);
+        delete pressedKeys[note];
+        document.getElementById('display').innerHTML = defaultString;
+        activeLed('#key' + String(Math.abs(note - 12) % 36 + 1));
+        activeKey('#key' + String(Math.abs(note - 12) % 36 + 1));
+    }
+}
+
+function handleMIDIPadOn(note) {
+    if (pads[note] == 0) {
+        // Handle MIDI Note On event
+        if (note == 0) {
+            playKick();
+            document.getElementById("display").innerHTML = document.getElementById("display").innerHTML + '<br>' + 'Kick';
+        }
+        else if (note == 1) {
+            playSnare();
+            document.getElementById("display").innerHTML = document.getElementById("display").innerHTML + '<br>' + 'Snare';
+        }
+        else if (note == 2) {
+            playClosedHiHat()
+            document.getElementById("display").innerHTML = document.getElementById("display").innerHTML + '<br>' + 'Closed Hit Hat';
+        }
+        else if (note == 3) {
+            playCrashCymbal();
+            document.getElementById("display").innerHTML = document.getElementById("display").innerHTML + '<br>' + 'Crash Cymbal';
+        }
+        pads[note] = 1;
+        activePad(note);
+    }
+}
+
+function handleMIDIControlChangeEvent(controllerNumber, value) {
+    id=controllerNumber-19;
+    knobs_level[id]=value/127;
+    // Your code to handle MIDI control change events (knob rotations)
+    knob=document.getElementById('knob'+id);
+    rotateKnob(knob,value/127*100);
+}
+
+function handleMIDIPadOff(note) {
+    if (pads[note] == 1) {
+        // Handle MIDI Note Off event
+        if (note == 0) { document.getElementById("display").innerHTML = defaultString; }
+        else if (note == 1) { document.getElementById("display").innerHTML = defaultString; }
+        else if (note == 2) { document.getElementById("display").innerHTML = defaultString; }
+        else if (note == 3) { document.getElementById("display").innerHTML = defaultString; }
+        pads[note] = 0;
+        activePad(note);
+    }
+
+}
+
+
 keys.forEach((key) => {
     const note = Number(key.getAttribute('dataNote'));
 
     key.addEventListener('mousedown', () => {
-        if (!pressedKeys[note]) {
-            pressedKeys[note] = playNote(note);
-            document.getElementById("display").innerHTML = document.getElementById("display").innerHTML + '<br>' + getNoteByIndex(note);
-            activeLed('#key' + String(note));
+        if (!pressedKeys[47 + note]) {
+            handleMIDINoteOn(47 + note);
         }
     });
 
     key.addEventListener('mouseup', () => {
-        if (pressedKeys[note]) {
-            stopNote(pressedKeys[note]);
-            delete pressedKeys[note];
-            document.getElementById('display').innerHTML = defaultString;
-            activeLed('#key' + String(note));
+        if (pressedKeys[47 + note]) {
+            handleMIDINoteOff(47 + note);
         }
     });
 
     key.addEventListener('mouseleave', () => {
-        if (pressedKeys[note]) {
-            stopNote(pressedKeys[note]);
-            delete pressedKeys[note];
-            document.getElementById('display').innerHTML = defaultString;
-            activeLed('#key' + String(note));
+        if (pressedKeys[47 + note]) {
+            handleMIDINoteOff(47 + note);
         }
     });
 });
@@ -120,59 +290,68 @@ blacKeys.forEach((key) => {
     const note = Number(key.getAttribute('dataNote'));
 
     key.addEventListener('mousedown', () => {
-        if (!pressedKeys[note]) {
-            pressedKeys[note] = playNote(note);
-            document.getElementById("display").innerHTML = document.getElementById("display").innerHTML + '<br>' + getNoteByIndex(note);
-            activeLed('#key' + String(note));
+        if (!pressedKeys[47 + note]) {
+            handleMIDINoteOn(47 + note);
         }
     });
 
     key.addEventListener('mouseup', () => {
-        if (pressedKeys[note]) {
-            stopNote(pressedKeys[note]);
-            delete pressedKeys[note];
-            document.getElementById('display').innerHTML = defaultString;
-            activeLed('#key' + String(note));
+        if (pressedKeys[47 + note]) {
+            handleMIDINoteOff(47 + note);
         }
     });
 
     key.addEventListener('mouseleave', () => {
-        if (pressedKeys[note]) {
-            stopNote(pressedKeys[note]);
-            delete pressedKeys[note];
-            document.getElementById('display').innerHTML = defaultString;
-            activeLed('#key' + String(note));
+        if (pressedKeys[47 + note]) {
+            handleMIDINoteOff(47 + note);
         }
     });
 });
 
 let KickPad = document.getElementById('pad1');
 KickPad.addEventListener('mousedown', () => {
-    playKick();
-    document.getElementById("display").innerHTML = document.getElementById("display").innerHTML + '<br>' + 'Kick';
-    setTimeout(() => { document.getElementById("display").innerHTML = defaultString; }, 500);
+    handleMIDIPadOn(0)
+})
+KickPad.addEventListener('mouseup', () => {
+    handleMIDIPadOff(0)
+})
+KickPad.addEventListener('mouseleave', () => {
+    handleMIDIPadOff(0)
 })
 
 let snarePad = document.getElementById('pad2');
 snarePad.addEventListener('mousedown', () => {
-    playSnare();
-    document.getElementById("display").innerHTML = document.getElementById("display").innerHTML + '<br>' + 'Snare';
-    setTimeout(() => { document.getElementById("display").innerHTML = defaultString; }, 500);
+    handleMIDIPadOn(1)
+})
+snarePad.addEventListener('mouseup', () => {
+    handleMIDIPadOff(1)
+})
+snarePad.addEventListener('mouseleave', () => {
+    handleMIDIPadOff(1)
 })
 
 let closedHitPad = document.getElementById('pad3');
 closedHitPad.addEventListener('mousedown', () => {
-    playClosedHiHat();
-    document.getElementById("display").innerHTML = document.getElementById("display").innerHTML + '<br>' + 'Closed Hit Hat';
-    setTimeout(() => { document.getElementById("display").innerHTML = defaultStri1ng; }, 500);
+    handleMIDIPadOn(2)
+})
+closedHitPad.addEventListener('mouseup', () => {
+    handleMIDIPadOff(2)
+})
+closedHitPad.addEventListener('mouseleave', () => {
+    handleMIDIPadOff(2)
 })
 
 let crashPad = document.getElementById('pad4');
 crashPad.addEventListener('mousedown', () => {
-    playCrashCymbal();
-    document.getElementById("display").innerHTML = document.getElementById("display").innerHTML + '<br>' + 'Crash Cymbal';
-    setTimeout(() => { document.getElementById("display").innerHTML = defaultString; }, 500);
+    handleMIDIPadOn(3)
 })
+crashPad.addEventListener('mouseup', () => {
+    handleMIDIPadOff(3)
+})
+crashPad.addEventListener('mouseleave', () => {
+    handleMIDIPadOff(3)
+})
+
 
 
 // Define a key-to-note mapping object
@@ -191,20 +370,18 @@ document.addEventListener('keydown', (e) => {
     else if (e.key == '4') playCrashCymbal();
     else {
         note = getPressedNote(e.key);
-        if (note && !pressedKeys[note]) pressedKeys[note] = playNote(note);
+        if (note && !pressedKeys[47 + note]) {
+            handleMIDINoteOn(47 + note);
+        }
     }
 })
-
 
 document.addEventListener('keyup', (e) => {
     note = getPressedNote(e.key);
     if (note) {
-        stopNote(pressedKeys[note]);
-        delete pressedKeys[note];
+        handleMIDINoteOff(47 + note);
     }
 })
-
-
 
 
 // AUDIO CHAIN SETUP --------------------------------------------------------------------------------------------------------------------------------
@@ -213,7 +390,6 @@ const c = new AudioContext();
 const compressor = c.createDynamicsCompressor();
 let attackNote = 0.06;
 let releaseNote = 0.10;
-let gainVal = 0;
 
 //analyser_node:
 const analyser = c.createAnalyser();
@@ -233,7 +409,7 @@ function getAmplitude() { // Function to get the current amplitude
 // Connect the custom analyser node to the audio output
 compressor.connect(analyser);
 analyser.connect(c.destination);
-let octave = 1 / 2;
+let octave = 1;
 
 
 // PLAYFUNCTIONS -----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -242,13 +418,12 @@ function playNote(note) {
     var o = c.createOscillator();
     o.type = "sawtooth";
     var g = c.createGain();
-
-    o.frequency.value = 261.63 * octave * Math.pow(2, note / 12);
+    o.frequency.value = 261.63 * Math.pow(2, (note - 57) / 12);
     o.connect(g);
     g.connect(compressor);
 
     g.gain.setValueAtTime(0, c.currentTime);
-    g.gain.linearRampToValueAtTime(gainVal * 0.7, c.currentTime + attackNote);
+    g.gain.linearRampToValueAtTime(knobs_level[0]*knobs_level[1], c.currentTime + attackNote);
 
     o.start();
 
@@ -290,7 +465,7 @@ function playKick() {
     source.buffer = buffer;
 
     g = c.createGain();
-    g.gain.value = gainVal;
+    g.gain.value = knobs_level[0]*knobs_level[9];
 
     source.connect(g);
     g.connect(compressor);
@@ -309,7 +484,7 @@ function playSnare() {
     const bufferData = buffer.getChannelData(0);
 
     const noiseGain = c.createGain();
-    noiseGain.gain.setValueAtTime(gainVal, c.currentTime);
+    noiseGain.gain.setValueAtTime(knobs_level[0]*knobs_level[9], c.currentTime);
     noiseGain.gain.linearRampToValueAtTime(0, c.currentTime + bufferSize / c.sampleRate);
 
     // Create white noise for the snare
@@ -322,7 +497,7 @@ function playSnare() {
     toneOscillator.frequency.value = 40; // Adjust this value for the desired pitch
 
     const toneGain = c.createGain();
-    toneGain.gain.setValueAtTime(gainVal / 5, c.currentTime);
+    toneGain.gain.setValueAtTime(knobs_level[0]*knobs_level[9] / 5, c.currentTime);
     toneGain.gain.linearRampToValueAtTime(0, c.currentTime + 0.02); // Adjust the duration of the tone burst
 
     // Connect the components
@@ -348,7 +523,7 @@ function playClosedHiHat() {
     const bufferData = buffer.getChannelData(0);
 
     const noiseGain = c.createGain();
-    noiseGain.gain.setValueAtTime(gainVal, c.currentTime);
+    noiseGain.gain.setValueAtTime(knobs_level[0]*knobs_level[9], c.currentTime);
     noiseGain.gain.linearRampToValueAtTime(0, c.currentTime + bufferSize / c.sampleRate);
 
     // Create white noise for the closed hi-hat
@@ -382,7 +557,7 @@ function playCrashCymbal() {
     const bufferData = buffer.getChannelData(0);
 
     const noiseGain = c.createGain();
-    noiseGain.gain.setValueAtTime(gainVal * 0.5, c.currentTime);
+    noiseGain.gain.setValueAtTime(knobs_level[0]*knobs_level[9] * 0.5, c.currentTime);
     noiseGain.gain.linearRampToValueAtTime(0, c.currentTime + bufferSize / c.sampleRate);
 
     // Create white noise for the crash cymbal
@@ -405,44 +580,6 @@ function playCrashCymbal() {
     source.connect(noiseGain);
     source.start(0);
 }
-
-//KNOBS ---------------------------------------------------------------------------------------------------------------------------------------------------
-const knobs = document.querySelectorAll('.knob');
-
-knobs.forEach((knob) => {
-    let isDragging = false;
-    let initialValue = 0;
-    let currentValue = 0;
-
-    knob.style.transform = `rotate(${0 * 2.7 - 135}deg)`;
-    knob.addEventListener('mousedown', (e) => { // 'e' is the event object
-        knob_Id = knob.getAttribute('id');
-        isDragging = true;
-        initialValue = (currentValue || 0) - e.clientY; //e.clientY è la posizione sull'asse y del mouse
-    });
-    
-
-
-    window.addEventListener('mousemove', (e) => {
-        if (isDragging) {
-            const newValue = Math.min(100, Math.max(0, initialValue + e.clientY));
-            currentValue = newValue;
-            knob.style.transform = `rotate(${newValue * 2.7 - 135}deg)`;
-
-            if (knob_Id == 'megaKnob') { //Volume Knob
-                // Calculate the new gain based on the knob position
-                const minFrequency = 0; // Minimum gain
-                const maxFrequency = 1; // Maximum gain
-                gainVal = minFrequency + (maxFrequency - minFrequency) * (newValue / 100);
-            }
-
-        }
-    });
-
-    window.addEventListener('mouseup', () => {
-        isDragging = false;
-    });
-});
 
 // SINUSOID ------------------------------------------------------------------------------------------------------------------------------------------------
 

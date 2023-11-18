@@ -77,19 +77,37 @@ body {
     transition: background-color .3s
 }
 
-.key:hover {
+/*.key:hover {
     background-color: rgb(165, 165, 165);
-}
+}*/
 
-.key:active {
+.key_active {
+    position: relative;
+    display: inline-block;
+    width: 6.0%;
+    height: 88%;
+    border-radius: 10px;
+    margin-top: 0.6%;
+    margin-left: 0.32%;
+    transition: background-color 0.3s;
     background-color: rgb(0, 0, 0);
 }
 
-.blacKey:hover {
+/*.blacKey:hover {
     background-color: rgb(81, 81, 81);
-}
+}*/
 
-.blacKey:active {
+.blacKey_active {
+    padding-top: 0.2%;
+    position: relative;
+    display: inline-block;
+    width: 4%;
+    height: 65%;
+    border-radius: 10px;
+    margin-top: 0.6%;
+    margin-left: 0.32%;
+    margin-bottom: 3%;
+    transition: background-color 0.3s;
     background-color: rgb(198, 198, 198);
 }
 
@@ -145,9 +163,6 @@ body {
 }
 
 
-
-
-
 #firstRow {
     background-color: grey;
     width: 90%;
@@ -193,9 +208,9 @@ body {
     background-color: rgb(210, 124, 124);
 }
 
-.pad:active {
+/*.pad:active {
     background-color: rgb(255, 0, 0);
-}
+}*/
 
 #secondRow {
     width: 60%;
@@ -247,7 +262,7 @@ body {
 
 
 
-#megaKnob {
+#knob0 {
     background-color: wheat;
     width: 7%;
     height: 50%;
