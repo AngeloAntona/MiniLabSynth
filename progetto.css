@@ -343,3 +343,47 @@ body {
     border-radius: 10px;
     padding: 5%;
 }
+
+
+.hidden {
+    display: none;
+}
+
+.menu {
+    position:relative;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px; /* Increase padding for more space inside the menu */
+    width: 200px; /* Set a specific width for the menu */
+    height: 80px; /* Set a specific height for the menu */
+    z-index: 1000; /* Ensure the menu is on top of other elements */
+    font-size:xx-large;
+    transition: background-color 0.8s;
+
+}
+.menu:hover{
+    background-color: black;
+    color:white;
+}
+
+.selectButton{
+    position:relative;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px; /* Increase padding for more space inside the menu */
+    width: 200px; /* Set a specific width for the menu */
+    height: 80px; /* Set a specific height for the menu */
+    z-index: 1000; /* Ensure the menu is on top of other elements */
+    font-size:xx-large;
+    transition: background-color 0.3s;
+}
+.selectButton:hover{
+    background-color: black;
+    color:white;
+}
+.selectButton:active{
+    background-color: red;
+    color:black;
+}

@@ -6,12 +6,12 @@ const defaultString = "MiniLab";
 let infoDisplay = document.querySelector('#display');
 
 
-//KNOBS ---------------------------------------------------------------------------------------------------------------------------------------------------
+//Knobs
 const knobs = document.querySelectorAll('.knob');
 
 knobs.forEach((knob) => {
     const knob_Id = knob.getAttribute('id');
-    const knob_Idx=knob.getAttribute('idx');
+    const knob_Idx = knob.getAttribute('idx');
 
     let isDragging = false;
     knob.style.transform = `rotate(${0 * 2.7 - 135}deg)`;
@@ -22,8 +22,8 @@ knobs.forEach((knob) => {
 
     knob.addEventListener('mousemove', (e) => {
         if (isDragging) {
-            knobs_level[knob_Idx] = Math.min(100, Math.max(0, initialValue + e.clientY))/100;
-            rotateKnob(knob,knobs_level[knob_Idx]*100);
+            knobs_level[knob_Idx] = Math.min(100, Math.max(0, initialValue + e.clientY)) / 100;
+            rotateKnob(knob, knobs_level[knob_Idx] * 100);
         }
     });
 
@@ -31,7 +31,7 @@ knobs.forEach((knob) => {
         isDragging = false;
     });
 });
-function rotateKnob(knob,rotation){
+function rotateKnob(knob, rotation) {
     knob.style.transform = `rotate(${rotation * 2.7 - 135}deg)`;
 }
 
@@ -131,7 +131,8 @@ function startLights(id) {
 
 const pressedKeys = {};// Object to keep track of pressed keys and their corresponding oscillators
 var pads = [0, 0, 0, 0, 0, 0, 0, 0];
-var knobs_level=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+var knobs_level = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
 
 function getNoteByIndex(index) {
     if (index == 1 || index == 1 + 12 || index == 1 + 24) return 'Do';
@@ -151,20 +152,41 @@ function getNoteByIndex(index) {
 // Add event listeners to each piano key
 const keys = document.querySelectorAll('.key');
 
+// Keep track of the sustain pedal state
+let isSustainPedalDown = false;
+
 // Initialize Web MIDI API
 navigator.requestMIDIAccess().then((midiAccess) => {
-    const deviceName = "Arturia MiniLab mkII";
-    
+    const deviceName = "Arturia MiniLab mkII"; // Replace with your MIDI device name
+
     midiAccess.inputs.forEach((input) => {
         if (input.name === deviceName) {
             input.onmidimessage = (event) => {
                 const statusByte = event.data[0] & 0xf0; // Extract the top 4 bits
 
-                if (statusByte === 0x90 || statusByte === 0x80) {
+                if (statusByte === 0xB0) {
+                    const controllerNumber = event.data[1];
+                    const value = event.data[2];
+                    // Control Change message (knob or slider)
+                    if (controllerNumber === 64) {
+                        // Sustain pedal event
+                        console.log(value);
+                        if (value > 0) {
+                            isSustainPedalDown = true;
+                        } else {
+                            isSustainPedalDown = false;
+                            handleSustain();
+                        }
+                    }
+                    else {
+                        // Handle MIDI control change events (knob rotations)
+                        handleMIDIControlChangeEvent(controllerNumber, value);
+                    }
+                } else if (statusByte === 0x90 || statusByte === 0x80) {
                     // Note On or Note Off message
                     const noteNumber = event.data[1];
                     const velocity = event.data[2];
-
+                    // Handle other MIDI note events
                     if (noteNumber > 7) {
                         // Handle MIDI note events for keys
                         if (statusByte === 0x90 && velocity > 0) {
@@ -180,13 +202,6 @@ navigator.requestMIDIAccess().then((midiAccess) => {
                             handleMIDIPadOff(noteNumber);
                         }
                     }
-                } else if (statusByte === 0xB0) {
-                    // Control Change message (knob or slider)
-                    const controllerNumber = event.data[1];
-                    const value = event.data[2];
-
-                    // Handle MIDI control change events (knob rotations)
-                    handleMIDIControlChangeEvent(controllerNumber, value);
                 }
             };
         }
@@ -196,26 +211,58 @@ navigator.requestMIDIAccess().then((midiAccess) => {
 });
 
 
+// Keep track of sustained notes when the sustain pedal is down
+const sustainedNotes = {};
+
+function handleSustain(note) {
+    if (note) {
+        sustainedNotes[note] = pressedKeys[note]; // Add the note to the list of sustained notes
+        delete pressedKeys[note];
+    }
+    else {
+        Object.keys(sustainedNotes).forEach((key) => {
+            if (!pressedKeys[key]) {
+                stopNote(sustainedNotes[key]);
+                delete sustainedNotes[key];
+            }
+
+        });
+    }
+}
+
+notecorrection = 0;
+noteDivisor = 24;
+noteshift = 1;
 function handleMIDINoteOn(note) {
     // Handle MIDI Note On event
     if (!pressedKeys[note]) {
         pressedKeys[note] = playNote(note);
-        document.getElementById("display").innerHTML = document.getElementById("display").innerHTML + '<br>' + getNoteByIndex(Math.abs(note - 12) % 12 + 1);
-        activeLed('#key' + String(Math.abs(note - 12) % 36 + 1));
-        activeKey('#key' + String(Math.abs(note - 12) % 36 + 1));
+        document.getElementById("display").innerHTML += '<br>' + getNoteByIndex(Math.abs(note - 12) % 12 + 1);
+        activeLed('#key' + String(Math.abs(note - notecorrection) % noteDivisor + noteshift));
+        activeKey('#key' + String(Math.abs(note - notecorrection) % noteDivisor + noteshift));
     }
 }
 
 function handleMIDINoteOff(note) {
-    // Handle MIDI Note Off event
     if (pressedKeys[note]) {
-        stopNote(pressedKeys[note]);
-        delete pressedKeys[note];
         document.getElementById('display').innerHTML = defaultString;
-        activeLed('#key' + String(Math.abs(note - 12) % 36 + 1));
-        activeKey('#key' + String(Math.abs(note - 12) % 36 + 1));
+        console.log(Math.abs(note - notecorrection) % noteDivisor + noteshift);
+        activeLed('#key' + String(Math.abs(note - notecorrection) % noteDivisor + noteshift));
+        activeKey('#key' + String(Math.abs(note - notecorrection) % noteDivisor + noteshift));
+        console.log(pressedKeys);
+        console.log(sustainedNotes);
+        // Handle MIDI Note Off event
+        if (isSustainPedalDown && !sustainedNotes[note]) {
+            handleSustain(note); // Check for sustain when a note is released
+        }
+        else {
+            stopNote(pressedKeys[note]);
+            delete pressedKeys[note];
+        }
     }
+
 }
+
 
 function handleMIDIPadOn(note) {
     if (pads[note] == 0) {
@@ -242,11 +289,12 @@ function handleMIDIPadOn(note) {
 }
 
 function handleMIDIControlChangeEvent(controllerNumber, value) {
-    id=controllerNumber-19;
-    knobs_level[id]=value/127;
-    // Your code to handle MIDI control change events (knob rotations)
-    knob=document.getElementById('knob'+id);
-    rotateKnob(knob,value/127*100);
+    id = controllerNumber - 19;
+    knobs_level[id] = value / 127;
+    // Code to handle MIDI control change events (knob rotations)
+    knob = document.getElementById('knob' + id);
+    applyKnobsValues();
+    rotateKnob(knob, value / 127 * 100);
 }
 
 function handleMIDIPadOff(note) {
@@ -388,6 +436,7 @@ document.addEventListener('keyup', (e) => {
 
 const c = new AudioContext();
 const compressor = c.createDynamicsCompressor();
+const mainGain = c.createGain();
 let attackNote = 0.06;
 let releaseNote = 0.10;
 
@@ -407,10 +456,14 @@ function getAmplitude() { // Function to get the current amplitude
     return amplitude;
 }
 // Connect the custom analyser node to the audio output
-compressor.connect(analyser);
+compressor.connect(mainGain);
+mainGain.connect(analyser);
 analyser.connect(c.destination);
-let octave = 1;
 
+function applyKnobsValues() {
+    mainGain.gain.value = knobs_level[0];
+}
+applyKnobsValues();
 
 // PLAYFUNCTIONS -----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -423,7 +476,7 @@ function playNote(note) {
     g.connect(compressor);
 
     g.gain.setValueAtTime(0, c.currentTime);
-    g.gain.linearRampToValueAtTime(knobs_level[0]*knobs_level[1], c.currentTime + attackNote);
+    g.gain.linearRampToValueAtTime(knobs_level[1], c.currentTime + attackNote);
 
     o.start();
 
@@ -465,7 +518,7 @@ function playKick() {
     source.buffer = buffer;
 
     g = c.createGain();
-    g.gain.value = knobs_level[0]*knobs_level[9];
+    g.gain.value = knobs_level[9];
 
     source.connect(g);
     g.connect(compressor);
@@ -484,7 +537,7 @@ function playSnare() {
     const bufferData = buffer.getChannelData(0);
 
     const noiseGain = c.createGain();
-    noiseGain.gain.setValueAtTime(knobs_level[0]*knobs_level[9], c.currentTime);
+    noiseGain.gain.setValueAtTime(knobs_level[9], c.currentTime);
     noiseGain.gain.linearRampToValueAtTime(0, c.currentTime + bufferSize / c.sampleRate);
 
     // Create white noise for the snare
@@ -497,7 +550,7 @@ function playSnare() {
     toneOscillator.frequency.value = 40; // Adjust this value for the desired pitch
 
     const toneGain = c.createGain();
-    toneGain.gain.setValueAtTime(knobs_level[0]*knobs_level[9] / 5, c.currentTime);
+    toneGain.gain.setValueAtTime(knobs_level[9] / 5, c.currentTime);
     toneGain.gain.linearRampToValueAtTime(0, c.currentTime + 0.02); // Adjust the duration of the tone burst
 
     // Connect the components
@@ -523,7 +576,7 @@ function playClosedHiHat() {
     const bufferData = buffer.getChannelData(0);
 
     const noiseGain = c.createGain();
-    noiseGain.gain.setValueAtTime(knobs_level[0]*knobs_level[9], c.currentTime);
+    noiseGain.gain.setValueAtTime(knobs_level[9], c.currentTime);
     noiseGain.gain.linearRampToValueAtTime(0, c.currentTime + bufferSize / c.sampleRate);
 
     // Create white noise for the closed hi-hat
@@ -557,7 +610,7 @@ function playCrashCymbal() {
     const bufferData = buffer.getChannelData(0);
 
     const noiseGain = c.createGain();
-    noiseGain.gain.setValueAtTime(knobs_level[0]*knobs_level[9] * 0.5, c.currentTime);
+    noiseGain.gain.setValueAtTime(knobs_level[9] * 0.5, c.currentTime);
     noiseGain.gain.linearRampToValueAtTime(0, c.currentTime + bufferSize / c.sampleRate);
 
     // Create white noise for the crash cymbal
@@ -615,3 +668,83 @@ function animate() {
 }
 
 animate();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    mainFrame.addEventListener('contextmenu', function (event) {
+        // Prevent the default context menu
+        event.preventDefault();
+    })
+    // Get references to the clickable objects and the context menus
+    const display = document.getElementById('display');
+    const knobs = document.querySelectorAll('.knob');
+    const displayMenu = document.getElementById('displayMenu');
+    const knobMenu = document.getElementById('knobMenu');
+
+    // Add a contextmenu event listener to the display (right-click)
+    display.addEventListener('contextmenu', function (event) {
+        handleContextMenu(event, displayMenu);
+    });
+
+    // Add a contextmenu event listener to each knob
+    knobs.forEach((knob) => {
+        knob.addEventListener('contextmenu', function (event) {
+            handleContextMenu(event, knobMenu);
+        });
+    });
+
+    // Get references to the selection menu components
+    const presetOptions = document.getElementById('presetOptions');
+    const pedalOptions = document.getElementById('pedalOptions');
+    const presetSelect = document.getElementById('presetSelect');
+    const pedalSelect = document.getElementById('pedalSelect');
+
+    // Add a click event listener to the preset select button
+    presetSelect.addEventListener('click', function () {
+        const selectedOption = presetOptions.value;
+
+        alert('Selected option: ' + selectedOption);
+
+        displayMenu.classList.add('hidden');
+    });
+
+    // Add a click event listener to the pedal select button
+    pedalSelect.addEventListener('click', function () {
+        const selectedOption = pedalOptions.value;
+
+        alert('Selected option: ' + selectedOption);
+
+        knobMenu.classList.add('hidden');
+    });
+
+    // Add a click event listener to the document to hide the context menu on a click outside the menu
+    document.addEventListener('click', function (e) {
+        if (!displayMenu.contains(e.target) && !knobMenu.contains(e.target)) {
+            displayMenu.classList.add('hidden');
+            knobMenu.classList.add('hidden');
+        }
+    });
+
+    function handleContextMenu(event, menu) {
+
+        menu.style.position = 'absolute';
+        menu.style.left = event.clientX + 'px';
+        menu.style.top = event.clientY + 'px';
+
+        menu.classList.remove('hidden');
+    }
+});
