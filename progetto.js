@@ -437,6 +437,8 @@ document.addEventListener('keyup', (e) => {
 const c = new AudioContext();
 const compressor = c.createDynamicsCompressor();
 const mainGain = c.createGain();
+const keyGain = c.createGain();
+const drumGain = c.createGain();
 let attackNote = 0.06;
 let releaseNote = 0.10;
 
@@ -456,12 +458,16 @@ function getAmplitude() { // Function to get the current amplitude
     return amplitude;
 }
 // Connect the custom analyser node to the audio output
+keyGain.connect(compressor);
+drumGain.connect(compressor);
 compressor.connect(mainGain);
 mainGain.connect(analyser);
 analyser.connect(c.destination);
 
 function applyKnobsValues() {
     mainGain.gain.value = knobs_level[0];
+    keyGain.gain.value = knobs_level[1];
+    drumGain.gain.value = knobs_level[9];
 }
 applyKnobsValues();
 
@@ -473,10 +479,10 @@ function playNote(note) {
     var g = c.createGain();
     o.frequency.value = 261.63 * Math.pow(2, (note - 57) / 12);
     o.connect(g);
-    g.connect(compressor);
+    g.connect(keyGain);
 
     g.gain.setValueAtTime(0, c.currentTime);
-    g.gain.linearRampToValueAtTime(knobs_level[1], c.currentTime + attackNote);
+    g.gain.linearRampToValueAtTime(1, c.currentTime + attackNote);
 
     o.start();
 
@@ -517,11 +523,7 @@ function playKick() {
     const source = c.createBufferSource();
     source.buffer = buffer;
 
-    g = c.createGain();
-    g.gain.value = knobs_level[9];
-
-    source.connect(g);
-    g.connect(compressor);
+    source.connect(drumGain);
     source.start(0);
 
     // Schedule the stop of the source node after the duration
@@ -537,7 +539,7 @@ function playSnare() {
     const bufferData = buffer.getChannelData(0);
 
     const noiseGain = c.createGain();
-    noiseGain.gain.setValueAtTime(knobs_level[9], c.currentTime);
+    noiseGain.gain.setValueAtTime(1, c.currentTime);
     noiseGain.gain.linearRampToValueAtTime(0, c.currentTime + bufferSize / c.sampleRate);
 
     // Create white noise for the snare
@@ -550,16 +552,16 @@ function playSnare() {
     toneOscillator.frequency.value = 40; // Adjust this value for the desired pitch
 
     const toneGain = c.createGain();
-    toneGain.gain.setValueAtTime(knobs_level[9] / 5, c.currentTime);
+    toneGain.gain.setValueAtTime(1 / 5, c.currentTime);
     toneGain.gain.linearRampToValueAtTime(0, c.currentTime + 0.02); // Adjust the duration of the tone burst
 
     // Connect the components
     noiseGain.connect(toneGain.gain);
     toneOscillator.connect(toneGain);
-    toneGain.connect(compressor);
+    toneGain.connect(drumGain);
 
     // Start the noise and the tone simultaneously
-    noiseGain.connect(compressor);
+    noiseGain.connect(drumGain);
     toneOscillator.start();
     toneOscillator.stop(c.currentTime + 0.02); // Adjust the duration of the tone burst
 
@@ -592,7 +594,7 @@ function playClosedHiHat() {
 
     // Connect the components
     noiseGain.connect(filter);
-    filter.connect(compressor);
+    filter.connect(drumGain);
 
     const source = c.createBufferSource();
     source.buffer = buffer;
@@ -610,12 +612,12 @@ function playCrashCymbal() {
     const bufferData = buffer.getChannelData(0);
 
     const noiseGain = c.createGain();
-    noiseGain.gain.setValueAtTime(knobs_level[9] * 0.5, c.currentTime);
+    noiseGain.gain.setValueAtTime(0.5, c.currentTime);
     noiseGain.gain.linearRampToValueAtTime(0, c.currentTime + bufferSize / c.sampleRate);
 
     // Create white noise for the crash cymbal
     for (let i = 0; i < bufferSize; i++) {
-        bufferData[i] = (Math.random() * 2 - 1); // Generate random noise
+        bufferData[i] = (Math.random() * 1.5 - 1); // Generate random noise
     }
 
     // Create a low-pass filter to shape the cymbal sound
@@ -626,7 +628,7 @@ function playCrashCymbal() {
 
     // Connect the components
     noiseGain.connect(filter);
-    filter.connect(compressor);
+    filter.connect(drumGain);
 
     const source = c.createBufferSource();
     source.buffer = buffer;
