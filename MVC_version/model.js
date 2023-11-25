@@ -78,7 +78,6 @@ class Model {
         const id = controllerNumber - 19;
         this.knobsLevel[id] = value / 127;
         this.refreshAudioParameters();
-        console.log(this.knobsLevel);
         const knob = document.getElementById('knob' + id);
         return { knob };
     }
