@@ -4,15 +4,15 @@ This is my first project in HTML, JavaScript, and CSS, developed during the "Adv
 This code implements a small keyboard that can be played through mouse clicks or MIDI input. The instrument's structure is based on the Arturia MiniLab Keyboard.
 
 ## Status
-| Main functionality                        | State           |
+| Main objectives                           | State           |
 | ----------------------------------------- |:---------------:|
 | Keyboard and Pad Sounds                   | :green_circle:  |
 | Mini amplitude display                    | :green_circle:  |
 | Separate pad and keys volume              | :green_circle:  |
 | MIDI keyboard input                       | :green_circle:  |
+| Model View Controller pattern             | :green_circle:  |
 | Sustain and control pedals MIDI input     | :yellow_circle: |
 | Mappable control pedals                   | :yellow_circle: |
-| Model View Controller pattern             | :yellow_circle: |
 | Different presets of sounds combinations  | :red_circle:    |
 | Playable remotely                         | :red_circle:    |
 
