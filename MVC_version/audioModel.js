@@ -13,12 +13,11 @@ class AudioModel {
 
         this.bufferLength = this.analyser.frequencyBinCount;
         this.dataArray = new Uint8Array(this.bufferLength);
-        this.keyGain.connect(this.compressor);
-        this.drumGain.connect(this.compressor);
-        this.compressor.connect(this.mainGain);
+        this.keyGain.connect(this.mainGain);
+        this.drumGain.connect(this.mainGain);
         this.mainGain.connect(this.analyser);
-        this.analyser.connect(this.context.destination);
-
+        this.analyser.connect(this.compressor);
+        this.compressor.connect(this.context.destination);
         this.attackNote = 0.01;
         this.releaseNote = 0.10;
     }

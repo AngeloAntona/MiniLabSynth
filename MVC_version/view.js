@@ -11,10 +11,6 @@ class View {
         this.centerX = this.canvas.width / 2;
         this.animateSinusoid();
     }
-    
-    setAmplitude(amplitude){
-        this.amplitude=amplitude;
-    }
     //lights-----------------------------------------------------------
     flipLed(led) {
         if (led.classList.value === 'dot') {
