@@ -14,14 +14,14 @@ class TouchController {
     attachKnobEventListeners() {
         this.controller.knobElements.forEach((knob, idx) => {
             let isDragging = false;
-            this.controller.synchronizeKnobs()
+            this.controller.synchronizeKnobs();
 
             knob.addEventListener('mousedown', (e) => {
                 isDragging = true;
                 this.initialValue = this.controller.model.knobsLevel[idx]*127 - e.clientY;
             });
 
-            knob.addEventListener('mousemove', (e) => {
+            window.addEventListener('mousemove', (e) => {
                 if (isDragging) {
                     const newValue = Math.min(100, Math.max(0, this.initialValue + e.clientY));
                     this.controller.handleControlChangeEvent(idx+19, newValue*1.27)

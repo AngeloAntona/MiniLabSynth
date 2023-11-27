@@ -59,7 +59,8 @@ class View {
 
     //Knobs-----------------------------------------------------------
     rotateKnob(knob, rotation) {
-        knob.style.transform = `rotate(${rotation * 2.7 - 135}deg)`;
+        knob.children[0].style.transform = `rotate(${rotation * 2.7 - 135}deg)`;
+        knob.children[1].innerHTML=rotation.toFixed(0);
     }
     
     //Visualizer-----------------------------------------------------------
@@ -70,8 +71,8 @@ class View {
         this.ctx.clearRect(0, 0, width, height);
 
         this.ctx.beginPath();
-        this.ctx.strokeStyle = 'k';
-        this.ctx.lineWidth = 15;
+        this.ctx.strokeStyle = 'black';
+        this.ctx.lineWidth = 20;
 
         for (let x = 0; x < width; x++) {
             const currentAmplitude = this.audioModel.getAmplitude();

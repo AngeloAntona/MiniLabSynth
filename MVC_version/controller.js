@@ -40,7 +40,6 @@ class Controller {
         });
     }
 
-
     //lights-----------------------------------------------------------
     flipLed(id) {
         let led = document.querySelector(id);
@@ -117,7 +116,6 @@ class Controller {
             this.view.rotateKnob(knob, this.model.knobsLevel[idx]*100)
         });
     }
-
 
     //Play controls
     handleSustain(note) {
