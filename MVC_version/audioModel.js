@@ -31,6 +31,10 @@ class AudioModel {
         return sum / this.bufferLength;
     }
 
+    setNoteOscillator(oscillatorType){
+        this.noteOscillator=oscillatorType;
+    }
+
     setMainGain(value){
         this.mainGain.gain.value=value;
     }
@@ -41,9 +45,9 @@ class AudioModel {
         this.drumGain.gain.value=value;
     }
 
-    playNote(note) {
+    playNote(note, oscillatorType) {
         const oscillator = this.context.createOscillator();
-        oscillator.type = "sawtooth";
+        oscillator.type = oscillatorType;
         const gainNode = this.context.createGain();
         oscillator.frequency.value = 261.63 * Math.pow(2, (note - 57) / 12);
         oscillator.connect(gainNode);
@@ -53,7 +57,6 @@ class AudioModel {
         gainNode.gain.linearRampToValueAtTime(1, this.context.currentTime + this.attackNote);
 
         oscillator.start();
-
         return { oscillator, gainNode };
     }
     stopNote(note) {

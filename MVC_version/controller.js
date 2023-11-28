@@ -16,7 +16,7 @@ class Controller {
 
         this.keys = document.querySelectorAll('.key');
         this.blacKeys = document.querySelectorAll('.blacKey');
-        this.displayPads=document.querySelectorAll('.pad');
+        this.displayPads = document.querySelectorAll('.pad');
 
         // Get references to the selection menu components
         this.presetOptions = document.getElementById('presetOptions');
@@ -111,19 +111,27 @@ class Controller {
 
     //Knobs-----------------------------------------------------------
 
-    synchronizeKnobs(){
+    synchronizeKnobs() {
         this.knobElements.forEach((knob, idx) => {
-            this.view.rotateKnob(knob, this.model.knobsLevel[idx]*100)
+            this.view.rotateKnob(knob, this.model.knobsLevel[idx] * 100)
         });
     }
 
     //Play controls
     handleSustain(note) {
         this.model.handleSustain(note);
+        this.model.handleBassSustain(note);
     }
 
     handleNoteOn(note) {
-        const result = this.model.handleNoteOn(note);
+        const actKey = this.model.activateKey;
+        const actBass = this.model.activateBass;
+        let result = null;
+        if (actKey) { result = this.model.handleNoteOn(note); }
+        if (actBass) {
+            const result2 = this.model.handleBassOn(note);
+            result = result || result2;
+        }
         if (result) {
             this.flipLed(result.ledSelector);
             this.flipKey(result.keySelector);
@@ -131,9 +139,10 @@ class Controller {
     }
 
     handleNoteOff(note) {
-        const result = this.model.handleNoteOff(note);
+        const result1 = this.model.handleNoteOff(note);
+        const result2 = this.model.handleBassOff(note);
+        const result = result1 || result2;
         if (result) {
-            
             this.flipLed(result.ledSelector);
             this.flipKey(result.keySelector);
         }

@@ -5,15 +5,76 @@ class Model {
         console.log('Costruttore model.js');
         this.knobsLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         this.pads = [0, 0, 0, 0, 0, 0, 0, 0];
-        this.pressedKeys = {};
         this.sustainedNotes = {};
         this.isSustainPedalDown = false;
-        this.refreshAudioParameters()
+
+
+        this.activateBass = true;
+        this.pressedBass = {};
+        this.sustainedBass = {};
+        this.bassOscillator = "sawtooth";
+        this.bassOctave = 1 / 4;
+        this.bassSustain=true;
+        this.bassMono=false;
+        this.activateKey = true;
+        this.pressedKeys = {};
+        this.sustainedNotes = {};
+        this.keyOscillator = "triangle";
+        this.keyOctave = 1;
+        this.keySustain=true;
+        this.keyMono=false;
+        this.refreshAudioParameters();
     }
 
     updateKnobLevel(idx, value) {
         this.knobsLevel[idx] = value;
     }
+
+    activateInstrument(instrument, status) {
+        if (instrument === 'bass') {
+            if (status === 'active') {
+                this.activateBass = true;
+            }
+            else {
+                this.activateBass = false;
+            }
+        }
+        else if (instrument === 'key') {
+            if (status === 'active') {
+                this.activateKey = true;
+            }
+            else {
+                this.activateKey = false;
+            }
+        }
+    }
+
+    getKeyOctave(note) {
+        const oct = Math.log2(this.keyOctave);
+        return note+(Math.round(oct)* 12);
+    }
+
+    getBassOctave(note) {
+        const oct = Math.log2(this.bassOctave);
+        return note+(Math.round(oct)* 12);
+    }
+
+    /*delAllSustExcept1(instrument, not){
+        if (instrument=='bass'){
+            const note=this.getBassOctave(not);
+            Object.keys(this.sustainedBass).forEach((bassNote) => {
+                if (bassNote!=note) {
+                    this.audioModel.stopNote(this.sustainedBass[bassNote]);
+                    delete this.sustainedBass[bassNote];
+                }
+                else if(bassNote!=note&&this.pressedBass[note])
+                {
+                    delete this.sustainedBass[note];
+                }
+            });
+        }  
+    }*/
+
 
     handleSustain(note) {
         if (note) {
@@ -30,8 +91,9 @@ class Model {
     }
 
     handleNoteOn(note) {
-        if (!this.pressedKeys[note]) {
-            this.pressedKeys[note] = this.audioModel.playNote(note);
+        const currentNote=this.getKeyOctave(note);
+        if (!this.pressedKeys[currentNote]) {
+            this.pressedKeys[currentNote] = this.audioModel.playNote(currentNote,this.keyOscillator);
             const ledSelector = '#key' + String(Math.abs(note) % 24 + 1);
             const keySelector = '#key' + String(Math.abs(note) % 24 + 1);
             return { display, ledSelector, keySelector };
@@ -40,19 +102,65 @@ class Model {
     }
 
     handleNoteOff(note) {
-        if (this.pressedKeys[note]) {
+        const currentNote=this.getKeyOctave(note);
+        if (this.pressedKeys[currentNote]) {
             const ledSelector = '#key' + String(Math.abs(note) % 24 + 1);
             const keySelector = '#key' + String(Math.abs(note) % 24 + 1);
-            if (this.isSustainPedalDown && !this.sustainedNotes[note]) {
-                this.handleSustain(note);
+            if (this.isSustainPedalDown && !this.sustainedNotes[currentNote]&&this.sustainedNotes) {
+                this.handleSustain(currentNote);
             } else {
-                this.audioModel.stopNote(this.pressedKeys[note]);
-                delete this.pressedKeys[note];
+                this.audioModel.stopNote(this.pressedKeys[currentNote]);
+                delete this.pressedKeys[currentNote];
             }
             return { display, ledSelector, keySelector };
         }
         return null;
     }
+
+
+
+    handleBassSustain(note) {
+        if (note) {
+            this.sustainedBass[note] = this.pressedBass[note];
+            delete this.pressedBass[note];
+        } else {
+            Object.keys(this.sustainedBass).forEach((bassNote) => {
+                if (!this.pressedBass[bassNote]) {
+                    this.audioModel.stopNote(this.sustainedBass[bassNote]);
+                    delete this.sustainedBass[bassNote];
+                }
+            });
+        }
+    }
+
+    handleBassOn(note) {
+        const currentNote=this.getBassOctave(note);
+        if (!this.pressedBass[currentNote]) {
+            this.pressedBass[currentNote] = this.audioModel.playNote(currentNote,this.bassOscillator);
+            const ledSelector = '#key' + String(Math.abs(note) % 24 + 1);
+            const keySelector = '#key' + String(Math.abs(note) % 24 + 1);
+            return { display, ledSelector, keySelector };
+        }
+        return null;
+    }
+
+    handleBassOff(note) {
+        const currentNote=this.getBassOctave(note);
+        if (this.pressedBass[currentNote]) {
+            const ledSelector = '#key' + String(Math.abs(note) % 24 + 1);
+            const keySelector = '#key' + String(Math.abs(note) % 24 + 1);
+            if (this.isSustainPedalDown && !this.sustainedBass[currentNote]&&this.bassSustain) {
+                this.handleBassSustain(currentNote);
+            } else {
+                this.audioModel.stopNote(this.pressedBass[currentNote]);
+                delete this.pressedBass[currentNote];
+            }
+            return { display, ledSelector, keySelector };
+        }
+        return null;
+    }
+
+
 
     handlePadOn(note) {
         if (this.pads[note] === 0) {
@@ -64,10 +172,10 @@ class Model {
                 this.audioModel.playClosedHiHat();
             } else if (note === 3) {
                 this.audioModel.playCrashCymbal();
-            } else if (note === 4) {} 
-             else if (note === 5) {}
-             else if (note === 6) {}
-             else if (note === 7) {}
+            } else if (note === 4) { }
+            else if (note === 5) { }
+            else if (note === 6) { }
+            else if (note === 7) { }
             this.pads[note] = 1;
             return true;
         }
@@ -93,7 +201,7 @@ class Model {
         }
         return null;
     }
-    refreshAudioParameters(){
+    refreshAudioParameters() {
         this.audioModel.setMainGain(this.knobsLevel[0]);
         this.audioModel.setKeyGain(this.knobsLevel[1]);
         this.audioModel.setDrumGain(this.knobsLevel[9]);
