@@ -12,22 +12,35 @@ class Model {
         this.activateBass = true;
         this.pressedBass = {};
         this.sustainedBass = {};
-        this.bassOscillator = "sawtooth";
+        this.bassOscillator = "sine";
         this.bassOctave = 1 / 4;
-        this.bassSustain=true;
-        this.bassMono=false;
+        this.bassSustain = false;
+        this.bassMono = false;
+        this.bassWeel = false;
+
         this.activateKey = true;
         this.pressedKeys = {};
         this.sustainedNotes = {};
-        this.keyOscillator = "triangle";
+        this.keyOscillator = "sine";
         this.keyOctave = 1;
-        this.keySustain=true;
-        this.keyMono=false;
+        this.keySustain = true;
+        this.keyMono = false;
+        this.keyWheel = false;
+
+
+
         this.refreshAudioParameters();
     }
 
     updateKnobLevel(idx, value) {
         this.knobsLevel[idx] = value;
+    }
+
+    shiftOctave(inst, direction) {
+        if (inst === 'key') {
+            if (direction === '+' && this.keyOctave <= 8) { this.keyOctave = this.keyOctave * 2 }
+            else if (direction === '-' && this.keyOctave >= 1 / 8) { this.keyOctave = this.keyOctave / 2 }
+        }
     }
 
     activateInstrument(instrument, status) {
@@ -49,14 +62,19 @@ class Model {
         }
     }
 
-    getKeyOctave(note) {
-        const oct = Math.log2(this.keyOctave);
-        return note+(Math.round(oct)* 12);
+    getOctave(inst){
+        if(inst=='key'){return Math.log2(this.keyOctave);}
+        else if(inst=='bass'){return Math.log2(this.bassOctave);}
     }
 
-    getBassOctave(note) {
+    getKeyShift(note) {
+        const oct = Math.log2(this.keyOctave);
+        return note + (Math.round(oct) * 12);
+    }
+
+    getBassShift(note) {
         const oct = Math.log2(this.bassOctave);
-        return note+(Math.round(oct)* 12);
+        return note + (Math.round(oct) * 12);
     }
 
     /*delAllSustExcept1(instrument, not){
@@ -91,9 +109,9 @@ class Model {
     }
 
     handleNoteOn(note) {
-        const currentNote=this.getKeyOctave(note);
+        const currentNote = this.getKeyShift(note);
         if (!this.pressedKeys[currentNote]) {
-            this.pressedKeys[currentNote] = this.audioModel.playNote(currentNote,this.keyOscillator);
+            this.pressedKeys[currentNote] = this.audioModel.playNote(currentNote, this.keyOscillator);
             const ledSelector = '#key' + String(Math.abs(note) % 24 + 1);
             const keySelector = '#key' + String(Math.abs(note) % 24 + 1);
             return { display, ledSelector, keySelector };
@@ -102,11 +120,11 @@ class Model {
     }
 
     handleNoteOff(note) {
-        const currentNote=this.getKeyOctave(note);
+        const currentNote = this.getKeyShift(note);
         if (this.pressedKeys[currentNote]) {
             const ledSelector = '#key' + String(Math.abs(note) % 24 + 1);
             const keySelector = '#key' + String(Math.abs(note) % 24 + 1);
-            if (this.isSustainPedalDown && !this.sustainedNotes[currentNote]&&this.sustainedNotes) {
+            if (this.isSustainPedalDown && !this.sustainedNotes[currentNote] && this.sustainedNotes) {
                 this.handleSustain(currentNote);
             } else {
                 this.audioModel.stopNote(this.pressedKeys[currentNote]);
@@ -117,6 +135,22 @@ class Model {
         return null;
     }
 
+    deleteAllNotes(inst) {
+        if (inst == 'key') {
+            const keysToDelete = Object.keys(this.pressedKeys);
+            keysToDelete.forEach(note => {
+                this.audioModel.stopNote(this.pressedKeys[note]);
+                delete this.pressedKeys[note];
+            });
+        }
+        else if (inst == 'bass') {
+            const bassToDelete = Object.keys(this.pressedBass);
+            bassToDelete.forEach(bass => {
+                this.audioModel.stopNote(this.pressedBass[bass]);
+                delete this.pressedBass[bass];
+            });
+        }
+    }
 
 
     handleBassSustain(note) {
@@ -134,9 +168,9 @@ class Model {
     }
 
     handleBassOn(note) {
-        const currentNote=this.getBassOctave(note);
+        const currentNote = this.getBassShift(note);
         if (!this.pressedBass[currentNote]) {
-            this.pressedBass[currentNote] = this.audioModel.playNote(currentNote,this.bassOscillator);
+            this.pressedBass[currentNote] = this.audioModel.playNote(currentNote, this.bassOscillator);
             const ledSelector = '#key' + String(Math.abs(note) % 24 + 1);
             const keySelector = '#key' + String(Math.abs(note) % 24 + 1);
             return { display, ledSelector, keySelector };
@@ -145,11 +179,11 @@ class Model {
     }
 
     handleBassOff(note) {
-        const currentNote=this.getBassOctave(note);
+        const currentNote = this.getBassShift(note);
         if (this.pressedBass[currentNote]) {
             const ledSelector = '#key' + String(Math.abs(note) % 24 + 1);
             const keySelector = '#key' + String(Math.abs(note) % 24 + 1);
-            if (this.isSustainPedalDown && !this.sustainedBass[currentNote]&&this.bassSustain) {
+            if (this.isSustainPedalDown && !this.sustainedBass[currentNote] && this.bassSustain) {
                 this.handleBassSustain(currentNote);
             } else {
                 this.audioModel.stopNote(this.pressedBass[currentNote]);
@@ -160,7 +194,7 @@ class Model {
         return null;
     }
 
-
+    
 
     handlePadOn(note) {
         if (this.pads[note] === 0) {

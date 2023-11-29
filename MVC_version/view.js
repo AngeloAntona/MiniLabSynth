@@ -3,7 +3,7 @@ class View {
     constructor(audioModel) {
         // Initialize the view
         console.log('Costruttore view.js');
-        this.audioModel=audioModel;
+        this.audioModel = audioModel;
         this.canvas = document.getElementById('signalCanvas');
         this.ctx = this.canvas.getContext('2d');
         this.frequency = 0.02;
@@ -60,9 +60,9 @@ class View {
     //Knobs-----------------------------------------------------------
     rotateKnob(knob, rotation) {
         knob.children[0].style.transform = `rotate(${rotation * 2.7 - 135}deg)`;
-        knob.children[1].innerHTML=rotation.toFixed(0);
+        knob.children[1].innerHTML = rotation.toFixed(0);
     }
-    
+
     //Visualizer-----------------------------------------------------------
     drawSinusoidalSignal() {
         const width = this.canvas.width;
@@ -88,4 +88,22 @@ class View {
         this.drawSinusoidalSignal();
         requestAnimationFrame(this.animateSinusoid.bind(this));
     }
+
+    //display-----------------------------------------------------------
+    updateDisplayOctave(octave, displayObj){
+        displayObj.innerHTML=octave;
+    }
+
+    renderActiveIndicator(indicator, boolean){
+        if (boolean){
+            indicator.classList.add('turnOnActive');
+            indicator.classList.toggle('turnOn');
+        }
+        else{
+            indicator.classList.add('turnOn');
+            indicator.classList.toggle('turnOnActive');
+        }
+    }
+
+
 }

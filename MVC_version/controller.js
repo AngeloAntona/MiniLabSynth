@@ -14,6 +14,15 @@ class Controller {
         this.displayMenu = document.getElementById('displayMenu');
         this.knobMenu = document.getElementById('knobMenu');
 
+        this.keySelection = document.getElementById('keySelection');
+        this.bassSelection = document.getElementById('bassSelection');
+        this.dispKeyOctave = document.getElementById('keyOctave');
+        this.dispBassOctave = document.getElementById('bassOctave');
+        this.keyActive = document.getElementById('turnOnKey');
+        this.bassActive = document.getElementById('turnOnBass');
+
+
+
         this.keys = document.querySelectorAll('.key');
         this.blacKeys = document.querySelectorAll('.blacKey');
         this.displayPads = document.querySelectorAll('.pad');
@@ -165,6 +174,27 @@ class Controller {
         const result = this.model.handleControlChangeEvent(controllerNumber, value);
         if (result) {
             this.synchronizeKnobs()
+        }
+    }
+
+    manageChangeMode(inst){
+        this.model.deleteAllNotes(inst);
+    }
+
+    shiftOctave(inst,direction){
+        this.model.shiftOctave(inst, direction);
+        this.manageChangeMode(inst);
+        if(inst==='key'){this.view.updateDisplayOctave(this.model.getOctave(inst), this.dispKeyOctave)}
+        else if(inst=='bass'){this.view.updateDisplayOctave(this.model.getOctave(inst), this.dispBassOctave)}
+    }
+
+    turnOn(inst){
+        this.model.activateKey=!this.model.activateKey;
+        if(inst==='key'){
+            this.view.renderActiveIndicator(this.keyActive, this.model.activateKey);
+        }
+        else if(inst=='bass'){
+            this.view.renderActiveIndicator(this.bassActive, this.model.activateBass);
         }
     }
 }
