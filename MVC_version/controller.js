@@ -16,10 +16,15 @@ class Controller {
 
         this.keySelection = document.getElementById('keySelection');
         this.bassSelection = document.getElementById('bassSelection');
+        this.keyOptions = document.getElementById('selectKeyType');
+        this.currentOptionKeyIndex=0;
+        this.currentOptionBassIndex=0;
+        this.bassOptions = document.getElementById('selectBassType');
         this.dispKeyOctave = document.getElementById('keyOctave');
         this.dispBassOctave = document.getElementById('bassOctave');
         this.keyActive = document.getElementById('turnOnKey');
         this.bassActive = document.getElementById('turnOnBass');
+        this.waveformOptions = ['sine', 'square', 'sawtooth', 'triangle'];
 
 
 
@@ -177,24 +182,34 @@ class Controller {
         }
     }
 
-    manageChangeMode(inst){
+    manageChangeMode(inst) {
         this.model.deleteAllNotes(inst);
     }
 
-    shiftOctave(inst,direction){
+    shiftOctave(inst, direction) {
         this.model.shiftOctave(inst, direction);
         this.manageChangeMode(inst);
-        if(inst==='key'){this.view.updateDisplayOctave(this.model.getOctave(inst), this.dispKeyOctave)}
-        else if(inst=='bass'){this.view.updateDisplayOctave(this.model.getOctave(inst), this.dispBassOctave)}
+        if (inst === 'key') { this.view.updateDisplayOctave(this.model.getOctave(inst), this.dispKeyOctave) }
+        else if (inst == 'bass') { this.view.updateDisplayOctave(this.model.getOctave(inst), this.dispBassOctave) }
     }
 
-    turnOn(inst){
-        this.model.activateKey=!this.model.activateKey;
-        if(inst==='key'){
+    turnOn(inst) {
+        this.model.activateKey = !this.model.activateKey;
+        if (inst === 'key') {
             this.view.renderActiveIndicator(this.keyActive, this.model.activateKey);
         }
-        else if(inst=='bass'){
+        else if (inst == 'bass') {
             this.view.renderActiveIndicator(this.bassActive, this.model.activateBass);
+        }
+    }
+    waveformChanger(inst) {
+        if (inst === 'key') {
+            // Increment the index (loop back to 0 if reaching the end)
+            this.currentOptionKeyIndex = (this.currentOptionKeyIndex + 1) % this.waveformOptions.length;
+
+            // Update the text content of the element with the new option
+            this.view.showOscillatorType(this.keyOptions,this.waveformOptions[this.currentOptionKeyIndex])
+            this.model.keyOscillator = this.waveformOptions[this.currentOptionKeyIndex];
         }
     }
 }

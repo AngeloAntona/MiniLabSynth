@@ -392,6 +392,8 @@ body {
     width: 36%;
     display: inline-block;
     position: relative;
+    transition:background-color 0.3s;
+    cursor:pointer;
 }
 
 .turnOn{
@@ -403,6 +405,7 @@ body {
     display: flex;
     transition: color 0.3s, background-color 0.3s;
     position: relative;
+    cursor: pointer;
 }
 
 .turnOnActive{
@@ -414,6 +417,7 @@ body {
     display: flex;
     transition: color 0.1s, background-color 0.1s;
     position: relative;
+    cursor: pointer;
 }
 
 
@@ -431,8 +435,12 @@ body {
     align-items: center;
     transition: color 0.2s, background-color 0.2s;
     position: relative;
+    cursor: pointer;
 }
 
+.octave:hover {
+    background-color: rgb(255, 255, 255);
+}
 .octave:active {
     color:wheat;
     background-color: black;
@@ -452,6 +460,7 @@ body {
     align-items: center;
     transition: color 0.3s, background-color 0.3s;
     position: relative;
+    cursor: pointer;
 }
 
 .monoActive{
@@ -468,6 +477,7 @@ body {
     align-items: center;
     transition: color 0.3s, background-color 0.3s;
     position: relative;
+    cursor: pointer;
 }
 
 .instrumentSelection{

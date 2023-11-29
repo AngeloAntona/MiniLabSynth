@@ -84,7 +84,7 @@ class TouchController {
                 button.addEventListener('mouseleave', () => {});
             }
             else if (buttType === 'selectKeyType'){
-                button.addEventListener('mousedown', () => {console.log('selectKeyType');});
+                button.addEventListener('mousedown', () => {this.controller.waveformChanger('key')});
                 button.addEventListener('mouseup', () => {});
                 button.addEventListener('mouseleave', () => {});
             }

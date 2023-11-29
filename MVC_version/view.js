@@ -105,5 +105,7 @@ class View {
         }
     }
 
-
+    showOscillatorType(cell,text){
+        cell.textContent = text;
+    }
 }

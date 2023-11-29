@@ -9,16 +9,16 @@ class Model {
         this.isSustainPedalDown = false;
 
 
-        this.activateBass = true;
+        this.activateBass = false;
         this.pressedBass = {};
         this.sustainedBass = {};
         this.bassOscillator = "sine";
-        this.bassOctave = 1 / 4;
+        this.bassOctave = 1;
         this.bassSustain = false;
         this.bassMono = false;
         this.bassWeel = false;
 
-        this.activateKey = true;
+        this.activateKey = false;
         this.pressedKeys = {};
         this.sustainedNotes = {};
         this.keyOscillator = "sine";
