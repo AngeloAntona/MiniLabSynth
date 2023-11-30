@@ -22,9 +22,9 @@ This code implements a small keyboard that can be played through mouse clicks or
 | Reverb                                    | :red_circle:    |
 | Delay                                     | :red_circle:    |
 | Distortion                                | :red_circle:    |
-| LPF                                       | :red_circle:    |
+| LPF                                       | :green_circle:  |
 | HPF                                       | :red_circle:    |
-| Different presets of sounds combinations  | :red_circle:    |
+| Different presets of sounds combinations  | :yellow_circle: |
 | Personalized presets                      | :red_circle:    |
 | Arpeggiator                               | :red_circle:    |
 
