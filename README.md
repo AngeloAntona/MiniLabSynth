@@ -13,17 +13,20 @@ This code implements a small keyboard that can be played through mouse clicks or
 | Model View Controller pattern             | :green_circle:  |
 | Sustain and control pedals MIDI input     | :yellow_circle: |
 | Mappable control pedals                   | :yellow_circle: |
-| Different presets of sounds combinations  | :red_circle:    |
+| Various sound personalizations            | :yellow_circle: |
 | Playable remotely                         | :red_circle:    |
 
 | Sound effects                             | State           |
 | ----------------------------------------- |:---------------:|
-| Modulable distortion                      | :red_circle:    |
-| Different presets of sounds combinations  | :red_circle:    |
+| Frequency weel                            | :red_circle:    |
 | Reverb                                    | :red_circle:    |
 | Delay                                     | :red_circle:    |
-| Modulable frequency                       | :red_circle:    |
-| Modulable LPF                             | :red_circle:    |
+| Distortion                                | :red_circle:    |
+| LPF                                       | :red_circle:    |
+| HPF                                       | :red_circle:    |
+| Different presets of sounds combinations  | :red_circle:    |
+| Personalized presets                      | :red_circle:    |
+| Arpeggiator                               | :red_circle:    |
 
 ### Legend
 - :green_circle: Implemented
