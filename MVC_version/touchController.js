@@ -80,13 +80,9 @@ class TouchController {
             const buttType=button.getAttribute('id');
             if (buttType === 'turnOnKey'){
                 button.addEventListener('mousedown', () => {this.controller.turnOn('key')});
-                button.addEventListener('mouseup', () => {});
-                button.addEventListener('mouseleave', () => {});
             }
             else if (buttType === 'selectKeyType'){
                 button.addEventListener('mousedown', () => {this.controller.waveformChanger('key')});
-                button.addEventListener('mouseup', () => {});
-                button.addEventListener('mouseleave', () => {});
             }
             else if (buttType === 'keyOctaveMinus'){
                 button.addEventListener('mousedown', () => {this.controller.shiftOctave('key','-')});
@@ -95,9 +91,35 @@ class TouchController {
                 button.addEventListener('mousedown', () => {this.controller.shiftOctave('key', '+');});
             }
             else if (buttType === 'monoKey'){
-                button.addEventListener('mousedown', () => {console.log('monoKey');});
-                button.addEventListener('mouseup', () => {});
-                button.addEventListener('mouseleave', () => {});
+                button.addEventListener('mousedown', () => {this.controller.flipMono('key')});
+            }
+            else if(buttType==='susKey'){
+                button.addEventListener('mousedown', () => {this.controller.flipSustain('key')});
+            }
+        }
+
+        const bassSel = this.controller.bassSelection;
+        const childrenNum=bassSel.childElementCount;
+        for (let i=0; i<childrenNum; i++){
+            const button=bassSel.children[i];
+            const buttType=button.getAttribute('id');
+            if (buttType === 'turnOnBass'){
+                button.addEventListener('mousedown', () => {this.controller.turnOn('bass')});
+            }
+            else if (buttType === 'selectBassType'){
+                button.addEventListener('mousedown', () => {this.controller.waveformChanger('bass')});
+            }
+            else if (buttType === 'bassOctaveMinus'){
+                button.addEventListener('mousedown', () => {this.controller.shiftOctave('bass','-')});
+            }
+            else if (buttType === 'bassOctavePlus'){
+                button.addEventListener('mousedown', () => {this.controller.shiftOctave('bass', '+');});
+            }
+            else if (buttType === 'monoBass'){
+                button.addEventListener('mousedown', () => {this.controller.flipMono('bass')});
+            }
+            else if(buttType==='susBass'){
+                button.addEventListener('mousedown', () => {this.controller.flipSustain('bass')});
             }
         }
     }

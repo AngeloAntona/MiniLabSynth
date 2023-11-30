@@ -108,4 +108,15 @@ class View {
     showOscillatorType(cell,text){
         cell.textContent = text;
     }
+
+    flipButton(button, boolean){
+        if (boolean){
+            button.classList.add('monoActive');
+            button.classList.toggle('mono');
+        }
+        else{
+            button.classList.add('mono');
+            button.classList.toggle('monoActive');
+        }
+    }
 }

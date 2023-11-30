@@ -141,8 +141,20 @@ class Controller {
         const actKey = this.model.activateKey;
         const actBass = this.model.activateBass;
         let result = null;
-        if (actKey) { result = this.model.handleNoteOn(note); }
+        if (actKey) { 
+            if(this.model.keyMono)
+            {
+                this.model.deleteAllNotes('key');
+                this.model.deleteAllSustainedNotes('key');
+            }
+            result = this.model.handleNoteOn(note); 
+        }
         if (actBass) {
+            if(this.model.bassMono)
+            {
+                this.model.deleteAllNotes('bass');
+                this.model.deleteAllSustainedNotes('bass');
+            }
             const result2 = this.model.handleBassOn(note);
             result = result || result2;
         }
@@ -194,11 +206,12 @@ class Controller {
     }
 
     turnOn(inst) {
-        this.model.activateKey = !this.model.activateKey;
         if (inst === 'key') {
+            this.model.activateKey = !this.model.activateKey;
             this.view.renderActiveIndicator(this.keyActive, this.model.activateKey);
         }
         else if (inst == 'bass') {
+            this.model.activateBass = !this.model.activateBass;
             this.view.renderActiveIndicator(this.bassActive, this.model.activateBass);
         }
     }
@@ -206,10 +219,34 @@ class Controller {
         if (inst === 'key') {
             // Increment the index (loop back to 0 if reaching the end)
             this.currentOptionKeyIndex = (this.currentOptionKeyIndex + 1) % this.waveformOptions.length;
-
             // Update the text content of the element with the new option
-            this.view.showOscillatorType(this.keyOptions,this.waveformOptions[this.currentOptionKeyIndex])
-            this.model.keyOscillator = this.waveformOptions[this.currentOptionKeyIndex];
+            this.view.showOscillatorType(this.keyOptions,this.waveformOptions[this.currentOptionKeyIndex]);
+            this.model.setWaveform(inst, this.waveformOptions[this.currentOptionKeyIndex]);
+        }
+        if (inst === 'bass') {
+            // Increment the index (loop back to 0 if reaching the end)
+            this.currentOptionBassIndex = (this.currentOptionBassIndex + 1) % this.waveformOptions.length;
+            // Update the text content of the element with the new option
+            this.view.showOscillatorType(this.bassOptions,this.waveformOptions[this.currentOptionBassIndex]);
+            this.model.setWaveform(inst, this.waveformOptions[this.currentOptionBassIndex]);
+        }
+    }
+    flipMono(inst){
+        this.model.flipMono(inst);
+        if(inst==='key'){
+            this.view.flipButton(document.getElementById('monoKey'));
+        }
+        else if(inst==='bass'){
+            this.view.flipButton(document.getElementById('monoBass'));
+        }
+    }
+    flipSustain(inst){
+        this.model.flipSust(inst);
+        if(inst==='key'){
+            this.view.flipButton(document.getElementById('susKey'));
+        }
+        else if(inst==='bass'){
+            this.view.flipButton(document.getElementById('susBass'));
         }
     }
 }

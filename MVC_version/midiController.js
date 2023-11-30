@@ -51,6 +51,8 @@ class MidiController {
                     this.controller.handleSustain();
                 }
             }
+            else if(controllerNumber===113){this.controller.turnOn('key');}
+            else if(controllerNumber===115){this.controller.turnOn('bass');}
             else {
                 // Handle MIDI control change events (knob rotations)
                 this.controller.handleControlChangeEvent(controllerNumber, value);
