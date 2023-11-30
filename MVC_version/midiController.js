@@ -16,7 +16,6 @@ class MidiController {
         navigator.requestMIDIAccess().then((midiAccess) => {
             this.midiAccess = midiAccess;
             this.setupMIDIInput();
-            console.log('midiOK');
         }).catch((error) => {
             console.error('Error accessing MIDI:', error);
         });
@@ -31,7 +30,6 @@ class MidiController {
                     this.handleMIDIMessage(event);
                 };
             }
-            console.log("Midi setup ok");
         });
     }
 

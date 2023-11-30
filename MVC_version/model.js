@@ -2,43 +2,129 @@
 class Model {
     constructor(audioModel) {
         this.audioModel = audioModel;
-        console.log('Costruttore model.js');
-        this.knobsLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        this.pads = [0, 0, 0, 0, 0, 0, 0, 0];
-        this.sustainedNotes = {};
-        this.isSustainPedalDown = false;
 
-
+        //Preset parameters
+        this.knobsLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         this.activateBass = false;
+        this.activateKey = false;
+        this.bassOscillator = "sine";
+        this.keyOscillator = "sine";
+        this.bassOctave = 1;
+        this.keyOctave = 1;
+        this.bassSustain = false;
+        this.keySustain = false;
+        this.bassMono = false;
+        this.keyMono = false;
+        this.bassWeel = false;
+        this.keyWheel = false;
+        this.currentOptionKeyIndex=0;
+        this.currentOptionBassIndex=0;
+
+        this.waveformOptions = ['sine', 'square', 'sawtooth', 'triangle'];
+
+        this.isSustainPedalDown = false;
         this.pressedBass = {};
         this.sustainedBass = {};
-        this.bassOscillator = "sine";
-        this.bassOctave = 1;
-        this.bassSustain = false;
-        this.bassMono = false;
-        this.bassWeel = false;
 
-        this.activateKey = false;
+
         this.pressedKeys = {};
         this.sustainedNotes = {};
-        this.keyOscillator = "sine";
-        this.keyOctave = 1;
-        this.keySustain = false;
-        this.keyMono = false;
-        this.keyWheel = false;
+        this.pads = [0, 0, 0, 0, 0, 0, 0, 0];
 
+        this.defaultPreset = {
+            knobsLevel: [0.5, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.8, 1, 0, 0, 0, 0, 0, 0, 0.3, 0.3],
+            activateBass: false,
+            activateKey: true,
+            currentOptionKeyIndex: 0,
+            currentOptionBassIndex: 1,
+            bassOctave: 1/2,
+            keyOctave: 1,
+            bassSustain: true,
+            keySustain: true,
+            bassMono: true,
+            keyMono: false,
+            bassWeel: false,
+            keyWheel: false,
+        };
 
+        // Apply the preset to the model
+        this.setPreset(this.defaultPreset);
 
         this.refreshAudioParameters();
+    }
+
+    setPreset(preset) {
+        // Apply the preset to the model
+        this.knobsLevel = Array.from(preset.knobsLevel) || this.knobsLevel;
+        this.activateBass = preset.activateBass;
+        this.activateKey = preset.activateKey;
+        this.currentOptionBassIndex = preset.currentOptionBassIndex;
+        this.currentOptionKeyIndex = preset.currentOptionKeyIndex;
+        this.bassOctave = preset.bassOctave;
+        this.keyOctave = preset.keyOctave;
+        this.bassSustain = preset.bassSustain;
+        this.keySustain = preset.keySustain;
+        this.bassMono = preset.bassMono;
+        this.keyMono = preset.keyMono;
+        this.bassWeel = preset.bassWeel;
+        this.keyWheel = preset.keyWheel;
+        this.refreshAudioParameters();
+        this.setWaveform();
+    }
+    
+
+    // Function to save the current state as a JSON string
+    savePreset() {
+        const preset = {
+            knobsLevel: this.knobsLevel,
+            activateBass: this.activateBass,
+            activateKey: this.activateKey,
+            bassOscillator: this.bassOscillator,
+            keyOscillator: this.keyOscillator,
+            bassOctave: this.bassOctave,
+            keyOctave: this.keyOctave,
+            bassSustain: this.bassSustain,
+            keySustain: this.keySustain,
+            bassMono: this.bassMono,
+            keyMono: this.keyMono,
+            bassWeel: this.bassWeel,
+            keyWheel: this.keyWheel,
+        };
+
+        // Convert the preset to a JSON string
+        const jsonString = JSON.stringify(preset);
+
+        // Store the JSON string or do something with it (e.g., save to local storage)
+        console.log(jsonString);
+
+        return jsonString;
+    }
+
+    // Function to load a preset from a JSON string
+    loadPreset(jsonString) {
+        try {
+            // Parse the JSON string to get the preset object
+            const preset = JSON.parse(jsonString);
+
+            // Apply the preset to the model
+            this.setPreset(preset);
+
+            // Return true if the loading was successful
+            return true;
+        } catch (error) {
+            // Handle errors, e.g., invalid JSON format
+            console.error('Error loading preset:', error);
+            return false;
+        }
     }
 
     updateKnobLevel(idx, value) {
         this.knobsLevel[idx] = value;
     }
 
-    setWaveform(inst, waveform){
-        if(inst==='key'){this.keyOscillator=waveform}
-        else if (inst==='bass'){this.bassOscillator=waveform}
+    setWaveform() {
+        this.keyOscillator = this.waveformOptions[this.currentOptionKeyIndex];
+        this.bassOscillator = this.waveformOptions[this.currentOptionBassIndex];
     }
 
     shiftOctave(inst, direction) {
@@ -52,20 +138,20 @@ class Model {
         }
     }
 
-    flipMono(inst){
-        if (inst==='key'){
-            this.keyMono=!this.keyMono;
+    flipMono(inst) {
+        if (inst === 'key') {
+            this.keyMono = !this.keyMono;
         }
-        else if(inst==='bass'){
-            this.bassMono=!this.bassMono;
+        else if (inst === 'bass') {
+            this.bassMono = !this.bassMono;
         }
     }
-    flipSust(inst){
-        if (inst==='key'){
-            this.keySustain=!this.keySustain;
+    flipSust(inst) {
+        if (inst === 'key') {
+            this.keySustain = !this.keySustain;
         }
-        else if(inst==='bass'){
-            this.bassSustain=!this.bassSustain;
+        else if (inst === 'bass') {
+            this.bassSustain = !this.bassSustain;
         }
     }
 
@@ -88,9 +174,9 @@ class Model {
         }
     }
 
-    getOctave(inst){
-        if(inst=='key'){return Math.log2(this.keyOctave);}
-        else if(inst=='bass'){return Math.log2(this.bassOctave);}
+    getOctave(inst) {
+        if (inst == 'key') { return Math.log2(this.keyOctave); }
+        else if (inst == 'bass') { return Math.log2(this.bassOctave); }
     }
 
     getKeyShift(note) {
@@ -102,23 +188,6 @@ class Model {
         const oct = Math.log2(this.bassOctave);
         return note + (Math.round(oct) * 12);
     }
-
-    /*delAllSustExcept1(instrument, not){
-        if (instrument=='bass'){
-            const note=this.getBassOctave(not);
-            Object.keys(this.sustainedBass).forEach((bassNote) => {
-                if (bassNote!=note) {
-                    this.audioModel.stopNote(this.sustainedBass[bassNote]);
-                    delete this.sustainedBass[bassNote];
-                }
-                else if(bassNote!=note&&this.pressedBass[note])
-                {
-                    delete this.sustainedBass[note];
-                }
-            });
-        }  
-    }*/
-
 
     handleSustain(note) {
         if (note) {
@@ -137,7 +206,7 @@ class Model {
     handleNoteOn(note) {
         const currentNote = this.getKeyShift(note);
         if (!this.pressedKeys[currentNote]) {
-            this.pressedKeys[currentNote] = this.audioModel.playNote(currentNote, this.keyOscillator);
+            this.pressedKeys[currentNote] = this.audioModel.playNote(currentNote, this.keyOscillator, 'key');
             const ledSelector = '#key' + String(Math.abs(note) % 24 + 1);
             const keySelector = '#key' + String(Math.abs(note) % 24 + 1);
             return { display, ledSelector, keySelector };
@@ -145,7 +214,7 @@ class Model {
         return null;
     }
 
-    handleNoteOff(note,inst) {
+    handleNoteOff(note, inst) {
         const currentNote = this.getKeyShift(note);
         if (this.pressedKeys[currentNote]) {
             const ledSelector = '#key' + String(Math.abs(note) % 24 + 1);
@@ -213,7 +282,7 @@ class Model {
     handleBassOn(note) {
         const currentNote = this.getBassShift(note);
         if (!this.pressedBass[currentNote]) {
-            this.pressedBass[currentNote] = this.audioModel.playNote(currentNote, this.bassOscillator);
+            this.pressedBass[currentNote] = this.audioModel.playNote(currentNote, this.bassOscillator, 'bass');
             const ledSelector = '#key' + String(Math.abs(note) % 24 + 1);
             const keySelector = '#key' + String(Math.abs(note) % 24 + 1);
             return { display, ledSelector, keySelector };
@@ -237,7 +306,7 @@ class Model {
         return null;
     }
 
-    
+
 
     handlePadOn(note) {
         if (this.pads[note] === 0) {
@@ -259,14 +328,6 @@ class Model {
         return false;
     }
 
-    handleControlChangeEvent(controllerNumber, value) {
-        const id = controllerNumber - 19;
-        this.knobsLevel[id] = value / 127;
-        this.refreshAudioParameters();
-        const knob = document.getElementById('knob' + id);
-        return { knob };
-    }
-
     handlePadOff(note) {
         if (this.pads[note] === 1) {
             let padIndex = null;
@@ -278,9 +339,22 @@ class Model {
         }
         return null;
     }
+
+    handleControlChangeEvent(controllerNumber, value) {
+        const id = controllerNumber - 19;
+        this.knobsLevel[id] = value / 127;
+        this.refreshAudioParameters();
+        const knob = document.getElementById('knob' + id);
+        return { knob };
+    }
+
     refreshAudioParameters() {
         this.audioModel.setMainGain(this.knobsLevel[0]);
-        this.audioModel.setKeyGain(this.knobsLevel[1]);
+        this.audioModel.setInstGain(this.knobsLevel[1]);
         this.audioModel.setDrumGain(this.knobsLevel[9]);
-    }
+        this.audioModel.setKeyGain(this.knobsLevel[17]);
+        this.audioModel.setBassGain(this.knobsLevel[18]);
+        this.audioModel.setLowPassFilterFrequency(this.knobsLevel[2] * 14990 + 100, 'key');
+        this.audioModel.setLowPassFilterFrequency(this.knobsLevel[10] * 14990 + 100, 'bass');
+    }s
 }

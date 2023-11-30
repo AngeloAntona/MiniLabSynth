@@ -1,8 +1,6 @@
 // view.js
 class View {
     constructor(audioModel) {
-        // Initialize the view
-        console.log('Costruttore view.js');
         this.audioModel = audioModel;
         this.canvas = document.getElementById('signalCanvas');
         this.ctx = this.canvas.getContext('2d');
@@ -95,11 +93,11 @@ class View {
     }
 
     renderActiveIndicator(indicator, boolean){
-        if (boolean){
+        if (boolean && indicator.classList.value==='turnOn'){
             indicator.classList.add('turnOnActive');
             indicator.classList.toggle('turnOn');
         }
-        else{
+        else if(!boolean && indicator.classList.value==='turnOnActive'){
             indicator.classList.add('turnOn');
             indicator.classList.toggle('turnOnActive');
         }
@@ -110,11 +108,11 @@ class View {
     }
 
     flipButton(button, boolean){
-        if (boolean){
+        if (boolean && button.classList.value==='mono'){
             button.classList.add('monoActive');
             button.classList.toggle('mono');
         }
-        else{
+        else if(!boolean && button.classList.value==='monoActive'){
             button.classList.add('mono');
             button.classList.toggle('monoActive');
         }

@@ -3,8 +3,16 @@ class AudioModel {
         this.context = new AudioContext();
         
         this.mainGain = this.context.createGain();
-        this.keyGain = this.context.createGain();
+        this.instGain = this.context.createGain();
         this.drumGain = this.context.createGain();
+        this.keyGain = this.context.createGain();
+        this.bassGain = this.context.createGain();
+
+        this.lowPassFilterKey = this.context.createBiquadFilter();
+        this.lowPassFilterKey.type = 'lowpass';
+        this.lowPassFilterBass = this.context.createBiquadFilter();
+        this.lowPassFilterBass.type = 'lowpass';
+
 
         this.analyser = this.context.createAnalyser();
         this.analyser.fftSize = 256;
@@ -13,7 +21,11 @@ class AudioModel {
 
         this.bufferLength = this.analyser.frequencyBinCount;
         this.dataArray = new Uint8Array(this.bufferLength);
-        this.keyGain.connect(this.mainGain);
+        this.lowPassFilterKey.connect(this.keyGain);
+        this.lowPassFilterBass.connect(this.bassGain);
+        this.keyGain.connect(this.instGain);
+        this.bassGain.connect(this.instGain);
+        this.instGain.connect(this.mainGain);
         this.drumGain.connect(this.mainGain);
         this.mainGain.connect(this.analyser);
         this.analyser.connect(this.compressor);
@@ -38,20 +50,32 @@ class AudioModel {
     setMainGain(value){
         this.mainGain.gain.value=value;
     }
-    setKeyGain(value){
-        this.keyGain.gain.value=value;
+    setInstGain(value){
+        this.instGain.gain.value=value;
     }
     setDrumGain(value){
         this.drumGain.gain.value=value;
     }
+    setKeyGain(value){
+        this.keyGain.gain.value=value;
+    }
+    setBassGain(value){
+        this.bassGain.gain.value=value;
+    }
+    setLowPassFilterFrequency(frequency, inst) {
+        if(inst==='key'){this.lowPassFilterKey.frequency.setValueAtTime(frequency, this.context.currentTime);}
+        else if (inst==='bass'){this.lowPassFilterBass.frequency.setValueAtTime(frequency, this.context.currentTime);}
+        else {console.log('Error in steHighPassFilterFrequency (audioModel)');}        
+    }
 
-    playNote(note, oscillatorType) {
+    playNote(note, oscillatorType, inst) {
         const oscillator = this.context.createOscillator();
         oscillator.type = oscillatorType;
         const gainNode = this.context.createGain();
         oscillator.frequency.value = 261.63 * Math.pow(2, (note - 57) / 12);
         oscillator.connect(gainNode);
-        gainNode.connect(this.keyGain);
+        if(inst=='key'){gainNode.connect(this.lowPassFilterKey);}
+        else if(inst=='bass'){gainNode.connect(this.lowPassFilterBass);}
 
         gainNode.gain.setValueAtTime(0, this.context.currentTime);
         gainNode.gain.linearRampToValueAtTime(1, this.context.currentTime + this.attackNote);

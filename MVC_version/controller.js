@@ -1,7 +1,6 @@
 // controller.js
 class Controller {
     constructor(model, view) {
-        console.log('Costruttore controller.js');
 
         // Initialize the controller
         this.model = model;
@@ -17,14 +16,11 @@ class Controller {
         this.keySelection = document.getElementById('keySelection');
         this.bassSelection = document.getElementById('bassSelection');
         this.keyOptions = document.getElementById('selectKeyType');
-        this.currentOptionKeyIndex=0;
-        this.currentOptionBassIndex=0;
         this.bassOptions = document.getElementById('selectBassType');
         this.dispKeyOctave = document.getElementById('keyOctave');
         this.dispBassOctave = document.getElementById('bassOctave');
         this.keyActive = document.getElementById('turnOnKey');
         this.bassActive = document.getElementById('turnOnBass');
-        this.waveformOptions = ['sine', 'square', 'sawtooth', 'triangle'];
 
 
 
@@ -39,8 +35,8 @@ class Controller {
         this.pedalSelect = document.getElementById('pedalSelect');
 
         this.knobElements = document.querySelectorAll('.knob');
+        this.renderAll();
         this.attachEventListeners();
-
     }
 
     attachEventListeners() {
@@ -51,19 +47,20 @@ class Controller {
             this.presetSelectClick();
             this.pedalSelectClick();
             this.documentClick();
+            this.renderAll();
         });
     }
 
     //lights-----------------------------------------------------------
-    flipLed(id) {
-        let led = document.querySelector(id);
-        this.view.flipLed(led.children[0]);
-    }
+    // flipLed(id) {
+    //     let led = document.querySelector(id);
+    //     this.view.flipLed(led.children[0]);
+    // }
 
-    flipKey(id) {
-        let key = document.querySelector(id);
-        this.view.flipKey(key, key.getAttribute('keyType'));
-    }
+    // flipKey(id) {
+    //     let key = document.querySelector(id);
+    //     this.view.flipKey(key, key.getAttribute('keyType'));
+    // }
 
     flipPad(idx) {
         let padRow = document.getElementById('padrow');
@@ -95,9 +92,24 @@ class Controller {
     presetSelectClick() {
         this.presetSelect.addEventListener('click', () => {
             const selectedOption = this.presetOptions.value;
-            alert('Selected option: ' + selectedOption);
+            if (selectedOption != 'NewPreset') {
+                this.setPreset(selectedOption);
+            }
+            else {
+                alert('New preset: ' + selectedOption);
+            }
             this.view.hideContextMenu(this.displayMenu);
         });
+    }
+
+    setPreset(selectedOption) {
+        if (selectedOption === 'Default') {
+            this.model.setPreset(this.model.defaultPreset);
+        }
+        else {
+            alert('Selected option: ' + selectedOption);
+        }
+        this.renderAll();
     }
 
     pedalSelectClick() {
@@ -141,37 +153,29 @@ class Controller {
         const actKey = this.model.activateKey;
         const actBass = this.model.activateBass;
         let result = null;
-        if (actKey) { 
-            if(this.model.keyMono)
-            {
+        if (actKey) {
+            if (this.model.keyMono) {
                 this.model.deleteAllNotes('key');
                 this.model.deleteAllSustainedNotes('key');
             }
-            result = this.model.handleNoteOn(note); 
+            result = this.model.handleNoteOn(note);
         }
         if (actBass) {
-            if(this.model.bassMono)
-            {
+            if (this.model.bassMono) {
                 this.model.deleteAllNotes('bass');
                 this.model.deleteAllSustainedNotes('bass');
             }
             const result2 = this.model.handleBassOn(note);
-            result = result || result2;
+            if (!(result || result2)) { console.log("Error in handleNoteOn (Controller)"); }
         }
-        if (result) {
-            this.flipLed(result.ledSelector);
-            this.flipKey(result.keySelector);
-        }
+        this.updateKeyClasses();
     }
 
     handleNoteOff(note) {
         const result1 = this.model.handleNoteOff(note);
         const result2 = this.model.handleBassOff(note);
         const result = result1 || result2;
-        if (result) {
-            this.flipLed(result.ledSelector);
-            this.flipKey(result.keySelector);
-        }
+        this.updateKeyClasses();
     }
 
     handlePadOn(note) {
@@ -190,7 +194,7 @@ class Controller {
     handleControlChangeEvent(controllerNumber, value) {
         const result = this.model.handleControlChangeEvent(controllerNumber, value);
         if (result) {
-            this.synchronizeKnobs()
+            this.renderAll();
         }
     }
 
@@ -201,52 +205,64 @@ class Controller {
     shiftOctave(inst, direction) {
         this.model.shiftOctave(inst, direction);
         this.manageChangeMode(inst);
-        if (inst === 'key') { this.view.updateDisplayOctave(this.model.getOctave(inst), this.dispKeyOctave) }
-        else if (inst == 'bass') { this.view.updateDisplayOctave(this.model.getOctave(inst), this.dispBassOctave) }
+        this.renderAll();
     }
 
     turnOn(inst) {
-        if (inst === 'key') {
-            this.model.activateKey = !this.model.activateKey;
-            this.view.renderActiveIndicator(this.keyActive, this.model.activateKey);
-        }
-        else if (inst == 'bass') {
-            this.model.activateBass = !this.model.activateBass;
-            this.view.renderActiveIndicator(this.bassActive, this.model.activateBass);
-        }
+        if (inst === 'key') {this.model.activateKey = !this.model.activateKey;}
+        else if (inst == 'bass') {this.model.activateBass = !this.model.activateBass;}
+        this.renderAll();
     }
     waveformChanger(inst) {
-        if (inst === 'key') {
-            // Increment the index (loop back to 0 if reaching the end)
-            this.currentOptionKeyIndex = (this.currentOptionKeyIndex + 1) % this.waveformOptions.length;
-            // Update the text content of the element with the new option
-            this.view.showOscillatorType(this.keyOptions,this.waveformOptions[this.currentOptionKeyIndex]);
-            this.model.setWaveform(inst, this.waveformOptions[this.currentOptionKeyIndex]);
-        }
-        if (inst === 'bass') {
-            // Increment the index (loop back to 0 if reaching the end)
-            this.currentOptionBassIndex = (this.currentOptionBassIndex + 1) % this.waveformOptions.length;
-            // Update the text content of the element with the new option
-            this.view.showOscillatorType(this.bassOptions,this.waveformOptions[this.currentOptionBassIndex]);
-            this.model.setWaveform(inst, this.waveformOptions[this.currentOptionBassIndex]);
-        }
+        if (inst === 'key') {this.model.currentOptionKeyIndex = (this.model.currentOptionKeyIndex + 1) % this.model.waveformOptions.length;}
+        if (inst === 'bass') {this.model.currentOptionBassIndex = (this.model.currentOptionBassIndex + 1) % this.model.waveformOptions.length;}
+        this.model.setWaveform();
+        this.renderAll();
     }
-    flipMono(inst){
+
+    flipMono(inst) {
         this.model.flipMono(inst);
-        if(inst==='key'){
-            this.view.flipButton(document.getElementById('monoKey'));
-        }
-        else if(inst==='bass'){
-            this.view.flipButton(document.getElementById('monoBass'));
-        }
+        this.renderAll();
     }
-    flipSustain(inst){
+    flipSustain(inst) {
         this.model.flipSust(inst);
-        if(inst==='key'){
-            this.view.flipButton(document.getElementById('susKey'));
-        }
-        else if(inst==='bass'){
-            this.view.flipButton(document.getElementById('susBass'));
+        this.renderAll();
+    }
+
+    updateKeyClasses() {
+        for (let i = 1; i <= 25; i++) {
+            const keyElement = document.getElementById(`key${i}`);
+            if (this.model.pressedKeys[this.model.getKeyShift(i + 47)]||this.model.pressedBass[this.model.getBassShift(i + 47)]) {
+                if (keyElement.classList.contains('blacKey')) {
+                    keyElement.classList.remove('blacKey');
+                    keyElement.classList.add('blacKey_active');
+                } else if (keyElement.classList.contains('key')) {
+                    keyElement.classList.add('key_active');
+                }
+            } else {
+                if (keyElement.classList.contains('blacKey_active')) {
+                    keyElement.classList.remove('blacKey_active');
+                    keyElement.classList.add('blacKey');
+                } else if (keyElement.classList.contains('key_active')) {
+                    keyElement.classList.remove('key_active');
+                    keyElement.classList.add('key');
+                }
+            }
         }
     }
+
+    renderAll() {
+        this.view.flipButton(document.getElementById('susKey'), this.model.keySustain);
+        this.view.flipButton(document.getElementById('susBass'), this.model.bassSustain);
+        this.view.flipButton(document.getElementById('monoKey'), this.model.keyMono);
+        this.view.flipButton(document.getElementById('monoBass'), this.model.bassMono);
+        this.view.updateDisplayOctave(this.model.getOctave('key'), this.dispKeyOctave);
+        this.view.updateDisplayOctave(this.model.getOctave('bass'), this.dispBassOctave);
+        this.view.showOscillatorType(this.keyOptions, this.model.waveformOptions[this.model.currentOptionKeyIndex]);
+        this.view.showOscillatorType(this.bassOptions, this.model.waveformOptions[this.model.currentOptionBassIndex]);
+        this.view.renderActiveIndicator(this.keyActive, this.model.activateKey);
+        this.view.renderActiveIndicator(this.bassActive, this.model.activateBass);
+        this.synchronizeKnobs();
+    }
+
 }
