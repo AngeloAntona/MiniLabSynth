@@ -21,6 +21,8 @@ class Controller {
         this.dispBassOctave = document.getElementById('bassOctave');
         this.keyActive = document.getElementById('turnOnKey');
         this.bassActive = document.getElementById('turnOnBass');
+        this.keyVolumeIndicator=document.getElementById('keyVolumeIndicator');
+        this.bassVolumeIndicator=document.getElementById('bassVolumeIndicator');
 
 
 
@@ -141,6 +143,8 @@ class Controller {
         this.knobElements.forEach((knob, idx) => {
             this.view.rotateKnob(knob, this.model.knobsLevel[idx] * 100)
         });
+        this.view.updateDisplayVolumeIndicator(this.keyVolumeIndicator, this.model.knobsLevel[17] * 100);
+        this.view.updateDisplayVolumeIndicator(this.bassVolumeIndicator, this.model.knobsLevel[18] * 100);
     }
 
     //Play controls

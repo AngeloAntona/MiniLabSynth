@@ -60,6 +60,9 @@ class View {
         knob.children[0].style.transform = `rotate(${rotation * 2.7 - 135}deg)`;
         knob.children[1].innerHTML = rotation.toFixed(0);
     }
+    updateDisplayVolumeIndicator(VolumeIndicator, value){
+        VolumeIndicator.innerHTML = value.toFixed(0);
+    }
 
     //Visualizer-----------------------------------------------------------
     drawSinusoidalSignal() {

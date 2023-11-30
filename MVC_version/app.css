@@ -468,6 +468,24 @@ body {
     cursor: pointer;
 }
 
+.volumeIndicator{
+    width: 7.3%;
+    height: 39.5%;
+    background-color: wheat;
+    text-align: center;
+    font-size: 70%;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight: bolder;
+    border-radius: 10px;
+    color: rgb(0, 0, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: color 0.3s, background-color 0.3s;
+    padding: 0.2%;
+    position: relative;
+}
+
 .instrumentSelection{
     background-color: gray;
     width: 100%;
@@ -476,5 +494,8 @@ body {
     display: flex;
     justify-content:space-around;
     align-items: center;
-    margin-bottom: 2%;
+    margin-bottom: 4%;
+    padding: 2%;
+    position: relative;
+    transform: translate(-1.8%,0%);
 }
