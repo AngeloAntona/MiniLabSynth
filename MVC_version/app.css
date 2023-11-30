@@ -103,7 +103,6 @@ body {
     background-color: rgb(198, 198, 198);
 }
 
-
 #key2 {
     left: 4.5%;
     transform: translate(0%, -140%);
@@ -153,7 +152,6 @@ body {
     left: 42.2%;
     transform: translate(0%, -140%);
 }
-
 
 #firstRow {
     background-color: grey;
@@ -248,8 +246,6 @@ body {
     background-color: rgb(206, 206, 206);
 }
 
-
-
 #knob0 {
     background-color: wheat;
     width: 7%;
@@ -334,18 +330,16 @@ body {
 }
 
 .menu {
+    cursor: pointer;
     position: relative;
     background-color: #fff;
+    font-family: roboto;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    /* Increase padding for more space inside the menu */
-    width: 200px;
-    /* Set a specific width for the menu */
+    width: 220px;
     height: 80px;
-    /* Set a specific height for the menu */
     z-index: 1000;
-    /* Ensure the menu is on top of other elements */
     font-size: xx-large;
     transition: background-color 0.8s;
 }
@@ -356,18 +350,15 @@ body {
 }
 
 .selectButton {
+    cursor: pointer;
     position: relative;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    /* Increase padding for more space inside the menu */
     width: 200px;
-    /* Set a specific width for the menu */
     height: 80px;
-    /* Set a specific height for the menu */
     z-index: 1000;
-    /* Ensure the menu is on top of other elements */
     font-size: xx-large;
     transition: background-color 0.3s;
 }
@@ -438,9 +429,6 @@ body {
     cursor: pointer;
 }
 
-.octave:hover {
-    background-color: rgb(255, 255, 255);
-}
 .octave:active {
     color:wheat;
     background-color: black;

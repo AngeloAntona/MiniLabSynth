@@ -7,8 +7,8 @@ class Model {
         this.knobsLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         this.activateBass = false;
         this.activateKey = false;
-        this.bassOscillator = "sine";
-        this.keyOscillator = "sine";
+        this.bassOscillator = " ";
+        this.keyOscillator = " ";
         this.bassOctave = 1;
         this.keyOctave = 1;
         this.bassSustain = false;
@@ -36,7 +36,7 @@ class Model {
             activateBass: false,
             activateKey: true,
             currentOptionKeyIndex: 0,
-            currentOptionBassIndex: 1,
+            currentOptionBassIndex: 0,
             bassOctave: 1/2,
             keyOctave: 1,
             bassSustain: true,
