@@ -20,8 +20,8 @@ This code implements a small keyboard that can be played through mouse clicks or
 | Sound effects                             | State           |
 | ----------------------------------------- |:---------------:|
 | Frequency weel                            | :red_circle:    |
-| Reverb                                    | :red_circle:    |
-| Delay                                     | :red_circle:    |
+| Reverb                                    | :green_circle:  |
+| Delay                                     | :green_circle:  |
 | Distortion                                | :red_circle:    |
 | LPF                                       | :green_circle:  |
 | HPF                                       | :green_circle:  |
