@@ -17,8 +17,8 @@ class Model {
         this.keyMono = false;
         this.bassWeel = false;
         this.keyWheel = false;
-        this.currentOptionKeyIndex=0;
-        this.currentOptionBassIndex=0;
+        this.currentOptionKeyIndex = 0;
+        this.currentOptionBassIndex = 0;
 
         this.waveformOptions = ['sine', 'square', 'sawtooth', 'triangle'];
 
@@ -37,7 +37,7 @@ class Model {
             activateKey: true,
             currentOptionKeyIndex: 0,
             currentOptionBassIndex: 0,
-            bassOctave: 1/2,
+            bassOctave: 1 / 2,
             keyOctave: 1,
             bassSustain: true,
             keySustain: true,
@@ -71,7 +71,7 @@ class Model {
         this.refreshAudioParameters();
         this.setWaveform();
     }
-    
+
 
     // Function to save the current state as a JSON string
     savePreset() {
@@ -190,16 +190,11 @@ class Model {
     }
 
     handleSustain(note) {
-        if (note) {
+        if (note&&this.isSustainPedalDown) {
             this.sustainedNotes[note] = this.pressedKeys[note];
             delete this.pressedKeys[note];
         } else {
-            Object.keys(this.sustainedNotes).forEach((key) => {
-                if (!this.pressedKeys[key]) {
-                    this.audioModel.stopNote(this.sustainedNotes[key]);
-                    delete this.sustainedNotes[key];
-                }
-            });
+            this.deleteAllSustainedNotes('key');
         }
     }
 
@@ -214,7 +209,7 @@ class Model {
         return null;
     }
 
-    handleNoteOff(note, inst) {
+    handleNoteOff(note) {
         const currentNote = this.getKeyShift(note);
         if (this.pressedKeys[currentNote]) {
             const ledSelector = '#key' + String(Math.abs(note) % 24 + 1);
@@ -266,16 +261,11 @@ class Model {
 
 
     handleBassSustain(note) {
-        if (note) {
+        if (note&&this.isSustainPedalDown) {
             this.sustainedBass[note] = this.pressedBass[note];
             delete this.pressedBass[note];
         } else {
-            Object.keys(this.sustainedBass).forEach((bassNote) => {
-                if (!this.pressedBass[bassNote]) {
-                    this.audioModel.stopNote(this.sustainedBass[bassNote]);
-                    delete this.sustainedBass[bassNote];
-                }
-            });
+            this.deleteAllSustainedNotes('bass');
         }
     }
 
@@ -356,5 +346,5 @@ class Model {
         this.audioModel.setBassGain(this.knobsLevel[18]);
         this.audioModel.setLowPassFilterFrequency(this.knobsLevel[2] * 14990 + 100, 'key');
         this.audioModel.setLowPassFilterFrequency(this.knobsLevel[10] * 14990 + 100, 'bass');
-    }s
+    } s
 }
