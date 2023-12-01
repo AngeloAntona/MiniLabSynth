@@ -510,3 +510,24 @@ body {
     position: absolute;
     transform: translate(500%,-40%);
 }
+
+.splitDot{
+    position:absolute;
+    width: 2.65%;
+    height: 4.85%;
+    background-color: transparent;
+    transform: translate(1500%,940%);
+    border-radius: 50%;
+    display: flex;
+    transition: color 0.6s, background-color 0.6s;
+}
+.splitDotActive{
+    background-color: gray;
+    position:absolute;
+    width: 2.65%;
+    height: 4.85%;
+    transform: translate(1500%,940%);
+    border-radius: 50%;
+    display: flex;
+    transition: color 0.6s, background-color 0.6s;
+}

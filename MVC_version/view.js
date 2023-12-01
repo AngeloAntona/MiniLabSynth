@@ -120,4 +120,14 @@ class View {
             button.classList.toggle('monoActive');
         }
     }
+    updateSplitDot(dot, boolean){
+        if (boolean && dot.classList.value==='splitDot'){
+            dot.classList.add('splitDotActive');
+            dot.classList.toggle('splitDot');
+        }
+        else if(!boolean && dot.classList.value==='splitDotActive'){
+            dot.classList.add('splitDot');
+            dot.classList.toggle('splitDotActive');
+        }
+    }
 }

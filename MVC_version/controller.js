@@ -25,6 +25,7 @@ class Controller {
         this.bassVolumeIndicator=document.getElementById('bassVolumeIndicator');
 
         this.splitIndicator=document.getElementById('splitIndicator');
+        this.splitDot=document.getElementById('splitDot1');
 
 
         this.keys = document.querySelectorAll('.key');
@@ -273,6 +274,7 @@ class Controller {
         this.view.showOscillatorType(this.bassOptions, this.model.waveformOptions[this.model.currentOptionBassIndex]);
         this.view.renderActiveIndicator(this.keyActive, this.model.activateKey);
         this.view.renderActiveIndicator(this.bassActive, this.model.activateBass);
+        this.view.updateSplitDot(this.splitDot, this.model.split)
         this.synchronizeKnobs();
     }
 
