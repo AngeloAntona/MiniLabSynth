@@ -110,6 +110,9 @@ class Controller {
         if (selectedOption === 'Default') {
             this.model.setPreset(this.model.defaultPreset);
         }
+        else if(selectedOption === 'Psycho'){
+            this.model.setPreset(this.model.psychoPreset);
+        }
         else {
             alert('Selected option: ' + selectedOption);
         }

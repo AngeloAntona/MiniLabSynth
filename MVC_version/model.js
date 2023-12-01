@@ -49,6 +49,23 @@ class Model {
             split: false,
         };
 
+        this.psychoPreset = {
+            knobsLevel: [0.5, 0.5, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0.3, 1],
+            activateBass: true,
+            activateKey: true,
+            currentOptionKeyIndex: 1,
+            currentOptionBassIndex: 2,
+            bassOctave: 1 / 4,
+            keyOctave: 1,
+            bassSustain: true,
+            keySustain: false,
+            bassMono: true,
+            keyMono: false,
+            bassWeel: false,
+            keyWheel: false,
+            split: true,
+        };
+
         // Apply the preset to the model
         this.setPreset(this.defaultPreset);
 

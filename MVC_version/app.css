@@ -310,7 +310,7 @@ body {
     height: 25%;
     position: relative;
     left: 50%;
-    transform: translate(350%, 190%);
+    transform: translate(350%, 177.5%);
     padding-left: 0.5%;
     border-radius: 10px;
 }
@@ -512,21 +512,21 @@ body {
 }
 
 .splitDot{
-    position:absolute;
-    width: 2.65%;
-    height: 4.85%;
     background-color: transparent;
-    transform: translate(1500%,940%);
+    position:relative;
+    width: 1.77%;
+    height: 3.23%;
+    transform: translate(2265%,1505%);
     border-radius: 50%;
     display: flex;
     transition: color 0.6s, background-color 0.6s;
 }
 .splitDotActive{
     background-color: gray;
-    position:absolute;
-    width: 2.65%;
-    height: 4.85%;
-    transform: translate(1500%,940%);
+    position:relative;
+    width: 1.77%;
+    height: 3.23%;
+    transform: translate(2265%,1505%);
     border-radius: 50%;
     display: flex;
     transition: color 0.6s, background-color 0.6s;
