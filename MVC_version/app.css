@@ -499,3 +499,14 @@ body {
     position: relative;
     transform: translate(-1.8%,0%);
 }
+
+#splitIndicator{
+    width: 2.5%;
+    height: 10%;
+    font-size: 120%;
+    font-weight: 900;
+    border-radius: 10px;
+    display: flex;
+    position: absolute;
+    transform: translate(500%,-40%);
+}

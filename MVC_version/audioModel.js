@@ -1,7 +1,7 @@
 class AudioModel {
     constructor() {
         this.context = new AudioContext();
-        
+
         this.mainGain = this.context.createGain();
         this.instGain = this.context.createGain();
         this.drumGain = this.context.createGain();
@@ -13,6 +13,31 @@ class AudioModel {
         this.lowPassFilterBass = this.context.createBiquadFilter();
         this.lowPassFilterBass.type = 'lowpass';
 
+        this.hiPassFilterKey = this.context.createBiquadFilter();
+        this.hiPassFilterKey.type = 'highpass';
+        this.hiPassFilterBass = this.context.createBiquadFilter();
+        this.hiPassFilterBass.type = 'highpass';
+
+        this.delayKey1 = this.context.createDelay();
+        this.delayKey2 = this.context.createDelay();
+        this.delayBass1 = this.context.createDelay();
+        this.delayBass2 = this.context.createDelay();
+
+        this.feedbackKey1 = this.context.createGain();
+        this.feedbackKey2 = this.context.createGain();
+        this.feedbackBass1 = this.context.createGain();
+        this.feedbackBass2 = this.context.createGain();
+
+        this.delayKey1.connect(this.feedbackKey1);
+        this.delayKey2.connect(this.feedbackKey2);
+        this.delayBass1.connect(this.feedbackBass1);
+        this.delayBass2.connect(this.feedbackBass2);
+
+        this.feedbackKey1.connect(this.delayKey2); // Connect to the next delay
+        this.feedbackKey2.connect(this.delayKey1); // Connect to the previous delay
+        this.feedbackBass1.connect(this.delayBass2); // Connect to the next delay
+        this.feedbackBass2.connect(this.delayBass1); // Connect to the previous delay
+
 
         this.analyser = this.context.createAnalyser();
         this.analyser.fftSize = 256;
@@ -21,8 +46,23 @@ class AudioModel {
 
         this.bufferLength = this.analyser.frequencyBinCount;
         this.dataArray = new Uint8Array(this.bufferLength);
-        this.lowPassFilterKey.connect(this.keyGain);
-        this.lowPassFilterBass.connect(this.bassGain);
+
+        this.lowPassFilterKey.connect(this.hiPassFilterKey);
+        this.lowPassFilterBass.connect(this.hiPassFilterBass);
+        this.hiPassFilterKey.connect(this.keyGain);
+        this.hiPassFilterBass.connect(this.bassGain);
+
+
+        this.hiPassFilterKey.connect(this.delayKey1);
+        this.hiPassFilterKey.connect(this.delayKey2);
+        this.hiPassFilterBass.connect(this.delayBass1);
+        this.hiPassFilterBass.connect(this.delayBass2);
+
+        this.feedbackKey1.connect(this.keyGain);
+        this.feedbackKey2.connect(this.keyGain);
+        this.feedbackBass1.connect(this.bassGain);
+        this.feedbackBass2.connect(this.bassGain);
+
         this.keyGain.connect(this.instGain);
         this.bassGain.connect(this.instGain);
         this.instGain.connect(this.mainGain);
@@ -43,29 +83,57 @@ class AudioModel {
         return sum / this.bufferLength;
     }
 
-    setNoteOscillator(oscillatorType){
-        this.noteOscillator=oscillatorType;
+    setNoteOscillator(oscillatorType) {
+        this.noteOscillator = oscillatorType;
     }
 
-    setMainGain(value){
-        this.mainGain.gain.value=value;
+    setMainGain(value) {
+        this.mainGain.gain.value = value;
     }
-    setInstGain(value){
-        this.instGain.gain.value=value;
+    setInstGain(value) {
+        this.instGain.gain.value = value;
     }
-    setDrumGain(value){
-        this.drumGain.gain.value=value;
+    setDrumGain(value) {
+        this.drumGain.gain.value = value;
     }
-    setKeyGain(value){
-        this.keyGain.gain.value=value;
+    setKeyGain(value) {
+        this.keyGain.gain.value = value;
     }
-    setBassGain(value){
-        this.bassGain.gain.value=value;
+    setBassGain(value) {
+        this.bassGain.gain.value = value;
     }
     setLowPassFilterFrequency(frequency, inst) {
-        if(inst==='key'){this.lowPassFilterKey.frequency.setValueAtTime(frequency, this.context.currentTime);}
-        else if (inst==='bass'){this.lowPassFilterBass.frequency.setValueAtTime(frequency, this.context.currentTime);}
-        else {console.log('Error in steHighPassFilterFrequency (audioModel)');}        
+        if (inst === 'key') { this.lowPassFilterKey.frequency.setValueAtTime(frequency, this.context.currentTime); }
+        else if (inst === 'bass') { this.lowPassFilterBass.frequency.setValueAtTime(frequency, this.context.currentTime); }
+        else { console.log('Error in setLowPassFilterFrequency (audioModel)'); }
+    }
+    setHiPassFilterFrequency(frequency, inst) {
+        if (inst === 'key') { this.hiPassFilterKey.frequency.setValueAtTime(frequency, this.context.currentTime); }
+        else if (inst === 'bass') { this.hiPassFilterBass.frequency.setValueAtTime(frequency, this.context.currentTime); }
+        else { console.log('Error in setHighPassFilterFrequency (audioModel)'); }
+    }
+    setDelayTime(time, inst) {
+        if (inst === 'key') {
+            this.delayKey1.delayTime.value = 0.8*time;
+            this.delayKey2.delayTime.value = 0.4*time;
+        }
+        else if (inst === 'bass') {
+            this.delayBass1.delayTime.value = 0.8*time;
+            this.delayBass2.delayTime.value = 0.4*time;
+        }
+        else { console.log('Error in steDelayTime (audioModel)'); }
+    }
+
+    setDelayFeedback(feedback, inst) {
+        if (inst === 'key') {
+            this.feedbackKey1.gain.value = 0.8*feedback;
+            this.feedbackKey2.gain.value = 0.4*feedback;
+        }
+        else if (inst === 'bass') {
+            this.feedbackBass1.gain.value = 0.8*feedback;
+            this.feedbackBass2.gain.value = 0.4*feedback;
+        }
+        else { console.log('Error in steDelayFeedback (audioModel)'); }
     }
 
     playNote(note, oscillatorType, inst) {
@@ -74,8 +142,8 @@ class AudioModel {
         const gainNode = this.context.createGain();
         oscillator.frequency.value = 261.63 * Math.pow(2, (note - 57) / 12);
         oscillator.connect(gainNode);
-        if(inst=='key'){gainNode.connect(this.lowPassFilterKey);}
-        else if(inst=='bass'){gainNode.connect(this.lowPassFilterBass);}
+        if (inst == 'key') { gainNode.connect(this.lowPassFilterKey); }
+        else if (inst == 'bass') { gainNode.connect(this.lowPassFilterBass); }
 
         gainNode.gain.setValueAtTime(0, this.context.currentTime);
         gainNode.gain.linearRampToValueAtTime(1, this.context.currentTime + this.attackNote);

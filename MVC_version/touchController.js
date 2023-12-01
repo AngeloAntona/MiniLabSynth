@@ -8,6 +8,7 @@ class TouchController {
         this.attachKeysEventListeners(this.controller.blacKeys);
         this.attachPadsEventListeners();
         this.attachDisplayButtonsEventListeners();
+        this.attachDisplaySplitEventListener();
     }
 
     //Knobs
@@ -122,5 +123,12 @@ class TouchController {
                 button.addEventListener('mousedown', () => {this.controller.flipSustain('bass')});
             }
         }
+    }
+
+    attachDisplaySplitEventListener(){
+        const split = this.controller.splitIndicator;
+        split.addEventListener('mousedown', () => {
+            this.controller.splitManager();
+        });
     }
 }

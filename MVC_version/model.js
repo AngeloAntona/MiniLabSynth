@@ -19,6 +19,7 @@ class Model {
         this.keyWheel = false;
         this.currentOptionKeyIndex = 0;
         this.currentOptionBassIndex = 0;
+        this.split=false;
 
         this.waveformOptions = ['sine', 'square', 'sawtooth', 'triangle'];
 
@@ -45,6 +46,7 @@ class Model {
             keyMono: false,
             bassWeel: false,
             keyWheel: false,
+            split: false,
         };
 
         // Apply the preset to the model
@@ -68,6 +70,7 @@ class Model {
         this.keyMono = preset.keyMono;
         this.bassWeel = preset.bassWeel;
         this.keyWheel = preset.keyWheel;
+        this.split= preset.split;
         this.refreshAudioParameters();
         this.setWaveform();
     }
@@ -116,6 +119,10 @@ class Model {
             console.error('Error loading preset:', error);
             return false;
         }
+    }
+
+    flipSplit(){
+        this.split=!this.split;
     }
 
     updateKnobLevel(idx, value) {
@@ -346,5 +353,11 @@ class Model {
         this.audioModel.setBassGain(this.knobsLevel[18]);
         this.audioModel.setLowPassFilterFrequency(this.knobsLevel[2] * 14990 + 100, 'key');
         this.audioModel.setLowPassFilterFrequency(this.knobsLevel[10] * 14990 + 100, 'bass');
+        this.audioModel.setHiPassFilterFrequency(this.knobsLevel[3] * 14990 + 100, 'key');
+        this.audioModel.setHiPassFilterFrequency(this.knobsLevel[11] * 14990 + 100, 'bass');
+        this.audioModel.setDelayTime(this.knobsLevel[4], 'key');
+        this.audioModel.setDelayTime(this.knobsLevel[12], 'bass');
+        this.audioModel.setDelayFeedback(this.knobsLevel[5], 'key'); 
+        this.audioModel.setDelayFeedback(this.knobsLevel[13], 'bass'); 
     } s
 }

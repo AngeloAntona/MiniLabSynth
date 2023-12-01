@@ -23,7 +23,7 @@ This code implements a small keyboard that can be played through mouse clicks or
 | Delay                                     | :red_circle:    |
 | Distortion                                | :red_circle:    |
 | LPF                                       | :green_circle:  |
-| HPF                                       | :red_circle:    |
+| HPF                                       | :green_circle:  |
 | Different presets of sounds combinations  | :yellow_circle: |
 | Personalized presets                      | :red_circle:    |
 | Arpeggiator                               | :red_circle:    |

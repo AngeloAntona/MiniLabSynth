@@ -24,6 +24,7 @@ class Controller {
         this.keyVolumeIndicator=document.getElementById('keyVolumeIndicator');
         this.bassVolumeIndicator=document.getElementById('bassVolumeIndicator');
 
+        this.splitIndicator=document.getElementById('splitIndicator');
 
 
         this.keys = document.querySelectorAll('.key');
@@ -157,14 +158,14 @@ class Controller {
         const actKey = this.model.activateKey;
         const actBass = this.model.activateBass;
         let result = null;
-        if (actKey) {
+        if (actKey && (this.model.split===false||note>=60)) {
             if (this.model.keyMono) {
                 this.model.deleteAllNotes('key');
                 this.model.deleteAllSustainedNotes('key');
             }
             result = this.model.handleNoteOn(note);
         }
-        if (actBass) {
+        if (actBass&& (this.model.split===false||note<60)) {
             if (this.model.bassMono) {
                 this.model.deleteAllNotes('bass');
                 this.model.deleteAllSustainedNotes('bass');
@@ -255,11 +256,17 @@ class Controller {
         }
     }
 
+    splitManager(){
+        this.model.flipSplit();
+        this.renderAll();
+    }
+
     renderAll() {
         this.view.flipButton(document.getElementById('susKey'), this.model.keySustain);
         this.view.flipButton(document.getElementById('susBass'), this.model.bassSustain);
         this.view.flipButton(document.getElementById('monoKey'), this.model.keyMono);
         this.view.flipButton(document.getElementById('monoBass'), this.model.bassMono);
+        this.view.flipButton(document.getElementById('splitIndicator'), this.model.split);
         this.view.updateDisplayOctave(this.model.getOctave('key'), this.dispKeyOctave);
         this.view.updateDisplayOctave(this.model.getOctave('bass'), this.dispBassOctave);
         this.view.showOscillatorType(this.keyOptions, this.model.waveformOptions[this.model.currentOptionKeyIndex]);
