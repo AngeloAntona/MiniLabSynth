@@ -78,7 +78,7 @@ class Model {
     setPreset(preset) {
         // Apply the preset to the model
         this.knobsLevel = Array.from(preset.knobsLevel) || this.knobsLevel;
-        this.cntrlPedalLinks=preset.cntrlPedalLinks;
+        this.cntrlPedalLinks = preset.cntrlPedalLinks;
         this.activateBass = preset.activateBass;
         this.activateKey = preset.activateKey;
         this.currentOptionBassIndex = preset.currentOptionBassIndex;
@@ -359,25 +359,29 @@ class Model {
     }
 
     handleControlChangeEvent(device, controllerNumber, value) {
+
         if ((device === 'midiKey' || device === 'touch') && (this.cntrlPedalLinks[controllerNumber - 19] === 0)) {
             const id = controllerNumber - 19;
             this.knobsLevel[id] = value / 127;
+            const knob = document.getElementById('knob' + id);
+            this.refreshAudioParameters();
+            return { knob };
         }
         else if (device === 'cntrlPedal') {
-            const id = controllerNumber - 19;
+            const id = controllerNumber;
             const divisor = 110; //SISTEMARE DIVISORE QUANDO HAI UN PEDALE CHE FUNZIONA DECENTEMENTE
             for (let i = 0; i < this.knobsLevel.length; i++) {
-                if (this.cntrlPedalLinks[i] === 1) { this.knobsLevel[i] =Math.min(1,Math.max(0, Math.pow(1.1,Math.max(0,value*8/divisor))-1)); }
-                else if (this.cntrlPedalLinks[i] === -1) { this.knobsLevel[i] = Math.min(1,Math.max(0,1 - Math.log(1+(value*2 / divisor)))); }
+                if (this.cntrlPedalLinks[i] === 1) { this.knobsLevel[i] = Math.min(1, Math.max(0, Math.pow(1.1, Math.max(0, value * 8 / divisor)) - 1)); }
+                else if (this.cntrlPedalLinks[i] === -1) { this.knobsLevel[i] = Math.min(1, Math.max(0, 1 - Math.log(1 + (value * 2 / divisor)))); }
             }
-            this.refreshAudioParameters();
             const knob = document.getElementById('knob' + id);
+            this.refreshAudioParameters();
             return { knob };
         }
     }
 
     connectPedalKnobs(knobNumber, mode) {
-        console.log(knobNumber +' '+ mode);
+        console.log(knobNumber + ' ' + mode);
         this.cntrlPedalLinks[knobNumber] = mode;
     }
 

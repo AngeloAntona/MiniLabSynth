@@ -26,7 +26,7 @@ class TouchController {
             window.addEventListener('mousemove', (e) => {
                 if (isDragging) {
                     const newValue = Math.min(100, Math.max(0, this.initialValue + e.clientY));
-                    this.controller.handleControlChangeEvent('touch', idx + 19, newValue * 1.27)
+                    this.controller.handleControlChangeEvent('touch', idx + 19, newValue * 1.27);
                 }
             });
 
