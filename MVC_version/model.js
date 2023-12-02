@@ -5,6 +5,7 @@ class Model {
 
         //Preset parameters
         this.knobsLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.cntrlPedalLinks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         this.activateBass = false;
         this.activateKey = false;
         this.bassOscillator = " ";
@@ -19,7 +20,7 @@ class Model {
         this.keyWheel = false;
         this.currentOptionKeyIndex = 0;
         this.currentOptionBassIndex = 0;
-        this.split=false;
+        this.split = false;
 
         this.waveformOptions = ['sine', 'square', 'sawtooth', 'triangle'];
 
@@ -34,6 +35,7 @@ class Model {
 
         this.defaultPreset = {
             knobsLevel: [0.5, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.8, 1, 0, 0, 0, 0, 0, 0, 0.3, 0.3],
+            cntrlPedalLinks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             activateBass: false,
             activateKey: true,
             currentOptionKeyIndex: 0,
@@ -51,6 +53,7 @@ class Model {
 
         this.psychoPreset = {
             knobsLevel: [0.5, 0.5, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0.3, 1],
+            cntrlPedalLinks: [0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
             activateBass: true,
             activateKey: true,
             currentOptionKeyIndex: 1,
@@ -67,7 +70,7 @@ class Model {
         };
 
         // Apply the preset to the model
-        this.setPreset(this.defaultPreset);
+        this.setPreset(this.psychoPreset);
 
         this.refreshAudioParameters();
     }
@@ -75,6 +78,7 @@ class Model {
     setPreset(preset) {
         // Apply the preset to the model
         this.knobsLevel = Array.from(preset.knobsLevel) || this.knobsLevel;
+        this.cntrlPedalLinks=preset.cntrlPedalLinks;
         this.activateBass = preset.activateBass;
         this.activateKey = preset.activateKey;
         this.currentOptionBassIndex = preset.currentOptionBassIndex;
@@ -87,7 +91,7 @@ class Model {
         this.keyMono = preset.keyMono;
         this.bassWeel = preset.bassWeel;
         this.keyWheel = preset.keyWheel;
-        this.split= preset.split;
+        this.split = preset.split;
         this.refreshAudioParameters();
         this.setWaveform();
     }
@@ -138,8 +142,8 @@ class Model {
         }
     }
 
-    flipSplit(){
-        this.split=!this.split;
+    flipSplit() {
+        this.split = !this.split;
     }
 
     updateKnobLevel(idx, value) {
@@ -214,7 +218,7 @@ class Model {
     }
 
     handleSustain(note) {
-        if (note&&this.isSustainPedalDown) {
+        if (note && this.isSustainPedalDown) {
             this.sustainedNotes[note] = this.pressedKeys[note];
             delete this.pressedKeys[note];
         } else {
@@ -285,7 +289,7 @@ class Model {
 
 
     handleBassSustain(note) {
-        if (note&&this.isSustainPedalDown) {
+        if (note && this.isSustainPedalDown) {
             this.sustainedBass[note] = this.pressedBass[note];
             delete this.pressedBass[note];
         } else {
@@ -354,27 +358,42 @@ class Model {
         return null;
     }
 
-    handleControlChangeEvent(controllerNumber, value) {
-        const id = controllerNumber - 19;
-        this.knobsLevel[id] = value / 127;
-        this.refreshAudioParameters();
-        const knob = document.getElementById('knob' + id);
-        return { knob };
+    handleControlChangeEvent(device, controllerNumber, value) {
+        if ((device === 'midiKey' || device === 'touch') && (this.cntrlPedalLinks[controllerNumber - 19] === 0)) {
+            const id = controllerNumber - 19;
+            this.knobsLevel[id] = value / 127;
+        }
+        else if (device === 'cntrlPedal') {
+            const id = controllerNumber - 19;
+            const divisor = 110; //SISTEMARE DIVISORE QUANDO HAI UN PEDALE CHE FUNZIONA DECENTEMENTE
+            for (let i = 0; i < this.knobsLevel.length; i++) {
+                if (this.cntrlPedalLinks[i] === 1) { this.knobsLevel[i] =Math.min(1,Math.max(0, Math.pow(1.1,Math.max(0,value*8/divisor))-1)); }
+                else if (this.cntrlPedalLinks[i] === -1) { this.knobsLevel[i] = Math.min(1,Math.max(0,1 - Math.log(1+(value*2 / divisor)))); }
+            }
+            this.refreshAudioParameters();
+            const knob = document.getElementById('knob' + id);
+            return { knob };
+        }
+    }
+
+    connectPedalKnobs(knobNumber, mode) {
+        console.log(knobNumber +' '+ mode);
+        this.cntrlPedalLinks[knobNumber] = mode;
     }
 
     refreshAudioParameters() {
         this.audioModel.setMainGain(this.knobsLevel[0]);
         this.audioModel.setInstGain(this.knobsLevel[1]);
+        this.audioModel.setLowPassFilterFrequency(this.knobsLevel[2] * 14990 + 100, 'key');
+        this.audioModel.setHiPassFilterFrequency(this.knobsLevel[3] * 14990 + 100, 'key');
+        this.audioModel.setDelayTime(this.knobsLevel[4], 'key');
+        this.audioModel.setDelayFeedback(this.knobsLevel[5], 'key');
         this.audioModel.setDrumGain(this.knobsLevel[9]);
+        this.audioModel.setLowPassFilterFrequency(this.knobsLevel[10] * 14990 + 100, 'bass');
+        this.audioModel.setHiPassFilterFrequency(this.knobsLevel[11] * 14990 + 100, 'bass');
+        this.audioModel.setDelayTime(this.knobsLevel[12], 'bass');
+        this.audioModel.setDelayFeedback(this.knobsLevel[13], 'bass');
         this.audioModel.setKeyGain(this.knobsLevel[17]);
         this.audioModel.setBassGain(this.knobsLevel[18]);
-        this.audioModel.setLowPassFilterFrequency(this.knobsLevel[2] * 14990 + 100, 'key');
-        this.audioModel.setLowPassFilterFrequency(this.knobsLevel[10] * 14990 + 100, 'bass');
-        this.audioModel.setHiPassFilterFrequency(this.knobsLevel[3] * 14990 + 100, 'key');
-        this.audioModel.setHiPassFilterFrequency(this.knobsLevel[11] * 14990 + 100, 'bass');
-        this.audioModel.setDelayTime(this.knobsLevel[4], 'key');
-        this.audioModel.setDelayTime(this.knobsLevel[12], 'bass');
-        this.audioModel.setDelayFeedback(this.knobsLevel[5], 'key'); 
-        this.audioModel.setDelayFeedback(this.knobsLevel[13], 'bass'); 
-    } s
+    }
 }

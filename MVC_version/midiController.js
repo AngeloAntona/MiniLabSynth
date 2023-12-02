@@ -3,7 +3,8 @@ class MidiController {
     constructor(controller) {
         this.controller = controller;
         this.midiAccess = null;
-        this.deviceName = "Arturia MiniLab mkII";
+        this.keyboardName = "Arturia MiniLab mkII";
+        this.cntrlPedalName = "beat bars controller";
 
         this.attachEventListeners();
     }
@@ -25,15 +26,21 @@ class MidiController {
         if (!this.midiAccess) return;
 
         this.midiAccess.inputs.forEach((input) => {
-            if (input.name === this.deviceName) {
+            console.log(input.name);
+            if (input.name === this.keyboardName) {
                 input.onmidimessage = (event) => {
-                    this.handleMIDIMessage(event);
+                    this.handleKeyboardMIDIMessage(event);
+                };
+            }
+            if (input.name === this.cntrlPedalName) {
+                input.onmidimessage = (event) => {
+                    this.handlecntrlPedalMIDIMessage(event);
                 };
             }
         });
     }
 
-    handleMIDIMessage(event) {
+    handleKeyboardMIDIMessage(event) {
         const statusByte = event.data[0] & 0xf0; // Extract the top 4 bits
 
         if (statusByte === 0xB0) {
@@ -53,7 +60,7 @@ class MidiController {
             else if(controllerNumber===115){this.controller.turnOn('bass');}
             else {
                 // Handle MIDI control change events (knob rotations)
-                this.controller.handleControlChangeEvent(controllerNumber, value);
+                this.controller.handleControlChangeEvent('midiKey',controllerNumber, value);
             }
         } else if (statusByte === 0x90 || statusByte === 0x80) {
             // Note On or Note Off message
@@ -75,6 +82,17 @@ class MidiController {
                     this.controller.handlePadOff(noteNumber);
                 }
             }
+        }
+    }
+
+    handlecntrlPedalMIDIMessage(event){
+        
+        if(event.data[1]===0){
+            //switchPedal
+        }
+        else if (event.data[1]==1){
+            //console.log('controlNumber: '+ event.data[1]+', Value: '+ event.data[2]);
+            this.controller.handleControlChangeEvent('cntrlPedal',event.data[1], event.data[2]);
         }
     }
 }

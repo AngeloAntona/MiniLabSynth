@@ -5,6 +5,7 @@ class Controller {
         // Initialize the controller
         this.model = model;
         this.view = view;
+        this.currentKnobIndex = -1;
         // Get references to the clickable objects and the context menus
 
         this.mainFrame = document.getElementById('mainFrame');
@@ -21,11 +22,11 @@ class Controller {
         this.dispBassOctave = document.getElementById('bassOctave');
         this.keyActive = document.getElementById('turnOnKey');
         this.bassActive = document.getElementById('turnOnBass');
-        this.keyVolumeIndicator=document.getElementById('keyVolumeIndicator');
-        this.bassVolumeIndicator=document.getElementById('bassVolumeIndicator');
+        this.keyVolumeIndicator = document.getElementById('keyVolumeIndicator');
+        this.bassVolumeIndicator = document.getElementById('bassVolumeIndicator');
 
-        this.splitIndicator=document.getElementById('splitIndicator');
-        this.splitDot=document.getElementById('splitDot1');
+        this.splitIndicator = document.getElementById('splitIndicator');
+        this.splitDot = document.getElementById('splitDot1');
 
 
         this.keys = document.querySelectorAll('.key');
@@ -48,8 +49,6 @@ class Controller {
             this.preventRightClick();
             this.displayContextMenu();
             this.knobContextMenu();
-            this.presetSelectClick();
-            this.pedalSelectClick();
             this.documentClick();
             this.renderAll();
         });
@@ -81,14 +80,16 @@ class Controller {
 
     displayContextMenu() {
         this.display.addEventListener('contextmenu', (event) => {
-            this.handleContextMenu(event, this.view, this.displayMenu);
+            this.handleContextMenu(this.display, event, this.view, this.displayMenu);
         });
     }
 
     knobContextMenu() {
         this.knobs.forEach((knob) => {
             knob.addEventListener('contextmenu', (event) => {
-                this.handleContextMenu(event, this.view, this.knobMenu);
+                this.currentKnobIndex = knob.getAttribute('idx');
+                console.log(this.currentKnobIndex);
+                this.handleContextMenu(knob, event, this.view, this.knobMenu);
             });
         });
     }
@@ -110,7 +111,7 @@ class Controller {
         if (selectedOption === 'Default') {
             this.model.setPreset(this.model.defaultPreset);
         }
-        else if(selectedOption === 'Psycho'){
+        else if (selectedOption === 'Psycho') {
             this.model.setPreset(this.model.psychoPreset);
         }
         else {
@@ -119,11 +120,17 @@ class Controller {
         this.renderAll();
     }
 
-    pedalSelectClick() {
+    pedalSelectClick(knobIdx) {
         this.pedalSelect.addEventListener('click', () => {
-            const selectedOption = this.pedalOptions.value;
-            alert('Selected option: ' + selectedOption);
-            this.view.hideContextMenu(this.knobMenu);
+            if (this.currentKnobIndex === knobIdx) {
+                console.log(knobIdx);
+                const selectedOption = this.pedalOptions.value;
+                var choice = 0;
+                if (selectedOption === 'Direct') { choice = 1; }
+                else if (selectedOption === 'Inverse') { choice = -1; }
+                this.model.connectPedalKnobs(knobIdx, choice);
+                this.view.hideContextMenu(this.knobMenu);
+            }
         });
     }
 
@@ -136,10 +143,19 @@ class Controller {
         });
     }
 
-    handleContextMenu(event, view, contextMenu) {
+    handleContextMenu(htmlElement, event, view, contextMenu) {
         const x = event.clientX;
         const y = event.clientY;
-        view.showContextMenu(contextMenu, x, y);
+        this.view.showContextMenu(contextMenu, x, y);
+        //console.log('htmlElement.getAttribute(\'id\')===\'display\': '+ (htmlElement.getAttribute('id')==='display'));
+        //console.log('htmlElement.classList.value===\'knob\': '+ (htmlElement.classList.value==='knob'));
+        if (htmlElement.getAttribute('id') === 'display') {
+            this.presetSelectClick();
+        }
+        else if (htmlElement.classList.value === 'knob') {
+            const idx = htmlElement.getAttribute('idx');
+            this.pedalSelectClick(idx);
+        }
     }
 
     //Knobs-----------------------------------------------------------
@@ -162,14 +178,14 @@ class Controller {
         const actKey = this.model.activateKey;
         const actBass = this.model.activateBass;
         let result = null;
-        if (actKey && (this.model.split===false||note>=60)) {
+        if (actKey && (this.model.split === false || note >= 60)) {
             if (this.model.keyMono) {
                 this.model.deleteAllNotes('key');
                 this.model.deleteAllSustainedNotes('key');
             }
             result = this.model.handleNoteOn(note);
         }
-        if (actBass&& (this.model.split===false||note<60)) {
+        if (actBass && (this.model.split === false || note < 60)) {
             if (this.model.bassMono) {
                 this.model.deleteAllNotes('bass');
                 this.model.deleteAllSustainedNotes('bass');
@@ -200,8 +216,8 @@ class Controller {
         }
     }
 
-    handleControlChangeEvent(controllerNumber, value) {
-        const result = this.model.handleControlChangeEvent(controllerNumber, value);
+    handleControlChangeEvent(device, controllerNumber, value) {
+        const result = this.model.handleControlChangeEvent(device, controllerNumber, value);
         if (result) {
             this.renderAll();
         }
@@ -218,13 +234,13 @@ class Controller {
     }
 
     turnOn(inst) {
-        if (inst === 'key') {this.model.activateKey = !this.model.activateKey;}
-        else if (inst == 'bass') {this.model.activateBass = !this.model.activateBass;}
+        if (inst === 'key') { this.model.activateKey = !this.model.activateKey; }
+        else if (inst == 'bass') { this.model.activateBass = !this.model.activateBass; }
         this.renderAll();
     }
     waveformChanger(inst) {
-        if (inst === 'key') {this.model.currentOptionKeyIndex = (this.model.currentOptionKeyIndex + 1) % this.model.waveformOptions.length;}
-        if (inst === 'bass') {this.model.currentOptionBassIndex = (this.model.currentOptionBassIndex + 1) % this.model.waveformOptions.length;}
+        if (inst === 'key') { this.model.currentOptionKeyIndex = (this.model.currentOptionKeyIndex + 1) % this.model.waveformOptions.length; }
+        if (inst === 'bass') { this.model.currentOptionBassIndex = (this.model.currentOptionBassIndex + 1) % this.model.waveformOptions.length; }
         this.model.setWaveform();
         this.renderAll();
     }
@@ -241,7 +257,7 @@ class Controller {
     updateKeyClasses() {
         for (let i = 1; i <= 25; i++) {
             const keyElement = document.getElementById(`key${i}`);
-            if (this.model.pressedKeys[this.model.getKeyShift(i + 47)]||this.model.pressedBass[this.model.getBassShift(i + 47)]) {
+            if (this.model.pressedKeys[this.model.getKeyShift(i + 47)] || this.model.pressedBass[this.model.getBassShift(i + 47)]) {
                 if (keyElement.classList.contains('blacKey')) {
                     keyElement.classList.remove('blacKey');
                     keyElement.classList.add('blacKey_active');
@@ -260,9 +276,18 @@ class Controller {
         }
     }
 
-    splitManager(){
+    splitManager() {
         this.model.flipSplit();
         this.renderAll();
+    }
+
+    handleControlPedalEvent(value) {
+        // for(const i=0; i<this.model.knobsLevel.length; i++){
+        //     if(this.cntrlPedalLinks[i]===1)
+    }
+
+    connectPedalKnobs(knobNumber, mode) {
+        this.model.connectPedalKnobs(knobNumber, mode);
     }
 
     renderAll() {
