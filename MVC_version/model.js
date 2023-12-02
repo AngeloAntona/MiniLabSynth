@@ -381,7 +381,6 @@ class Model {
     }
 
     connectPedalKnobs(knobNumber, mode) {
-        console.log(knobNumber + ' ' + mode);
         this.cntrlPedalLinks[knobNumber] = mode;
     }
 

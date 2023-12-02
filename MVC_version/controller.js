@@ -88,7 +88,6 @@ class Controller {
         this.knobs.forEach((knob) => {
             knob.addEventListener('contextmenu', (event) => {
                 this.currentKnobIndex = knob.getAttribute('idx');
-                console.log(this.currentKnobIndex);
                 this.handleContextMenu(knob, event, this.view, this.knobMenu);
             });
         });
@@ -123,7 +122,6 @@ class Controller {
     pedalSelectClick(knobIdx) {
         this.pedalSelect.addEventListener('click', () => {
             if (this.currentKnobIndex === knobIdx) {
-                console.log(knobIdx);
                 const selectedOption = this.pedalOptions.value;
                 var choice = 0;
                 if (selectedOption === 'Direct') { choice = 1; }
