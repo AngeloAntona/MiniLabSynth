@@ -178,7 +178,7 @@ body {
 .pad {
     width: 10%;
     height: 80%;
-    background-color: rgb(255, 220, 220);
+    background-color: rgb(255, 255, 255);
     display: inline-block;
     margin-left: 1.8%;
     border-radius: 10px;
@@ -188,14 +188,10 @@ body {
 .activePad {
     width: 10%;
     height: 80%;
-    background-color: rgb(255, 0, 0);
+    background-color: black;
     display: inline-block;
     margin-left: 1.8%;
     border-radius: 10px;
-}
-
-.pad:hover {
-    background-color: rgb(210, 124, 124);
 }
 
 #secondRow {

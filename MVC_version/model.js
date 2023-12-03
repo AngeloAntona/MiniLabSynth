@@ -34,7 +34,7 @@ class Model {
         this.pads = [0, 0, 0, 0, 0, 0, 0, 0];
 
         this.defaultPreset = {
-            knobsLevel: [0.5, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.8, 1, 0, 0, 0, 0, 0, 0, 0.3, 0.3],
+            knobsLevel: [0.5, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.3, 0.3],
             cntrlPedalLinks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             activateBass: false,
             activateKey: true,
@@ -52,8 +52,8 @@ class Model {
         };
 
         this.psychoPreset = {
-            knobsLevel: [0.5, 0.5, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0.3, 1],
-            cntrlPedalLinks: [0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+            knobsLevel: [0.5, 0.5, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0.14, 0, 0, 0, 0, 0.3, 1],
+            cntrlPedalLinks: [0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
             activateBass: true,
             activateKey: true,
             currentOptionKeyIndex: 1,

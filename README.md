@@ -11,7 +11,7 @@ This code implements a small keyboard that can be played through mouse clicks or
 | Separate pad and keys volume              | :green_circle:  |
 | MIDI keyboard input                       | :green_circle:  |
 | Model View Controller pattern             | :green_circle:  |
-| Sustain and control pedals MIDI input     | :yellow_circle: |
+| Sustain and control pedals MIDI input     | :green_circle:  |
 | Mappable control pedals                   | :green_circle:  |
 | Splittable keyboard                       | :green_circle:  |
 | Various sound personalizations            | :yellow_circle: |
