@@ -52,7 +52,7 @@ class Model {
         };
 
         this.psychoPreset = {
-            knobsLevel: [0.5, 0.5, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0.14, 0, 0, 0, 0, 0.3, 1],
+            knobsLevel: [0.5, 0.5, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0.14, 0, 0, 0, 0, 0.3, 0.75],
             cntrlPedalLinks: [0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
             activateBass: true,
             activateKey: true,

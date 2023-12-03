@@ -107,7 +107,6 @@ class View {
         const sum = this.amplitudeHistory.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
         // Calculate the average
         const average = sum / this.amplitudeHistory.length;
-        console.log(average);
 
         this.ctx.strokeStyle = 'rgb(128, 128, 128)';
         this.ctx.lineWidth = 15;
