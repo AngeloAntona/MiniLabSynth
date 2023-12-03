@@ -21,14 +21,13 @@ body {
 
 #keyboard {
     padding-top: 0.3%;
-    padding-right: 0.4%;
     background-color: grey;
-    width: 78%;
+    width: 75%;
     height: 25%;
     position: relative;
     left: 50%;
-    transform: translate(-57.2%, 290%);
-    padding-left: 0.5%;
+    transform: translate(-58.9%, 290%);
+    padding-left: 1.5%;
     border-radius: 10px;
 }
 
@@ -86,7 +85,7 @@ body {
     margin-top: 0.6%;
     margin-left: 0.32%;
     transition: background-color 0.1s;
-    background-color: black;
+    background-color: rgb(27, 27, 27);
 }
 
 .blacKey_active {
@@ -188,7 +187,7 @@ body {
 .activePad {
     width: 10%;
     height: 80%;
-    background-color: black;
+    background-color: rgb(27, 27, 27);
     display: inline-block;
     margin-left: 1.8%;
     border-radius: 10px;
@@ -215,35 +214,32 @@ body {
 }
 
 #miniDisplay {
-    width: 28%;
+    width: 28.8%;
     height: 35%;
     background-color: gray;
     position: absolute;
     left: 50%;
-    transform: translate(-160%, 20%);
+    transform: translate(-155%, 20%);
+    transition: background-color 2s, color 2s, text 2s;
     border-radius: 10px;
 }
 
 #display {
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     font-family: roboto;
-    width: 70%;
+    width: 80%;
     height: 70%;
     position: absolute;
     left: 50%;
     transform: translate(-50%, 9%);
     border-radius: 10px;
     padding: 5%;
-    transition: background-color 2s, color 2s, text 2s;
+    transition: background-color 0.2s, color 0.2s, text 0.2s;
     font-size: 200%;
 }
 
-#display:hover {
-    background-color: rgb(206, 206, 206);
-}
-
 #knob0 {
-    background-color: wheat;
+    background-color: rgb(0, 0, 0);
     width: 7%;
     height: 50%;
     border-radius: 100%;
@@ -259,7 +255,7 @@ body {
     margin-left: 2.5%;
     width: 10%;
     height: 31.8%;
-    background-color: wheat;
+    background-color: black;
     border-radius: 100%;
     margin: 1.1%;
     position: relative;
@@ -269,7 +265,7 @@ body {
 .knob-marker {
     width: 12px;
     height: 45%;
-    background-color: red;
+    background-color: rgb(255, 255, 255);
     border-radius: 10px;
     position: absolute;
     top: 11%;
@@ -277,21 +273,22 @@ body {
     transform-origin: center 85%;
 }
 
-.knobIndicator{
+.knobIndicator {
     width: 35%;
     height: 25%;
     text-align: center;
-    color:gray;
+    color: white;
     font-size: 190%;
     font-family: 'Roboto', sans-serif;
-    background-color: rgb(255, 235, 197);
+    background-color: rgb(23, 23, 23);
     border-radius: 30px;
     position: absolute;
     top: 70%;
     left: 32%;
     transform-origin: center 85%;
 }
-#knob0Indicator{
+
+#knob0Indicator {
     width: 27%;
     height: 20%;
     top: 75%;
@@ -299,26 +296,28 @@ body {
 }
 
 #secondDisplay {
-    padding-top: 0.3%;
-    padding-right: 0.4%;
-    background-color: wheat;
-    width: 9%;
-    height: 25%;
+
+    background-color: rgb(0, 0, 0);
+    width: 12.5%;
+    height: 24.8%;
     position: relative;
     left: 50%;
-    transform: translate(350%, 177.5%);
-    padding-left: 0.5%;
+    transform: translate(250.8%, 178.3%);
     border-radius: 10px;
+    border: 5px;
+    border-style: solid;
+    border-color: rgb(128, 128, 128);
+    z-index: 100;
+
 }
 
 #signalCanvas {
-    width: 100%;
-    height: 70%;
-    position: absolute;
+    width: 101%;
+    height: 100%;
+    position: relative;
     left: 50%;
-    transform: translate(-50%, 9%);
+    transform: translate(-49.8%, 0%);
     border-radius: 10px;
-    padding: 5%;
 }
 
 .hidden {
@@ -328,65 +327,70 @@ body {
 .menu {
     cursor: pointer;
     position: relative;
-    background-color: #fff;
-    font-family: roboto;
+    background-color: #000000;
+    color: white;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    width: 220px;
-    height: 80px;
+    width: 180px;
+    height: 90px;
     z-index: 1000;
     font-size: xx-large;
     transition: background-color 0.8s;
 }
 
-.menu:hover {
-    background-color: black;
-    color: white;
-}
-
 .selectButton {
     cursor: pointer;
     position: relative;
-    background-color: #fff;
+    background-color: #000000;
+    color: white;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    width: 200px;
-    height: 80px;
+    width: 130px;
+    height: 90px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     z-index: 1000;
     font-size: xx-large;
     transition: background-color 0.3s;
 }
 
 .selectButton:hover {
-    background-color: black;
+    background-color: rgb(82, 82, 82);
     color: white;
 }
 
 .selectButton:active {
-    background-color: red;
+    background-color: rgb(255, 255, 255);
     color: black;
 }
 
 
-.selectType{
-    background-color: wheat;
+.selectType {
+    background-color: white;
     padding-left: 1%;
     padding-right: 1%;
     text-align: center;
-    border-radius: 10px;
+    border-radius: 5px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: bold;
     width: 36%;
     display: inline-block;
     position: relative;
-    transition:background-color 0.3s;
-    cursor:pointer;
+    cursor: pointer;
+    transition: background-color 0.6s, color 0.6s;
 }
 
-.turnOn{
+.selectType:hover {
+    background-color: black;
+    color: white;
+}
+
+.turnOn {
     width: 5.3%;
     height: 39.5%;
-    background-color: wheat;
+    background-color: white;
     font-size: 110%;
     border-radius: 50%;
     display: flex;
@@ -395,10 +399,10 @@ body {
     cursor: pointer;
 }
 
-.turnOnActive{
+.turnOnActive {
     width: 5.3%;
     height: 39.5%;
-    background-color: red;
+    background-color: rgb(225, 0, 0);
     font-size: 110%;
     border-radius: 50%;
     display: flex;
@@ -409,35 +413,58 @@ body {
 
 
 .octave {
-    width: 5.3%;
-    height: 39.5%;
-    background-color: wheat;
+    width: 5%;
+    height: 39%;
+    background-color: white;
     text-align: center;
-    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     font-size: 110%;
-    border-radius: 50%;
+    border-radius: 5px;
     color: rgb(0, 0, 0);
     display: flex;
     justify-content: center;
+    padding: 1%;
     align-items: center;
-    transition: color 0.2s, background-color 0.2s;
+    transition: color 0.1s, background-color 0.1s;
     position: relative;
     cursor: pointer;
 }
 
 .octave:active {
-    color:wheat;
+    color: white;
+    padding: 1%;
     background-color: black;
 }
 
-.mono{
-    width: 5.3%;
-    height: 39.5%;
-    background-color: wheat;
+.octaveIndicator {
+    border: 4px;
+    border-style: solid;
+    border-color: rgb(149, 149, 149);
+    background-color: gray;
+    width: 5%;
+    height: 39%;
+    text-align: center;
+    border-radius: 50%;
+    color: rgb(0, 0, 0);
+    display: flex;
+    justify-content: center;
+    padding: 1%;
+    align-items: center;
+    transition: color 0.1s, background-color 0.1s;
+    position: relative;
+    cursor: pointer;
+}
+
+.mono {
+    width: 5%;
+    height: 39%;
+    background-color: white;
     text-align: center;
     font-size: 70%;
-    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    border-radius: 50%;
+    padding: 1%;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    border-radius: 5px;
     color: rgb(0, 0, 0);
     display: flex;
     justify-content: center;
@@ -447,15 +474,17 @@ body {
     cursor: pointer;
 }
 
-.monoActive{
-    width: 5.3%;
-    height: 39.5%;
-    background-color: red;
+.monoActive {
+    width: 5%;
+    height: 39%;
+    background-color: rgb(0, 0, 0);
     text-align: center;
     font-size: 70%;
-    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    border-radius: 50%;
-    color: rgb(0, 0, 0);
+    padding: 1%;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    border-radius: 5px;
+    color: rgb(255, 255, 255);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -464,39 +493,39 @@ body {
     cursor: pointer;
 }
 
-.volumeIndicator{
-    width: 7.3%;
-    height: 39.5%;
-    background-color: wheat;
+.volumeIndicator {
+    width: 5%;
+    height: 39%;
+    padding: 1%;
+    background-color: white;
+    color: black;
     text-align: center;
     font-size: 70%;
-    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    font-weight: bolder;
-    border-radius: 10px;
-    color: rgb(0, 0, 0);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    border-radius: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: color 0.3s, background-color 0.3s;
-    padding: 0.2%;
     position: relative;
 }
 
-.instrumentSelection{
+.instrumentSelection {
     background-color: gray;
     width: 100%;
     height: 20%;
     border-radius: 10px;
     display: flex;
-    justify-content:space-around;
+    justify-content: space-around;
     align-items: center;
     margin-bottom: 4%;
     padding: 2%;
     position: relative;
-    transform: translate(-1.8%,0%);
+    transform: translate(-1.8%, 0%);
 }
 
-#splitIndicator{
+#splitIndicator {
     width: 2.5%;
     height: 10%;
     font-size: 120%;
@@ -504,25 +533,28 @@ body {
     border-radius: 10px;
     display: flex;
     position: absolute;
-    transform: translate(500%,-40%);
+    transform: translate(400%, -60%);
+    padding: 0.3%;
+    padding-bottom: 0.5%;
 }
 
-.splitDot{
+.splitDot {
     background-color: transparent;
-    position:relative;
+    position: relative;
     width: 1.77%;
     height: 3.23%;
-    transform: translate(2265%,1505%);
+    transform: translate(2250%, 1504%);
     border-radius: 50%;
     display: flex;
     transition: color 0.6s, background-color 0.6s;
 }
-.splitDotActive{
+
+.splitDotActive {
     background-color: gray;
-    position:relative;
+    position: relative;
     width: 1.77%;
     height: 3.23%;
-    transform: translate(2265%,1505%);
+    transform: translate(2250%, 1504%);
     border-radius: 50%;
     display: flex;
     transition: color 0.6s, background-color 0.6s;
