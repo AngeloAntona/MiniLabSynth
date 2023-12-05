@@ -24,6 +24,7 @@ class Controller {
         this.bassActive = document.getElementById('turnOnBass');
         this.keyVolumeIndicator = document.getElementById('keyVolumeIndicator');
         this.bassVolumeIndicator = document.getElementById('bassVolumeIndicator');
+        this.buttons=document.querySelectorAll('.mono');
 
         this.splitIndicator = document.getElementById('splitIndicator');
         this.splitDot = document.getElementById('splitDot1');
@@ -50,6 +51,17 @@ class Controller {
             this.displayContextMenu();
             this.knobContextMenu();
             this.documentClick();
+            console.log(this.knobElements);
+            this.view.animateAmplitudePlot(
+                this.knobElements,
+                this.displayPads,
+                this.display,
+                this.keyOptions,
+                this.bassOptions,
+                this.keyVolumeIndicator,
+                this.bassVolumeIndicator,
+                this.buttons
+            );
             this.renderAll();
         });
     }
@@ -160,16 +172,15 @@ class Controller {
 
     synchronizeKnobs() {
         this.knobElements.forEach((knob, idx) => {
-            this.view.rotateKnob(knob, this.model.knobsLevel[idx] * 100)
+            this.view.rotateKnob(knob, this.model.knobsLevel[idx] * 100);
         });
-        this.view.updateDisplayVolumeIndicator(this.keyVolumeIndicator, this.model.knobsLevel[17] * 100);
-        this.view.updateDisplayVolumeIndicator(this.bassVolumeIndicator, this.model.knobsLevel[18] * 100);
     }
 
     //Play controls
     handleSustain(note) {
         this.model.handleSustain(note);
         this.model.handleBassSustain(note);
+        this.renderAll();
     }
 
     handleNoteOn(note) {
@@ -192,6 +203,7 @@ class Controller {
             if (!(result || result2)) { console.log("Error in handleNoteOn (Controller)"); }
         }
         this.updateKeyClasses();
+        this.renderAll();
     }
 
     handleNoteOff(note) {
@@ -199,6 +211,7 @@ class Controller {
         const result2 = this.model.handleBassOff(note);
         const result = result1 || result2;
         this.updateKeyClasses();
+        this.renderAll();
     }
 
     handlePadOn(note) {
@@ -206,12 +219,14 @@ class Controller {
         if (result) {
             this.flipPad(note);
         }
+        this.renderAll();
     }
     handlePadOff(note) {
         const result = this.model.handlePadOff(note);
         if (result) {
             this.flipPad(note);
         }
+        this.renderAll();
     }
 
     handleControlChangeEvent(device, controllerNumber, value) {
@@ -289,6 +304,8 @@ class Controller {
     }
 
     renderAll() {
+        this.view.updateDisplayVolumeIndicator(this.keyVolumeIndicator, this.model.knobsLevel[17] * 100);
+        this.view.updateDisplayVolumeIndicator(this.bassVolumeIndicator, this.model.knobsLevel[18] * 100);
         this.view.flipButton(document.getElementById('susKey'), this.model.keySustain);
         this.view.flipButton(document.getElementById('susBass'), this.model.bassSustain);
         this.view.flipButton(document.getElementById('monoKey'), this.model.keyMono);
@@ -300,7 +317,7 @@ class Controller {
         this.view.showOscillatorType(this.bassOptions, this.model.waveformOptions[this.model.currentOptionBassIndex]);
         this.view.renderActiveIndicator(this.keyActive, this.model.activateKey);
         this.view.renderActiveIndicator(this.bassActive, this.model.activateBass);
-        this.view.updateSplitDot(this.splitDot, this.model.split)
+        this.view.updateSplitDot(this.splitDot, this.model.split);
         this.synchronizeKnobs();
     }
 

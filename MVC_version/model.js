@@ -369,10 +369,11 @@ class Model {
         }
         else if (device === 'cntrlPedal') {
             const id = controllerNumber;
-            const divisor = 110; //SISTEMARE DIVISORE QUANDO HAI UN PEDALE CHE FUNZIONA DECENTEMENTE
+            const divisor = 127; 
             for (let i = 0; i < this.knobsLevel.length; i++) {
-                if (this.cntrlPedalLinks[i] === 1) { this.knobsLevel[i] = Math.min(1, Math.max(0, Math.pow(1.1, Math.max(0, value * 8 / divisor)) - 1)); }
-                else if (this.cntrlPedalLinks[i] === -1) { this.knobsLevel[i] = Math.min(1, Math.max(0, 1 - Math.log(1 + (value * 2 / divisor)))); }
+                console.log();
+                if (this.cntrlPedalLinks[i] === 1) { this.knobsLevel[i] = Math.min(1, Math.max(0, Math.pow(2, Math.max(0, value / divisor))-1)); }
+                else if (this.cntrlPedalLinks[i] === -1) { this.knobsLevel[i] = Math.min(1, 1 - Math.log2(Math.max(1,1 + (value / divisor)))); }
             }
             const knob = document.getElementById('knob' + id);
             this.refreshAudioParameters();

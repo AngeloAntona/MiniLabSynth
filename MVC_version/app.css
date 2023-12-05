@@ -6,6 +6,7 @@ body {
     user-select: none;
     /* Standard syntax */
     background-color: black;
+    transition: color 0.4s, background-color 0.4s;
 }
 
 #mainFrame {
@@ -16,7 +17,7 @@ body {
     width: 2595.19px;
     height: 1355.94px;
     border-radius: 10px;
-    padding-bottom: 1.8%;
+    padding-bottom: 3%;
 }
 
 #keyboard {
@@ -235,7 +236,7 @@ body {
     transform: translate(-50%, 9%);
     border-radius: 10px;
     padding: 5%;
-    transition: background-color 0.2s, color 0.2s, text 0.2s;
+    transition: background-color 0.3s, color 0.3s, text 0.3s;
     font-size: 200%;
 }
 
@@ -259,7 +260,7 @@ body {
     background-color: black;
     border-radius: 100%;
     margin: 1.1%;
-    margin-top:2%;
+    margin-top: 2%;
     position: relative;
     top: 6%;
 }
@@ -273,6 +274,7 @@ body {
     top: 11%;
     left: 46%;
     transform-origin: center 85%;
+    transition: color 0.4s, background-color 0.4s;
 }
 
 .knobIndicator {
@@ -288,6 +290,7 @@ body {
     top: 70%;
     left: 32%;
     transform-origin: center 85%;
+    transition: color 0.4s, background-color 0.4s;
 }
 
 #knob0Indicator {
@@ -300,11 +303,11 @@ body {
 #secondDisplay {
 
     background-color: rgb(0, 0, 0);
-    width: 12.5%;
+    width: 13%;
     height: 24.8%;
     position: relative;
     left: 50%;
-    transform: translate(250.8%, 169%);
+    transform: translate(237%, 169%);
     border-radius: 10px;
     border: 5px;
     border-style: solid;
@@ -380,16 +383,11 @@ body {
     display: inline-block;
     position: relative;
     cursor: pointer;
-    transition: background-color 0.6s, color 0.6s;
-}
-
-.selectType:hover {
-    background-color: black;
-    color: white;
+    transition: color 0.4s, background-color 0.4s;
 }
 
 .turnOn {
-    width: 5.3%;
+    width: 4.5%;
     height: 39.5%;
     background-color: white;
     font-size: 110%;
@@ -412,29 +410,23 @@ body {
     cursor: pointer;
 }
 
-
-.octave {
+#keyOctaveMinus,
+#keyOctavePlus,
+#bassOctaveMinus,
+#bassOctavePlus {
     width: 5%;
     height: 39%;
-    background-color: white;
     text-align: center;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     font-size: 110%;
     border-radius: 5px;
-    color: rgb(0, 0, 0);
     display: flex;
     justify-content: center;
     padding: 1%;
     align-items: center;
-    transition: color 0.1s, background-color 0.1s;
+    transition: color 0.4s, background-color 0.4s;
     position: relative;
     cursor: pointer;
-}
-
-.octave:active {
-    color: white;
-    padding: 1%;
-    background-color: black;
 }
 
 .octaveIndicator {
@@ -451,7 +443,7 @@ body {
     justify-content: center;
     padding: 1%;
     align-items: center;
-    transition: color 0.1s, background-color 0.1s;
+    transition: color 0.4s, background-color 0.4s;
     position: relative;
     cursor: pointer;
 }
@@ -459,18 +451,16 @@ body {
 .mono {
     width: 5%;
     height: 39%;
-    background-color: white;
     text-align: center;
     font-size: 70%;
     padding: 1%;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-weight: bold;
     border-radius: 5px;
-    color: rgb(0, 0, 0);
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: color 0.3s, background-color 0.3s;
+    transition: color 0.4s, background-color 0.4s;
     position: relative;
     cursor: pointer;
 }
@@ -478,18 +468,16 @@ body {
 .monoActive {
     width: 5%;
     height: 39%;
-    background-color: rgb(0, 0, 0);
     text-align: center;
     font-size: 70%;
     padding: 1%;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-weight: bold;
     border-radius: 5px;
-    color: rgb(255, 255, 255);
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: color 0.3s, background-color 0.3s;
+    transition: color 0.4s, background-color 0.4s;
     position: relative;
     cursor: pointer;
 }
@@ -508,7 +496,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: color 0.3s, background-color 0.3s;
+    transition: color 0.4s, background-color 0.4s;
     position: relative;
 }
 

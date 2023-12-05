@@ -6,11 +6,13 @@ class View {
         this.ctx = this.canvas.getContext('2d');
         this.frequency = 0.02;
         this.phase = 0;
+        this.audioVisColor = 'hsl(' + 0 + ',' + 0 + '%, ' + 0 + '%)';
+        this.colorBackgound = 'hsl(' + 0 + ',' + 0 + '%, ' + 0 + '%)';
+        this.color = 'hsl(' + 100 + ',' + 100 + '%, ' + 100 + '%)';
         this.centerX = this.canvas.width / 2;
         this.amplitudeHistory = [];
-        this.maxHistoryLength = 250;
+        this.maxHistoryLength = 120;
         //this.animateSinusoid();
-        this.animateAmplitudePlot();
     }
     //lights-----------------------------------------------------------
     flipLed(led) {
@@ -38,11 +40,11 @@ class View {
 
     flipPad(padElement) {
         if (padElement.classList.value === 'pad') {
+            padElement.classList.remove('pad');
             padElement.classList.add('activePad');
-            padElement.classList.toggle('pad');
         } else if (padElement.classList.value === 'activePad') {
+            padElement.classList.remove('activePad');
             padElement.classList.add('pad');
-            padElement.classList.toggle('activePad');
         }
     }
 
@@ -95,7 +97,7 @@ class View {
 
 
     // Visualizer-----------------------------------------------------------
-    drawAmplitudePlot() {
+    drawAmplitudePlot(knobElements, displayPads, display, keyOptions, bassOptions, keyVolumeIndicator, bassVolumeIndicator, buttons) {
         const width = this.canvas.width;
         const height = this.canvas.height;
 
@@ -103,10 +105,12 @@ class View {
 
         //ExternLine
         this.ctx.beginPath();
-        
+
         const sum = this.amplitudeHistory.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        const sum2 = this.amplitudeHistory.slice(70, 100).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
         // Calculate the average
-        const average = sum / this.amplitudeHistory.length;
+        const average = (sum / this.amplitudeHistory.length);
+        const realTimeAverage = (sum2);
 
         this.ctx.strokeStyle = 'rgb(128, 128, 128)';
         this.ctx.lineWidth = 15;
@@ -128,7 +132,7 @@ class View {
 
         //BorderLine
         this.ctx.beginPath();
-        
+
         this.ctx.strokeStyle = 'rgb(128, 128, 128)';
         this.ctx.lineWidth = 10;
         if (this.amplitudeHistory.length === this.maxHistoryLength) { this.amplitudeHistory.shift(); }
@@ -148,8 +152,16 @@ class View {
 
         //InternLine
         this.ctx.beginPath();
-        
-        this.ctx.strokeStyle = 'rgb(' + 2000*average + ',' + 2000*average + ',' + 2000*average + ')';
+        const hue = 55000 - 1000 * average;
+        const perc1 = Math.min(100, Math.pow(45, realTimeAverage));
+        const perc2 = Math.min(50, Math.pow(45, realTimeAverage));
+        const perc2Display = Math.min(10, Math.pow(45, realTimeAverage));
+        const perc2Pad = 100 - 1.5 * Math.min(10, Math.pow(2, realTimeAverage));
+        this.audioVisColor = 'hsl(' + hue + ',' + perc1 + '%, ' + perc2 + '%)';
+        this.colorBackgound = 'hsl(' + hue + ',' + perc1 + '%, ' + perc2Display + '%)';
+        this.color = 'hsl(' + hue + ',' + perc1 + '%, ' + perc2Pad + '%)';
+        this.interfaceColorGradient(knobElements, displayPads, display, keyOptions, bassOptions, keyVolumeIndicator, bassVolumeIndicator, buttons);
+        this.ctx.strokeStyle = this.audioVisColor;
         this.ctx.lineWidth = 10;
         if (this.amplitudeHistory.length === this.maxHistoryLength) { this.amplitudeHistory.shift(); }
         this.amplitudeHistory.push((this.audioModel.getAmplitude()));
@@ -167,9 +179,43 @@ class View {
         }
     }
 
-    animateAmplitudePlot() {
-        this.drawAmplitudePlot();
-        requestAnimationFrame(this.animateAmplitudePlot.bind(this));
+    animateAmplitudePlot(knobElements, displayPads, display, keyOptions, bassOptions, keyVolumeIndicator, bassVolumeIndicator, buttons) {
+        this.drawAmplitudePlot(Array.from(knobElements), displayPads, display, keyOptions, bassOptions, keyVolumeIndicator, bassVolumeIndicator, buttons);
+        requestAnimationFrame(() => this.animateAmplitudePlot(knobElements, displayPads, display, keyOptions, bassOptions, keyVolumeIndicator, bassVolumeIndicator, buttons));
+    }
+
+
+    interfaceColorGradient(knobElements, pads, display, keyOptions, bassOptions, keyVolumeIndicator, bassVolumeIndicator, buttons) {
+        document.body.style.backgroundColor = this.colorBackgound;
+        knobElements.forEach(knob => {
+            knob.children[0].style.backgroundColor = this.color;
+            knob.children[1].style.color = this.color;
+        });
+        pads.forEach(pad => {
+            if (pad.classList.contains('pad') && !pad.classList.contains('activePad')) {
+                pad.style.backgroundColor = this.color;
+            }
+            else {
+                pad.style.backgroundColor = 'black';
+            }
+        });
+        buttons.forEach(button => {
+            if (button.classList.contains('mono') && !button.classList.contains('monoActive')) {
+                button.style.backgroundColor = this.color;
+                button.style.color = 'black';
+            }
+            else {
+                button.style.backgroundColor = 'black';
+                button.style.color = this.color;
+            }
+        });
+        
+        bassVolumeIndicator.style.backgroundColor=this.color;
+        keyVolumeIndicator.style.backgroundColor=this.color;
+        keyOptions.style.backgroundColor=this.color;
+        bassOptions.style.backgroundColor=this.color;
+        display.style.backgroundColor = this.color;
+
     }
 
 
