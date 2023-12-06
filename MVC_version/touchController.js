@@ -74,9 +74,35 @@ class TouchController {
 
     //Display
     attachDisplayButtonsEventListeners() {
+        const arpSel = this.controller.arpSelection;
+        const ArpChildrenNumber = arpSel.childElementCount;
+        for (let i = 0; i < ArpChildrenNumber; i++) {
+            const button = arpSel.children[i];
+            const buttType = button.getAttribute('id');
+            if (buttType === 'turnOnArp') {
+                button.addEventListener('mousedown', () => { this.controller.handleArp() });
+            }
+            else if (buttType === 'selectArpType') {
+                button.addEventListener('mousedown', () => { this.controller.waveformChanger('arp') });
+            }
+            else if (buttType === 'arpOctaveMinus') {
+                button.addEventListener('mousedown', () => { this.controller.shiftOctave('arp', '-') });
+            }
+            else if (buttType === 'arpOctavePlus') {
+                button.addEventListener('mousedown', () => { this.controller.shiftOctave('arp', '+'); });
+            }
+            else if (buttType === 'arpSplit') {
+                button.addEventListener('mousedown', () => { this.controller.splitManager('arp'); });
+            }
+            else if (buttType === 'susArp') {
+                button.addEventListener('mousedown', () => { this.controller.flipSustain('arp') });
+            }
+        }
+
+
         const keySel = this.controller.keySelection;
-        const childrenNumber = keySel.childElementCount;
-        for (let i = 0; i < childrenNumber; i++) {
+        const instChildrenNumber = keySel.childElementCount;
+        for (let i = 0; i < instChildrenNumber; i++) {
             const button = keySel.children[i];
             const buttType = button.getAttribute('id');
             if (buttType === 'turnOnKey') {

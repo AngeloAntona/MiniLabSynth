@@ -13,6 +13,7 @@ class Controller {
         this.knobs = document.querySelectorAll('.knob');
         this.displayMenu = document.getElementById('displayMenu');
         this.knobMenu = document.getElementById('knobMenu');
+        this.leds = document.querySelectorAll('.dot');
 
         this.keySelection = document.getElementById('keySelection');
         this.bassSelection = document.getElementById('bassSelection');
@@ -24,7 +25,16 @@ class Controller {
         this.bassActive = document.getElementById('turnOnBass');
         this.keyVolumeIndicator = document.getElementById('keyVolumeIndicator');
         this.bassVolumeIndicator = document.getElementById('bassVolumeIndicator');
-        this.buttons=document.querySelectorAll('.mono');
+        this.buttons = document.querySelectorAll('.mono');
+        this.arpSelection = document.getElementById("arpSelection");
+        this.arpActive = document.getElementById("turnOnArp");
+        this.arpOptions = document.getElementById("selectArpType");
+        this.arpOctaveMinus = document.getElementById("arpOctaveMinus");
+        this.dispArpOctave = document.getElementById("arpOctave");
+        this.arpOctavePlus = document.getElementById("arpOctavePlus");
+        this.whoFollow = document.getElementById("whoFollow");
+        this.susArp = document.getElementById("susArp");
+        this.arpVolumeIndicator = document.getElementById("ArpVolumeIndicator");
 
         this.splitIndicator = document.getElementById('splitIndicator');
         this.splitDot = document.getElementById('splitDot1');
@@ -41,26 +51,30 @@ class Controller {
         this.pedalSelect = document.getElementById('pedalSelect');
 
         this.knobElements = document.querySelectorAll('.knob');
+        this.ledInterval = null;
         this.renderAll();
         this.attachEventListeners();
     }
 
     attachEventListeners() {
         document.addEventListener('DOMContentLoaded', () => {
+            this.updateLedClasses();
             this.preventRightClick();
             this.displayContextMenu();
             this.knobContextMenu();
             this.documentClick();
-            console.log(this.knobElements);
             this.view.animateAmplitudePlot(
                 this.knobElements,
                 this.displayPads,
                 this.display,
                 this.keyOptions,
                 this.bassOptions,
+                this.arpOptions,
                 this.keyVolumeIndicator,
                 this.bassVolumeIndicator,
-                this.buttons
+                this.arpVolumeIndicator,
+                this.buttons,
+                this.leds,
             );
             this.renderAll();
         });
@@ -180,13 +194,19 @@ class Controller {
     handleSustain(note) {
         this.model.handleSustain(note);
         this.model.handleBassSustain(note);
+        this.model.handleArpSustain(note);
         this.renderAll();
     }
 
     handleNoteOn(note) {
         const actKey = this.model.activateKey;
         const actBass = this.model.activateBass;
+        const actArp = this.model.activeArp;
         let result = null;
+        if (actArp && (this.model.splitArp === false || note >= 60)) {
+            result = this.model.handleArpeggioOn(note);
+        }
+
         if (actKey && (this.model.split === false || note >= 60)) {
             if (this.model.keyMono) {
                 this.model.deleteAllNotes('key');
@@ -194,6 +214,7 @@ class Controller {
             }
             result = this.model.handleNoteOn(note);
         }
+
         if (actBass && (this.model.split === false || note < 60)) {
             if (this.model.bassMono) {
                 this.model.deleteAllNotes('bass');
@@ -209,6 +230,7 @@ class Controller {
     handleNoteOff(note) {
         const result1 = this.model.handleNoteOff(note);
         const result2 = this.model.handleBassOff(note);
+        this.model.handleArpeggioOff(note);
         const result = result1 || result2;
         this.updateKeyClasses();
         this.renderAll();
@@ -254,6 +276,7 @@ class Controller {
     waveformChanger(inst) {
         if (inst === 'key') { this.model.currentOptionKeyIndex = (this.model.currentOptionKeyIndex + 1) % this.model.waveformOptions.length; }
         if (inst === 'bass') { this.model.currentOptionBassIndex = (this.model.currentOptionBassIndex + 1) % this.model.waveformOptions.length; }
+        if (inst === 'arp') { this.model.currentOptionArpIndex = (this.model.currentOptionArpIndex + 1) % this.model.waveformOptions.length; }
         this.model.setWaveform();
         this.renderAll();
     }
@@ -289,8 +312,38 @@ class Controller {
         }
     }
 
-    splitManager() {
-        this.model.flipSplit();
+    updateLedClasses() {
+        this.ledInterval = setInterval(() => {
+            for (let i = 1; i <= 25; i++) {
+                const ledElement = document.getElementById(`dot${i}`)
+                if (this.model.currentArpNote === 0) {
+                    if (ledElement.classList.contains('activeDot')) {
+                        ledElement.classList.remove('activeDot');
+                        ledElement.classList.add('dot');
+                    }
+                }
+                else if (this.model.currentArpNote === this.model.getArpShift(i + 47)) {
+                    if (ledElement.classList.contains('dot')) {
+                        ledElement.classList.remove('dot');
+                        ledElement.classList.add('activeDot');
+                    }
+                } else {
+                    if (ledElement.classList.contains('activeDot')) {
+                        ledElement.classList.remove('activeDot');
+                        ledElement.classList.add('dot');
+                    }
+                }
+            }
+        }, this.model.knobsLevel[4]);
+    }
+
+    splitManager(inst) {
+        if (inst === 'arp') {
+            this.model.flipSplitArp();
+        }
+        else {
+            this.model.flipSplit();
+        }
         this.renderAll();
     }
 
@@ -303,19 +356,36 @@ class Controller {
         this.model.connectPedalKnobs(knobNumber, mode);
     }
 
+    handleArp() {
+        this.model.activateInstrument('arp', '.');
+        if (this.model.activeArp) {
+            this.updateLedClasses();
+        }
+        else {
+            clearInterval(this.ledInterval);
+        }
+        this.renderAll();
+    }
+
     renderAll() {
         this.view.updateDisplayVolumeIndicator(this.keyVolumeIndicator, this.model.knobsLevel[17] * 100);
         this.view.updateDisplayVolumeIndicator(this.bassVolumeIndicator, this.model.knobsLevel[18] * 100);
+        this.view.updateDisplayVolumeIndicator(this.arpVolumeIndicator, this.model.knobsLevel[8] * 100);
         this.view.flipButton(document.getElementById('susKey'), this.model.keySustain);
         this.view.flipButton(document.getElementById('susBass'), this.model.bassSustain);
+        this.view.flipButton(document.getElementById('susArp'), this.model.arpSustain);
         this.view.flipButton(document.getElementById('monoKey'), this.model.keyMono);
         this.view.flipButton(document.getElementById('monoBass'), this.model.bassMono);
         this.view.flipButton(document.getElementById('splitIndicator'), this.model.split);
+        this.view.flipButton(document.getElementById('arpSplit'), this.model.splitArp);
         this.view.updateDisplayOctave(this.model.getOctave('key'), this.dispKeyOctave);
         this.view.updateDisplayOctave(this.model.getOctave('bass'), this.dispBassOctave);
+        this.view.updateDisplayOctave(this.model.getOctave('arp'), this.dispArpOctave);
         this.view.showOscillatorType(this.keyOptions, this.model.waveformOptions[this.model.currentOptionKeyIndex]);
         this.view.showOscillatorType(this.bassOptions, this.model.waveformOptions[this.model.currentOptionBassIndex]);
+        this.view.showOscillatorType(this.arpOptions, this.model.waveformOptions[this.model.currentOptionArpIndex]);
         this.view.renderActiveIndicator(this.keyActive, this.model.activateKey);
+        this.view.renderActiveIndicator(this.arpActive, this.model.activeArp);
         this.view.renderActiveIndicator(this.bassActive, this.model.activateBass);
         this.view.updateSplitDot(this.splitDot, this.model.split);
         this.synchronizeKnobs();

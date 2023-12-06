@@ -2,6 +2,7 @@ class AudioModel {
     constructor() {
         this.context = new AudioContext();
 
+        this.arpGain = this.context.createGain();
         this.mainGain = this.context.createGain();
         this.instGain = this.context.createGain();
         this.drumGain = this.context.createGain();
@@ -63,6 +64,7 @@ class AudioModel {
         this.feedbackBass1.connect(this.bassGain);
         this.feedbackBass2.connect(this.bassGain);
 
+        this.arpGain.connect(this.instGain);
         this.keyGain.connect(this.instGain);
         this.bassGain.connect(this.instGain);
         this.instGain.connect(this.mainGain);
@@ -102,6 +104,9 @@ class AudioModel {
     setBassGain(value) {
         this.bassGain.gain.value = value;
     }
+    setArpGain(value) {
+        this.arpGain.gain.value = value;
+    }
     setLowPassFilterFrequency(frequency, inst) {
         if (inst === 'key') { this.lowPassFilterKey.frequency.setValueAtTime(frequency, this.context.currentTime); }
         else if (inst === 'bass') { this.lowPassFilterBass.frequency.setValueAtTime(frequency, this.context.currentTime); }
@@ -114,24 +119,24 @@ class AudioModel {
     }
     setDelayTime(time, inst) {
         if (inst === 'key') {
-            this.delayKey1.delayTime.value = 0.8*time;
-            this.delayKey2.delayTime.value = 0.4*time;
+            this.delayKey1.delayTime.value = 0.8 * time;
+            this.delayKey2.delayTime.value = 0.4 * time;
         }
         else if (inst === 'bass') {
-            this.delayBass1.delayTime.value = 0.8*time;
-            this.delayBass2.delayTime.value = 0.4*time;
+            this.delayBass1.delayTime.value = 0.8 * time;
+            this.delayBass2.delayTime.value = 0.4 * time;
         }
         else { console.log('Error in steDelayTime (audioModel)'); }
     }
 
     setDelayFeedback(feedback, inst) {
         if (inst === 'key') {
-            this.feedbackKey1.gain.value = 0.8*feedback;
-            this.feedbackKey2.gain.value = 0.4*feedback;
+            this.feedbackKey1.gain.value = 0.8 * feedback;
+            this.feedbackKey2.gain.value = 0.4 * feedback;
         }
         else if (inst === 'bass') {
-            this.feedbackBass1.gain.value = 0.8*feedback;
-            this.feedbackBass2.gain.value = 0.4*feedback;
+            this.feedbackBass1.gain.value = 0.8 * feedback;
+            this.feedbackBass2.gain.value = 0.4 * feedback;
         }
         else { console.log('Error in steDelayFeedback (audioModel)'); }
     }
@@ -144,7 +149,7 @@ class AudioModel {
         oscillator.connect(gainNode);
         if (inst == 'key') { gainNode.connect(this.lowPassFilterKey); }
         else if (inst == 'bass') { gainNode.connect(this.lowPassFilterBass); }
-
+        else if (inst === 'arp') { gainNode.connect(this.arpGain); }
         gainNode.gain.setValueAtTime(0, this.context.currentTime);
         gainNode.gain.linearRampToValueAtTime(1, this.context.currentTime + this.attackNote);
 

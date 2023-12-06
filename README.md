@@ -27,7 +27,7 @@ This code implements a small keyboard that can be played through mouse clicks or
 | HPF                                       | :green_circle:  |
 | Different presets of sounds combinations  | :yellow_circle: |
 | Personalized presets                      | :red_circle:    |
-| Arpeggiator                               | :red_circle:    |
+| Arpeggiator                               | :yellow_circle: |
 
 ### Legend
 - :green_circle: Implemented

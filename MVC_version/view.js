@@ -97,7 +97,7 @@ class View {
 
 
     // Visualizer-----------------------------------------------------------
-    drawAmplitudePlot(knobElements, displayPads, display, keyOptions, bassOptions, keyVolumeIndicator, bassVolumeIndicator, buttons) {
+    drawAmplitudePlot(knobElements, displayPads, display, keyOptions, bassOptions, arpOptions, keyVolumeIndicator, bassVolumeIndicator,arpVolumeIndicator, buttons, leds) {
         const width = this.canvas.width;
         const height = this.canvas.height;
 
@@ -160,7 +160,7 @@ class View {
         this.audioVisColor = 'hsl(' + hue + ',' + perc1 + '%, ' + perc2 + '%)';
         this.colorBackgound = 'hsl(' + hue + ',' + perc1 + '%, ' + perc2Display + '%)';
         this.color = 'hsl(' + hue + ',' + perc1 + '%, ' + perc2Pad + '%)';
-        this.interfaceColorGradient(knobElements, displayPads, display, keyOptions, bassOptions, keyVolumeIndicator, bassVolumeIndicator, buttons);
+        this.interfaceColorGradient(knobElements, displayPads, display, keyOptions, bassOptions,arpOptions, keyVolumeIndicator, bassVolumeIndicator,arpVolumeIndicator, buttons, leds);
         this.ctx.strokeStyle = this.audioVisColor;
         this.ctx.lineWidth = 10;
         if (this.amplitudeHistory.length === this.maxHistoryLength) { this.amplitudeHistory.shift(); }
@@ -179,13 +179,13 @@ class View {
         }
     }
 
-    animateAmplitudePlot(knobElements, displayPads, display, keyOptions, bassOptions, keyVolumeIndicator, bassVolumeIndicator, buttons) {
-        this.drawAmplitudePlot(Array.from(knobElements), displayPads, display, keyOptions, bassOptions, keyVolumeIndicator, bassVolumeIndicator, buttons);
-        requestAnimationFrame(() => this.animateAmplitudePlot(knobElements, displayPads, display, keyOptions, bassOptions, keyVolumeIndicator, bassVolumeIndicator, buttons));
+    animateAmplitudePlot(knobElements, displayPads, display, keyOptions, bassOptions,arpOptions, keyVolumeIndicator, bassVolumeIndicator, arpVolumeIndicator, buttons, leds) {
+        this.drawAmplitudePlot(Array.from(knobElements), displayPads, display, keyOptions, bassOptions,arpOptions, keyVolumeIndicator, bassVolumeIndicator,arpVolumeIndicator, buttons, leds);
+        requestAnimationFrame(() => this.animateAmplitudePlot(knobElements, displayPads, display, keyOptions, bassOptions,arpOptions, keyVolumeIndicator, bassVolumeIndicator,arpVolumeIndicator, buttons, leds));
     }
 
 
-    interfaceColorGradient(knobElements, pads, display, keyOptions, bassOptions, keyVolumeIndicator, bassVolumeIndicator, buttons) {
+    interfaceColorGradient(knobElements, pads, display, keyOptions, bassOptions,arpOptions, keyVolumeIndicator, bassVolumeIndicator, arpVolumeIndicator, buttons, leds) {
         document.body.style.backgroundColor = this.colorBackgound;
         knobElements.forEach(knob => {
             knob.children[0].style.backgroundColor = this.color;
@@ -209,11 +209,21 @@ class View {
                 button.style.color = this.color;
             }
         });
+        leds.forEach(led => {
+            if (led.classList.contains('activeDot') && !led.classList.contains('dot')) {
+                led.style.backgroundColor = this.color;
+            }
+            else {
+                led.style.backgroundColor = 'transparent';
+            }
+        });
         
         bassVolumeIndicator.style.backgroundColor=this.color;
         keyVolumeIndicator.style.backgroundColor=this.color;
+        arpVolumeIndicator.style.backgroundColor=this.color;
         keyOptions.style.backgroundColor=this.color;
         bassOptions.style.backgroundColor=this.color;
+        arpOptions.style.backgroundColor=this.color;
         display.style.backgroundColor = this.color;
 
     }
