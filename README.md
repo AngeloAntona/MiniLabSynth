@@ -15,19 +15,19 @@ This code implements a small keyboard that can be played through mouse clicks or
 | Mappable control pedals                   | :green_circle:  |
 | Splittable keyboard                       | :green_circle:  |
 | Various sound personalizations            | :yellow_circle: |
+| Configurable with other keyboards         | :red_circle:    |
 | Playable remotely                         | :red_circle:    |
 
 | Sound effects                             | State           |
 | ----------------------------------------- |:---------------:|
-| Frequency weel                            | :red_circle:    |
+| Frequency weel                            | :green_circle:  |
 | Reverb                                    | :green_circle:  |
 | Delay                                     | :green_circle:  |
-| Distortion                                | :red_circle:    |
 | LPF                                       | :green_circle:  |
 | HPF                                       | :green_circle:  |
+| Arpeggiator                               | :green_circle:  |
 | Different presets of sounds combinations  | :yellow_circle: |
-| Personalized presets                      | :red_circle:    |
-| Arpeggiator                               | :yellow_circle: |
+| Storable personalized presets             | :red_circle:    |
 
 ### Legend
 - :green_circle: Implemented
