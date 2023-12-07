@@ -26,7 +26,7 @@ class Model {
         this.currentOptionBassIndex = 0;
         this.currentOptionArpIndex = 0;
         this.split = false;
-        this.splitArp=false;
+        this.splitArp = false;
 
         this.waveformOptions = ['sine', 'square', 'sawtooth', 'triangle'];
 
@@ -45,7 +45,8 @@ class Model {
 
         this.activeArp = false;
         this.arpInterval = null;
-        this.currentArpNote=0;
+        this.currentArpNote = 0;
+        this.arpDecay=80;
 
         this.defaultPreset = {
             knobsLevel: [0.5, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.3, 0.3],
@@ -67,7 +68,7 @@ class Model {
             activeArp: false,
             arpOctave: 1,
             arpSustain: false,
-            splitArp:false,
+            splitArp: false,
 
         };
 
@@ -91,7 +92,7 @@ class Model {
             activeArp: true,
             arpOctave: 1,
             arpSustain: true,
-            splitArp:false,
+            splitArp: false,
         };
 
         // Apply the preset to the model
@@ -121,7 +122,7 @@ class Model {
         this.activeArp = preset.activeArp;
         this.arpOctave = preset.arpOctave;
         this.arpSustain = preset.arpSustain;
-        this.splitArp=preset.splitArp;
+        this.splitArp = preset.splitArp;
         this.refreshAudioParameters();
         this.setWaveform();
     }
@@ -172,8 +173,8 @@ class Model {
         }
     }
 
-    flipSplitArp(){
-        this.splitArp= !this.splitArp;
+    flipSplitArp() {
+        this.splitArp = !this.splitArp;
     }
 
     flipSplit() {
@@ -244,6 +245,10 @@ class Model {
         }
         else if (instrument === 'arp') {
             this.activeArp = !this.activeArp;
+            if (!this.activeArp) {
+                this.sustainedArp.length = 0;
+                this.arpeggiatorIndexes.length = 0;
+            }
         }
     }
 
@@ -386,15 +391,16 @@ class Model {
     handleArpNoteOn(note) {
         const currentNote = this.getArpShift(note);
         this.arpeggiatorNotes[currentNote] = this.audioModel.playNote(currentNote, this.arpOscillator, 'arp');
-        this.currentArpNote=currentNote;
+        this.currentArpNote = currentNote;
         setTimeout(() => {
             this.audioModel.stopNote(this.arpeggiatorNotes[currentNote]);
             delete this.arpeggiatorNotes[currentNote];
-            this.currentArpNote=0;
-        }, Math.max(1, this.knobsLevel[4]*20));
+            this.currentArpNote = 0;
+        }, this.arpDecay);
     }
 
     handleArpSustain(note) {
+        // console.log('handleArpSustain');
         if (note && this.isSustainPedalDown) {
             const indexOfElement = this.arpeggiatorIndexes.indexOf(note);
             if (indexOfElement !== -1) {
@@ -402,55 +408,55 @@ class Model {
                 const insertIndex = this.sustainedArp.findIndex((element) => element > note);
                 if (insertIndex !== -1) { this.sustainedArp.splice(insertIndex, 0, note); }
                 else { this.sustainedArp.push(note); }
+                this.sustainedArp = [...new Set(this.sustainedArp)].sort((a, b) => a - b);
             }
         } else { this.deleteAllSustainedNotes('arp'); }
+        console.log('arpeggiatorIndexes:' + this.arpeggiatorIndexes);
+        console.log('sustainedArp: ' + this.sustainedArp);
     }
 
     handleArpeggioOff(note) {
+        // console.log('handleArpeggioOff');
+
         const currentNote = this.getKeyShift(note);
         if (this.arpeggiatorIndexes.includes(currentNote)) {
-            const ledSelector = '#key' + String(Math.abs(note) % 24 + 1);
-            const keySelector = '#key' + String(Math.abs(note) % 24 + 1);
-            if (this.isSustainPedalDown && this.arpSustain && !this.sustainedArp.includes(currentNote)) {
+            if (this.isSustainPedalDown && this.arpSustain) {
                 this.handleArpSustain(currentNote);
             } else {
                 const indexToDelete = this.arpeggiatorIndexes.indexOf(currentNote);
                 this.arpeggiatorIndexes.splice(indexToDelete, 1);
             }
-            return { display, ledSelector, keySelector };
         }
-        return null;
     }
 
-    playArpSequence() {
-        let currentIndex = 0;
-        this.arpInterval = setInterval(() => {
-            let indexArray= [];
-            // Combine the elements of arpeggiatorIndexes and sustainedArp
-            if(this.sustainedArp!= undefined){
-                const combinedArray = [...this.arpeggiatorIndexes, ...this.sustainedArp];
-                // Sort the combined array in increasing order
-                indexArray = combinedArray.sort((a, b) => a - b);
-                // Now, sortedArray contains all elements in increasing order
-            }
-            else{
-                indexArray=this.arpeggiatorIndexes;
-            }
+    playArpSequence(currentIndex) {
+        //console.log('playArpSequence');
 
-            if (indexArray[currentIndex] != undefined) { //DA SISTEMARE UNDEFINED
-                this.handleArpNoteOn(indexArray[currentIndex]);
-            }
-            currentIndex = (currentIndex + 1) % Math.max(1, indexArray.length);
-            if (!this.activeArp) {
-                clearInterval(this.arpInterval);
-                this.arpInterval = null;
-            }
-        }, Math.max(1, this.knobsLevel[4] * 120));
+        let indexArray = [];
+        if (this.sustainedArp !== undefined) {
+            indexArray = [...this.arpeggiatorIndexes, ...this.sustainedArp];
+            indexArray = [...new Set(indexArray)].sort((a, b) => a - b);
+        }
+
+        else {
+            indexArray = this.arpeggiatorIndexes;
+        }
+
+        if (indexArray[currentIndex] != undefined) { //DA SISTEMARE UNDEFINED
+            this.handleArpNoteOn(indexArray[currentIndex]);
+        }
+        currentIndex = (currentIndex + 1) % Math.max(1, indexArray.length);
+        if (!this.activeArp) {
+            clearInterval(this.arpInterval);
+            this.arpInterval = null;
+        }
+        this.arpInterval = setTimeout(() => { this.playArpSequence(currentIndex) }, Math.max(1, Math.max(this.arpDecay,3*this.knobsLevel[16] * 120)));
     }
 
 
     handleArpeggioOn(note) {
-        if (!this.arpeggiatorIndexes.includes(note)&&!this.sustainedArp.includes(note)) {
+        // console.log('handleArpeggioOn');
+        if (!this.arpeggiatorIndexes.includes(note)) {
             // Find the index where the new note should be inserted
             const indexToInsert = this.arpeggiatorIndexes.findIndex(existingNote => existingNote > note);
             // If indexToInsert is -1, the new note is the largest so far, push it to the end
@@ -461,11 +467,13 @@ class Model {
                 this.arpeggiatorIndexes.splice(indexToInsert, 0, note);
             }
         }
-        if (this.activeArp && (this.arpInterval === null)) { this.playArpSequence(); }
+        if (this.activeArp && (this.arpInterval === null)) { this.playArpSequence(0); }
         else if ((!this.activeArp) && this.arpInterval != null) {
             clearInterval(this.arpInterval);
             this.arpInterval = null;
         }
+        console.log('arpeggiatorIndexes:' + this.arpeggiatorIndexes);
+        console.log('sustainedArp: ' + this.sustainedArp);
     }
 
 
