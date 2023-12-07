@@ -42,8 +42,10 @@ class MidiController {
 
     handleKeyboardMIDIMessage(event) {
         const statusByte = event.data[0] & 0xf0; // Extract the top 4 bits
-
-        if (statusByte === 0xB0) {
+        if (event.data[0] === 224) {
+            if (event.data[1] === 0) { this.controller.handleWheel(event.data[2]); }
+        }
+        else if (statusByte === 0xB0) {
             const controllerNumber = event.data[1];
             const value = event.data[2];
             // Control Change message (knob or slider)
@@ -56,11 +58,11 @@ class MidiController {
                     this.controller.handleSustain();
                 }
             }
-            else if(controllerNumber===113){this.controller.turnOn('key');}
-            else if(controllerNumber===115){this.controller.turnOn('bass');}
+            else if (controllerNumber === 113) { this.controller.turnOn('key'); }
+            else if (controllerNumber === 115) { this.controller.turnOn('bass'); }
             else {
                 // Handle MIDI control change events (knob rotations)
-                this.controller.handleControlChangeEvent('midiKey',controllerNumber, value);
+                this.controller.handleControlChangeEvent('midiKey', controllerNumber, value);
             }
         } else if (statusByte === 0x90 || statusByte === 0x80) {
             // Note On or Note Off message
@@ -85,14 +87,14 @@ class MidiController {
         }
     }
 
-    handlecntrlPedalMIDIMessage(event){
-        
-        if(event.data[1]===0){
+    handlecntrlPedalMIDIMessage(event) {
+
+        if (event.data[1] === 0) {
             //switchPedal
         }
-        else if (event.data[1]==1){
+        else if (event.data[1] == 1) {
             //console.log('controlNumber: '+ event.data[1]+', Value: '+ event.data[2]);
-            this.controller.handleControlChangeEvent('cntrlPedal',event.data[1], event.data[2]);
+            this.controller.handleControlChangeEvent('cntrlPedal', event.data[1], event.data[2]);
         }
     }
 }

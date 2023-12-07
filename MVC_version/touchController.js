@@ -97,6 +97,9 @@ class TouchController {
             else if (buttType === 'susArp') {
                 button.addEventListener('mousedown', () => { this.controller.flipSustain('arp') });
             }
+            else if(buttType==='arpWheel'){
+                button.addEventListener('mousedown', () => { this.controller.flipWheel('arp') });
+            }
         }
 
 
@@ -123,6 +126,9 @@ class TouchController {
             else if (buttType === 'susKey') {
                 button.addEventListener('mousedown', () => { this.controller.flipSustain('key') });
             }
+            else if(buttType==='keyWheel'){
+                button.addEventListener('mousedown', () => { this.controller.flipWheel('key') });
+            }
         }
 
         const bassSel = this.controller.bassSelection;
@@ -147,6 +153,9 @@ class TouchController {
             }
             else if (buttType === 'susBass') {
                 button.addEventListener('mousedown', () => { this.controller.flipSustain('bass') });
+            }
+            else if(buttType==='bassWheel'){
+                button.addEventListener('mousedown', () => { this.controller.flipWheel('bass') });
             }
         }
     }

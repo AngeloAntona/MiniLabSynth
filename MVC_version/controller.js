@@ -262,6 +262,16 @@ class Controller {
         this.model.deleteAllNotes(inst);
     }
 
+
+    flipWheel(inst){
+        this.model.flipWheel(inst);
+        this.renderAll();
+    }
+
+    handleWheel(value){
+        this.model.handleWheel(value);
+        this.renderAll();
+    }
     shiftOctave(inst, direction) {
         this.model.shiftOctave(inst, direction);
         this.manageChangeMode(inst);
@@ -347,11 +357,6 @@ class Controller {
         this.renderAll();
     }
 
-    handleControlPedalEvent(value) {
-        // for(const i=0; i<this.model.knobsLevel.length; i++){
-        //     if(this.cntrlPedalLinks[i]===1)
-    }
-
     connectPedalKnobs(knobNumber, mode) {
         this.model.connectPedalKnobs(knobNumber, mode);
     }
@@ -378,6 +383,9 @@ class Controller {
         this.view.flipButton(document.getElementById('monoBass'), this.model.bassMono);
         this.view.flipButton(document.getElementById('splitIndicator'), this.model.split);
         this.view.flipButton(document.getElementById('arpSplit'), this.model.splitArp);
+        this.view.flipButton(document.getElementById('arpWheel'), this.model.arpWheel);
+        this.view.flipButton(document.getElementById('bassWheel'), this.model.bassWheel);
+        this.view.flipButton(document.getElementById('keyWheel'), this.model.keyWheel);
         this.view.updateDisplayOctave(this.model.getOctave('key'), this.dispKeyOctave);
         this.view.updateDisplayOctave(this.model.getOctave('bass'), this.dispBassOctave);
         this.view.updateDisplayOctave(this.model.getOctave('arp'), this.dispArpOctave);

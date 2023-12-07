@@ -74,6 +74,7 @@ class AudioModel {
         this.compressor.connect(this.context.destination);
         this.attackNote = 0.01;
         this.releaseNote = 0.10;
+        this.frequencyValues=[1,1,1];
     }
 
     getAmplitude() {
@@ -145,16 +146,25 @@ class AudioModel {
         const oscillator = this.context.createOscillator();
         oscillator.type = oscillatorType;
         const gainNode = this.context.createGain();
-        oscillator.frequency.value = 261.63 * Math.pow(2, (note - 57) / 12);
         oscillator.connect(gainNode);
-        if (inst == 'key') { gainNode.connect(this.lowPassFilterKey); }
-        else if (inst == 'bass') { gainNode.connect(this.lowPassFilterBass); }
-        else if (inst === 'arp') { gainNode.connect(this.arpGain); }
+        oscillator.frequency.value = 261.63 * Math.pow(2, (note - 57) / 12);
+        let interval=null;
+        if (inst == 'key') { 
+            gainNode.connect(this.lowPassFilterKey); 
+            interval= setInterval(()=>{oscillator.frequency.value = this.frequencyValues[0]*261.63 * Math.pow(2, (note - 57) / 12)}, 1);
+        }
+        else if (inst == 'bass') { 
+            gainNode.connect(this.lowPassFilterBass);
+            interval= setInterval(()=>{oscillator.frequency.value = this.frequencyValues[1]*261.63 * Math.pow(2, (note - 57) / 12)}, 1);
+         }
+        else if (inst === 'arp') { 
+            gainNode.connect(this.arpGain); 
+            interval= setInterval(()=>{oscillator.frequency.value = this.frequencyValues[2]*261.63 * Math.pow(2, (note - 57) / 12)}, 1);
+        }
         gainNode.gain.setValueAtTime(0, this.context.currentTime);
         gainNode.gain.linearRampToValueAtTime(1, this.context.currentTime + this.attackNote);
-
         oscillator.start();
-        return { oscillator, gainNode };
+        return { oscillator, gainNode,interval };
     }
     stopNote(note) {
         const releaseTime = this.context.currentTime + this.releaseNote;
@@ -166,6 +176,7 @@ class AudioModel {
 
         setTimeout(() => {
             note.oscillator.stop();
+            clearInterval(note.interval);
             note.oscillator.disconnect();
         }, (this.releaseNote + fadeOutDuration) * 1000);
     }

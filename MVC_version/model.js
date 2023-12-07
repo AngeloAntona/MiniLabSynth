@@ -20,7 +20,7 @@ class Model {
         this.arpSustain = false;
         this.bassMono = false;
         this.keyMono = false;
-        this.bassWeel = false;
+        this.bassWheel = false;
         this.keyWheel = false;
         this.currentOptionKeyIndex = 0;
         this.currentOptionBassIndex = 0;
@@ -46,7 +46,12 @@ class Model {
         this.activeArp = false;
         this.arpInterval = null;
         this.currentArpNote = 0;
-        this.arpDecay=80;
+        this.arpDecay = 80;
+
+        this.keyWheel = false;
+        this.arpWheel = false;
+        this.bassWheel = false;
+        this.currentWheel=0;
 
         this.defaultPreset = {
             knobsLevel: [0.5, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.3, 0.3],
@@ -69,11 +74,14 @@ class Model {
             arpOctave: 1,
             arpSustain: false,
             splitArp: false,
+            keyWheel: true,
+            arpWheel: false,
+            bassWheel: false,
 
         };
 
         this.psychoPreset = {
-            knobsLevel: [0.5, 0.5, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0.14, 0, 0, 0, 0, 0.3, 0.75],
+            knobsLevel: [0.5, 0.5, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0.14, 0, 0, 0, 0.25, 0.3, 0.75],
             cntrlPedalLinks: [0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
             activateBass: true,
             activateKey: true,
@@ -90,9 +98,12 @@ class Model {
             keyWheel: false,
             split: true,
             activeArp: true,
-            arpOctave: 1,
+            arpOctave: 1/2,
             arpSustain: true,
             splitArp: false,
+            keyWheel: true,
+            arpWheel: false,
+            bassWheel: false,
         };
 
         // Apply the preset to the model
@@ -116,13 +127,16 @@ class Model {
         this.keySustain = preset.keySustain;
         this.bassMono = preset.bassMono;
         this.keyMono = preset.keyMono;
-        this.bassWeel = preset.bassWeel;
+        this.bassWheel = preset.bassWeel;
         this.keyWheel = preset.keyWheel;
         this.split = preset.split;
         this.activeArp = preset.activeArp;
         this.arpOctave = preset.arpOctave;
         this.arpSustain = preset.arpSustain;
         this.splitArp = preset.splitArp;
+        this.keyWheel = preset.keyWheel;
+        this.arpWheel = preset.arpWheel;
+        this.bassWheel = preset.bassWeel;
         this.refreshAudioParameters();
         this.setWaveform();
     }
@@ -142,7 +156,7 @@ class Model {
             keySustain: this.keySustain,
             bassMono: this.bassMono,
             keyMono: this.keyMono,
-            bassWeel: this.bassWeel,
+            bassWeel: this.bassWheel,
             keyWheel: this.keyWheel,
         };
 
@@ -293,6 +307,23 @@ class Model {
         return null;
     }
 
+
+    flipWheel(inst) {
+        if (inst === 'key') { this.keyWheel = !this.keyWheel; }
+        else if (inst === 'bass') { this.bassWheel = !this.bassWheel; }
+        else if (inst === 'arp') { this.arpWheel = !this.arpWheel; }
+    }
+
+
+    handleWheel(value) {
+        if (this.arpWheel) { this.audioModel.frequencyValues[2] = Math.pow(2, 2*(value-64) / (64*12)); }
+        else{this.audioModel.frequencyValues[2] = 1;}
+        if (this.keyWheel) { this.audioModel.frequencyValues[0] = Math.pow(2, 2*(value-64) / (64*12)); }
+        else{this.audioModel.frequencyValues[0] = 1;}
+        if (this.bassWheel) { this.audioModel.frequencyValues[1] = Math.pow(2, 2*(value-64) / (64*12)); }   
+        else{this.audioModel.frequencyValues[1] = 1;}
+    }
+
     handleNoteOff(note) {
         const currentNote = this.getKeyShift(note);
         if (this.pressedKeys[currentNote]) {
@@ -400,7 +431,6 @@ class Model {
     }
 
     handleArpSustain(note) {
-        // console.log('handleArpSustain');
         if (note && this.isSustainPedalDown) {
             const indexOfElement = this.arpeggiatorIndexes.indexOf(note);
             if (indexOfElement !== -1) {
@@ -411,13 +441,9 @@ class Model {
                 this.sustainedArp = [...new Set(this.sustainedArp)].sort((a, b) => a - b);
             }
         } else { this.deleteAllSustainedNotes('arp'); }
-        console.log('arpeggiatorIndexes:' + this.arpeggiatorIndexes);
-        console.log('sustainedArp: ' + this.sustainedArp);
     }
 
     handleArpeggioOff(note) {
-        // console.log('handleArpeggioOff');
-
         const currentNote = this.getKeyShift(note);
         if (this.arpeggiatorIndexes.includes(currentNote)) {
             if (this.isSustainPedalDown && this.arpSustain) {
@@ -430,34 +456,21 @@ class Model {
     }
 
     playArpSequence(currentIndex) {
-        //console.log('playArpSequence');
-
         let indexArray = [];
-        if (this.sustainedArp !== undefined) {
-            indexArray = [...this.arpeggiatorIndexes, ...this.sustainedArp];
-            indexArray = [...new Set(indexArray)].sort((a, b) => a - b);
-        }
-
-        else {
-            indexArray = this.arpeggiatorIndexes;
-        }
-
-        if (indexArray[currentIndex] != undefined) { //DA SISTEMARE UNDEFINED
-            this.handleArpNoteOn(indexArray[currentIndex]);
-        }
+        indexArray = [...this.arpeggiatorIndexes, ...this.sustainedArp];
+        indexArray = [...new Set(indexArray)].sort((a, b) => a - b);
+        if (indexArray[currentIndex] != undefined) { this.handleArpNoteOn(indexArray[currentIndex]); }
         currentIndex = (currentIndex + 1) % Math.max(1, indexArray.length);
         if (!this.activeArp) {
             clearInterval(this.arpInterval);
             this.arpInterval = null;
         }
-        this.arpInterval = setTimeout(() => { this.playArpSequence(currentIndex) }, Math.max(1, Math.max(this.arpDecay,3*this.knobsLevel[16] * 120)));
+        this.arpInterval = setTimeout(() => { this.playArpSequence(currentIndex) }, Math.max(1, Math.max(this.arpDecay, 3 * this.knobsLevel[16] * 120)));
     }
 
 
     handleArpeggioOn(note) {
-        // console.log('handleArpeggioOn');
         if (!this.arpeggiatorIndexes.includes(note)) {
-            // Find the index where the new note should be inserted
             const indexToInsert = this.arpeggiatorIndexes.findIndex(existingNote => existingNote > note);
             // If indexToInsert is -1, the new note is the largest so far, push it to the end
             if (indexToInsert === -1) {
@@ -472,8 +485,6 @@ class Model {
             clearInterval(this.arpInterval);
             this.arpInterval = null;
         }
-        console.log('arpeggiatorIndexes:' + this.arpeggiatorIndexes);
-        console.log('sustainedArp: ' + this.sustainedArp);
     }
 
 
