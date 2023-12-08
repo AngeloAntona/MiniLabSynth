@@ -14,7 +14,7 @@ This code implements a small keyboard that can be played through mouse clicks or
 | Sustain and control pedals MIDI input     | :green_circle:  |
 | Mappable control pedals                   | :green_circle:  |
 | Splittable keyboard                       | :green_circle:  |
-| Various sound personalizations            | :yellow_circle: |
+| Various sound personalizations            | :green_circle:  |
 | Storable personalized presets on DB       | :red_circle:    |
 | Playable remotely                         | :red_circle:    |
 | Configurable with other keyboards         | :red_circle:    |
