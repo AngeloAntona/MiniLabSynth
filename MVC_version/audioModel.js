@@ -183,65 +183,98 @@ class AudioModel {
 
     playKick() {
         const duration = 2;
-        const attackDuration = 0.01;
+        const attackDuration = 0.03; // Slightly longer attack
         const releaseDuration = 4;
-
+        const highPassFrequency = 150; // Adjust the high-pass filter frequency
+      
         const buffer = this.context.createBuffer(1, this.context.sampleRate * duration, this.context.sampleRate);
         const bufferData = buffer.getChannelData(0);
-        const initialFrequency = 30;
-        const initialAmplitude = 10;
-
+        const initialFrequency = 3000; // Higher initial frequency
+        const initialAmplitude = 70; // Lower initial amplitude
+      
         for (let i = 0; i < bufferData.length; i++) {
-            const amplitude = Math.exp(-i * (initialAmplitude / this.context.sampleRate));
-            const frequency = 100 * Math.exp(-i * (initialFrequency / this.context.sampleRate));
-            bufferData[i] = amplitude * Math.cos(2 * Math.PI * frequency * i / this.context.sampleRate);
+          const t = i / this.context.sampleRate;
+      
+          // Envelope shaping
+          const envelope = Math.exp(-20 * t) * Math.cos(2 * Math.PI * 5 * t);
+          const amplitude = initialAmplitude * envelope;
+      
+          // Frequency shaping (adding some pitch modulation)
+          const frequency = initialFrequency * Math.exp(-i * (initialFrequency / this.context.sampleRate)) + 10 * Math.sin(2 * Math.PI * 2 * t);
+      
+          bufferData[i] = amplitude * Math.sin(2 * Math.PI * frequency * t);
         }
-
+      
         const source = this.context.createBufferSource();
         source.buffer = buffer;
-
-        source.connect(this.drumGain);
+      
+        const filterNode = this.context.createBiquadFilter();
+        filterNode.type = 'highpass';
+        filterNode.frequency.value = highPassFrequency;
+      
+        const gainNode = this.context.createGain();
+        gainNode.gain.setValueAtTime(0, this.context.currentTime);
+        gainNode.gain.linearRampToValueAtTime(1.5, this.context.currentTime + Math.min(attackDuration, duration));
+        gainNode.gain.linearRampToValueAtTime(0, this.context.currentTime + duration - Math.min(releaseDuration, duration));
+      
+        source.connect(filterNode);
+        filterNode.connect(gainNode);
+        gainNode.connect(this.drumGain);
+      
         source.start(0);
         source.stop(this.context.currentTime + duration);
-    }
+      }
+      
+      
 
-    playSnare() {
+      playSnare() {
         const bufferSize = this.context.sampleRate * 0.1;
         const buffer = this.context.createBuffer(1, bufferSize, this.context.sampleRate);
         const bufferData = buffer.getChannelData(0);
-
+      
         const noiseGain = this.context.createGain();
         noiseGain.gain.setValueAtTime(1, this.context.currentTime);
         noiseGain.gain.linearRampToValueAtTime(0, this.context.currentTime + bufferSize / this.context.sampleRate);
-
+      
         // Create white noise for the snare
         for (let i = 0; i < bufferSize; i++) {
-            bufferData[i] = Math.random() * 2 - 1;
+          bufferData[i] = Math.random() * 2 - 1;
         }
-
+      
         const toneOscillator = this.context.createOscillator();
         toneOscillator.type = 'sine';
         toneOscillator.frequency.value = 40;
-
+      
         const toneGain = this.context.createGain();
         toneGain.gain.setValueAtTime(1 / 5, this.context.currentTime);
         toneGain.gain.linearRampToValueAtTime(0, this.context.currentTime + 0.02);
+      
+        const lowPassFilter = this.context.createBiquadFilter();
+        lowPassFilter.type = 'lowpass';
+        lowPassFilter.frequency.value = 8000; // Adjust the cutoff frequency
 
+        const lowPassFilter2 = this.context.createBiquadFilter();
+        lowPassFilter2.type = 'lowpass';
+        lowPassFilter2.frequency.value = 9000; // Adjust the cutoff frequency
+      
         // Connect the components
-        noiseGain.connect(toneGain.gain);
+        noiseGain.connect(lowPassFilter);
+        lowPassFilter.connect(toneGain.gain);
+        noiseGain.connect(lowPassFilter2);
+        lowPassFilter2.connect(this.drumGain);
         toneOscillator.connect(toneGain);
         toneGain.connect(this.drumGain);
-
+      
         // Start the noise and the tone simultaneously
-        noiseGain.connect(this.drumGain);
         toneOscillator.start();
         toneOscillator.stop(this.context.currentTime + 0.02);
-
+      
         const source = this.context.createBufferSource();
         source.buffer = buffer;
         source.connect(noiseGain);
         source.start(0);
-    }
+      }
+      
 
     playClosedHiHat() {
         const bufferSize = this.context.sampleRate * 0.03;
@@ -260,8 +293,8 @@ class AudioModel {
         // Create a band-pass filter
         const filter = this.context.createBiquadFilter();
         filter.type = 'bandpass';
-        filter.frequency.value = 3000;
-        filter.Q.value = 1;
+        filter.frequency.value = 2000;
+        filter.Q.value = 1.5;
 
         // Connect the components
         noiseGain.connect(filter);
