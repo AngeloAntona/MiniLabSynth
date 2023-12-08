@@ -15,8 +15,9 @@ This code implements a small keyboard that can be played through mouse clicks or
 | Mappable control pedals                   | :green_circle:  |
 | Splittable keyboard                       | :green_circle:  |
 | Various sound personalizations            | :yellow_circle: |
-| Configurable with other keyboards         | :red_circle:    |
+| Storable personalized presets on DB       | :red_circle:    |
 | Playable remotely                         | :red_circle:    |
+| Configurable with other keyboards         | :red_circle:    |
 
 | Sound effects                             | State           |
 | ----------------------------------------- |:---------------:|
@@ -26,8 +27,7 @@ This code implements a small keyboard that can be played through mouse clicks or
 | LPF                                       | :green_circle:  |
 | HPF                                       | :green_circle:  |
 | Arpeggiator                               | :green_circle:  |
-| Different presets of sounds combinations  | :yellow_circle: |
-| Storable personalized presets             | :red_circle:    |
+| Different presets of sounds combinations  | :green_circle:  |
 
 ### Legend
 - :green_circle: Implemented

@@ -51,7 +51,7 @@ class Model {
         this.keyWheel = false;
         this.arpWheel = false;
         this.bassWheel = false;
-        this.currentWheel=0;
+        this.currentWheel = 0;
 
         this.defaultPreset = {
             knobsLevel: [0.5, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.3, 0.3],
@@ -98,7 +98,7 @@ class Model {
             keyWheel: false,
             split: true,
             activeArp: true,
-            arpOctave: 1/2,
+            arpOctave: 1 / 2,
             arpSustain: true,
             splitArp: false,
             keyWheel: true,
@@ -143,13 +143,15 @@ class Model {
 
 
     // Function to save the current state as a JSON string
-    savePreset() {
+    async savePreset(presetName) {
         const preset = {
             knobsLevel: this.knobsLevel,
+            cntrlPedalLinks: this.cntrlPedalLinks,
             activateBass: this.activateBass,
             activateKey: this.activateKey,
-            bassOscillator: this.bassOscillator,
-            keyOscillator: this.keyOscillator,
+            currentOptionKeyIndex: this.currentOptionKeyIndex,
+            currentOptionBassIndex: this.currentOptionBassIndex,
+            currentOptionArpIndex: this.currentOptionArpIndex,
             bassOctave: this.bassOctave,
             keyOctave: this.keyOctave,
             bassSustain: this.bassSustain,
@@ -158,15 +160,35 @@ class Model {
             keyMono: this.keyMono,
             bassWeel: this.bassWheel,
             keyWheel: this.keyWheel,
+            split: this.split,
+            activeArp: this.activeArp,
+            arpOctave: this.arpOctave,
+            arpSustain: this.arpSustain,
+            splitArp: this.splitArp,
+            keyWheel: this.keyWheel,
+            arpWheel: this.arpWheel,
+            bassWheel: this.bassWheel,
         };
 
-        // Convert the preset to a JSON string
         const jsonString = JSON.stringify(preset);
 
-        // Store the JSON string or do something with it (e.g., save to local storage)
-        console.log(jsonString);
+        try {
+            // Request file system access
+            const handle = await window.showSaveFilePicker({ suggestedName: `${presetName}.json` });
 
-        return jsonString;
+            // Create a writable stream to the file
+            const writable = await handle.createWritable();
+
+            // Write the JSON string to the file
+            await writable.write(jsonString);
+
+            // Close the writable stream
+            await writable.close();
+
+            console.log('Preset ' + presetName + ' saved successfully.');
+        } catch (error) {
+            console.error('Error saving preset:', error);
+        }
     }
 
     // Function to load a preset from a JSON string
@@ -184,6 +206,34 @@ class Model {
             // Handle errors, e.g., invalid JSON format
             console.error('Error loading preset:', error);
             return false;
+        }
+    }
+
+    async getAllPresetNames() {
+        try {
+            const db = await this.openDatabase(); // Assuming you have a method to open the IndexedDB database
+            const transaction = db.transaction(['presets'], 'readonly');
+            const objectStore = transaction.objectStore('presets');
+
+            // Use an array to store the names of presets
+            const presetNames = [];
+
+            // Open a cursor to iterate over the object store
+            const cursor = await objectStore.openCursor();
+
+            while (cursor) {
+                // Retrieve the preset name from the cursor
+                const presetName = cursor.key;
+                presetNames.push(presetName);
+
+                // Move to the next item in the object store
+                cursor.continue();
+            }
+
+            return presetNames;
+        } catch (error) {
+            console.error('Error getting preset names:', error);
+            return [];
         }
     }
 
@@ -316,12 +366,12 @@ class Model {
 
 
     handleWheel(value) {
-        if (this.arpWheel) { this.audioModel.frequencyValues[2] = Math.pow(2, 2*(value-64) / (64*12)); }
-        else{this.audioModel.frequencyValues[2] = 1;}
-        if (this.keyWheel) { this.audioModel.frequencyValues[0] = Math.pow(2, 2*(value-64) / (64*12)); }
-        else{this.audioModel.frequencyValues[0] = 1;}
-        if (this.bassWheel) { this.audioModel.frequencyValues[1] = Math.pow(2, 2*(value-64) / (64*12)); }   
-        else{this.audioModel.frequencyValues[1] = 1;}
+        if (this.arpWheel) { this.audioModel.frequencyValues[2] = Math.pow(2, 2 * (value - 64) / (64 * 12)); }
+        else { this.audioModel.frequencyValues[2] = 1; }
+        if (this.keyWheel) { this.audioModel.frequencyValues[0] = Math.pow(2, 2 * (value - 64) / (64 * 12)); }
+        else { this.audioModel.frequencyValues[0] = 1; }
+        if (this.bassWheel) { this.audioModel.frequencyValues[1] = Math.pow(2, 2 * (value - 64) / (64 * 12)); }
+        else { this.audioModel.frequencyValues[1] = 1; }
     }
 
     handleNoteOff(note) {

@@ -12,6 +12,7 @@ class Controller {
         this.display = document.getElementById('display');
         this.knobs = document.querySelectorAll('.knob');
         this.displayMenu = document.getElementById('displayMenu');
+
         this.knobMenu = document.getElementById('knobMenu');
         this.leds = document.querySelectorAll('.dot');
 
@@ -51,6 +52,7 @@ class Controller {
         this.pedalSelect = document.getElementById('pedalSelect');
 
         this.knobElements = document.querySelectorAll('.knob');
+        this.options = ['Default', 'Psycho', 'Rock', 'Pop'];
         this.ledInterval = null;
         this.renderAll();
         this.attachEventListeners();
@@ -80,17 +82,6 @@ class Controller {
         });
     }
 
-    //lights-----------------------------------------------------------
-    // flipLed(id) {
-    //     let led = document.querySelector(id);
-    //     this.view.flipLed(led.children[0]);
-    // }
-
-    // flipKey(id) {
-    //     let key = document.querySelector(id);
-    //     this.view.flipKey(key, key.getAttribute('keyType'));
-    // }
-
     flipPad(idx) {
         let padRow = document.getElementById('padrow');
         let pad = padRow.children[idx];
@@ -98,6 +89,17 @@ class Controller {
     }
 
     //Menu-----------------------------------------------------------
+
+    createMenu() {
+        this.presetOptions.innerHTML='';
+        this.options.forEach((optionText) => {
+            const option = document.createElement('option');
+            option.value = optionText;
+            option.textContent = optionText;
+            this.presetOptions.appendChild(option);
+        });
+    }
+
     preventRightClick() {
         mainFrame.addEventListener('contextmenu', (event) => {
             event.preventDefault();
@@ -106,6 +108,7 @@ class Controller {
 
     displayContextMenu() {
         this.display.addEventListener('contextmenu', (event) => {
+            this.createMenu();
             this.handleContextMenu(this.display, event, this.view, this.displayMenu);
         });
     }
@@ -171,8 +174,6 @@ class Controller {
         const x = event.clientX;
         const y = event.clientY;
         this.view.showContextMenu(contextMenu, x, y);
-        //console.log('htmlElement.getAttribute(\'id\')===\'display\': '+ (htmlElement.getAttribute('id')==='display'));
-        //console.log('htmlElement.classList.value===\'knob\': '+ (htmlElement.classList.value==='knob'));
         if (htmlElement.getAttribute('id') === 'display') {
             this.presetSelectClick();
         }
@@ -263,12 +264,12 @@ class Controller {
     }
 
 
-    flipWheel(inst){
+    flipWheel(inst) {
         this.model.flipWheel(inst);
         this.renderAll();
     }
 
-    handleWheel(value){
+    handleWheel(value) {
         this.model.handleWheel(value);
         this.renderAll();
     }
