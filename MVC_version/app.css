@@ -25,9 +25,9 @@ body {
     background-color: grey;
     width: 75%;
     height: 25%;
-    position: relative;
+    position: absolute;
     left: 50%;
-    transform: translate(-58.9%, 290%);
+    transform: translate(-58.9%, 275%);
     padding-left: 1.5%;
     border-radius: 10px;
 }
@@ -66,8 +66,6 @@ body {
     margin-top:195%;
     background-color: red;
     border-radius: 10px;
-    transition: background-color 0s;
-    /*clip-path: inset(0% 0% 50% 0%);*/
 }
 
 .dot {
@@ -163,10 +161,9 @@ body {
     height: 23.5%;
     position: absolute;
     left: 50%;
-    transform: translate(-50%, 178%);
+    transform: translate(-50%, 173%);
     border-radius: 10px;
     padding-bottom: 19px;
-
 }
 
 #padrow {
@@ -205,7 +202,7 @@ body {
     background-color: gray;
     position: absolute;
     left: 50%;
-    transform: translate(-25%, 20%);
+    transform: translate(-25%, 15%);
     border-radius: 10px;
 }
 
@@ -225,7 +222,7 @@ body {
     background-color: gray;
     position: absolute;
     left: 50%;
-    transform: translate(-156.1%, 20%);
+    transform: translate(-156.1%, 15%);
     transition: background-color 2s, color 2s, text 2s;
     border-radius: 10px;
 }
@@ -307,11 +304,11 @@ body {
 #secondDisplay {
 
     background-color: rgb(0, 0, 0);
-    width: 17.3%;
-    height: 99%;
-    position: relative;
+    width: 16%;
+    height: 98%;
+    position: absolute;
     left: 50%;
-    transform: translate(283%, -176.5%);
+    transform: translate(310%, -174.5%);
     border-radius: 10px;
     border: 5px;
     border-style: solid;
@@ -331,6 +328,8 @@ body {
 
 .hidden {
     display: none;
+    opacity: 0%;
+    transition: opacity 0.5s;
 }
 
 .menu {
@@ -339,10 +338,10 @@ body {
     background-color: #000000;
     color: white;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    border-radius: 10px;
+    border-radius: 30px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    width: 180px;
+    width: auto;
     height: 90px;
     z-index: 1000;
     font-size: xx-large;
@@ -354,14 +353,15 @@ body {
     position: relative;
     background-color: #000000;
     color: white;
-    border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    width: 130px;
+    width: 90px;
     height: 90px;
+    border-radius: 50%;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     z-index: 1000;
     font-size: xx-large;
+    font-weight: bolder;
     transition: background-color 0.3s;
 }
 
@@ -426,9 +426,9 @@ body {
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     font-size: 110%;
     border-radius: 5px;
+    padding: 1%;
     display: flex;
     justify-content: center;
-    padding: 1%;
     align-items: center;
     transition: color 0.4s, background-color 0.4s;
     position: relative;
@@ -535,11 +535,11 @@ body {
 
 .splitDot {
     background-color: transparent;
-    position: relative;
+    position: absolute;
     width: 1.77%;
     height: 3.93%;
     padding: 10px;
-    transform: translate(1551%, 870%);
+    transform: translate(1551%, 1288%);
     border-radius: 50%;
     display: flex;
     transition: color 0.6s, background-color 0.6s;
@@ -548,13 +548,184 @@ body {
 
 .splitDotActive {
     background-color: gray;
-    position: relative;
+    position: absolute;
     width: 1.77%;
     height: 3.93%;
     padding: 10px;
-    transform: translate(1551%, 870%);
+    transform: translate(1551%, 1288%);
     border-radius: 50%;
     display: flex;
     transition: color 0.6s, background-color 0.6s;
     clip-path: inset(50% 0% 0% 0%);
+}
+
+.dbPresets{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: white;
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    background-color: rgb(56, 56, 56);
+    border-radius: 50%;
+    margin: 0.3%;
+    margin-top: 29%;
+    margin-left: 1.3%;
+    font-size: 200%;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.dbPresets:hover{
+    color: orange;
+}
+
+.dbPresets:active{
+    color: rgb(255, 0, 0);
+}
+
+#savePresetMenu{
+    width:500px;
+    z-index: 1;
+}
+
+#savePreset{
+    transform: translate(0%,130%);
+}
+
+#nameInput{
+    padding-left: 20px;
+    width: 400px;
+    height: 50px;
+    font-size: 300%;
+    border-radius: 30px;
+}
+
+#submitButton{
+    width: 60px;
+    height: 60px;
+    font-size: 300%;   
+    border-radius: 50%;
+    transition: background-color 0.3s;
+    font-weight:bolder;
+ 
+}
+
+#submitButton:hover{
+    background-color: rgb(157, 157, 157);
+}
+
+#submitButton:active{
+    background-color: rgb(0, 0, 0);
+    color: white;
+}
+
+.openCloseLogin{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    color: white;
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    transform: translate(4110%, 70%);
+    z-index: 1;
+    transition: background-color 1s;
+    background-color: rgb(56, 56, 56);
+    border-radius: 50%;
+    margin: 0.3%;
+    margin-top: 29%;
+    margin-left: 1.3%;
+    font-size: 200%;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+#openLogin{
+    background-color: rgb(56, 56, 56);
+}
+
+#closeLogin{
+    background-color:rgb(8, 0, 35) ;
+}
+
+.simpleCircle{
+    border-radius: 50%;
+    background-color: red;
+    transition: background-color 5s;
+    width: 30px;
+    height: 30px;
+}
+
+
+#loginDiv{
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 10%);
+    background-color:  rgb(13, 0, 53);
+    width: 2595.19px;
+    height: 1355.94px;
+    border-radius: 10px;
+    padding-bottom: 3%;
+    z-index: 0;
+    opacity: 100%;
+    border-radius: 10px;
+    opacity: 100%;
+}
+
+
+#inputLogin{
+    position: absolute;
+    width: 80%;
+    height: 50%;
+    border-radius: 100px;
+    background-color: rgb(8, 0, 35);
+    transform: translate(12.5%,55%);
+}
+
+.login{
+    position: absolute;
+    padding-left: 20px;
+    padding-right: 20px;
+    width: 800px;
+    height: 70px;
+    font-size: 300%;
+    border-radius: 50px;
+    transform: translate(75%,450%);
+}
+#password{
+    margin-top: 5%;
+}
+
+#loginConfirm{
+    position: absolute;
+    margin-left: 1.5%;
+    width: 60px;
+    height: 60px;
+    font-size: 350%;   
+    border-radius: 50%;
+    transition: background-color 0.3s;
+    font-weight:bolder;
+    transform: translate(1650%,940%);
+}
+
+#mainTitle{
+    width: 100%;
+    color: white;
+    text-align: center;
+    position: absolute;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 1000%;
+    transform: translate(0%,50%);
+}
+
+#loginSubtitle{
+    width: 100%;
+    color: white;
+    position: absolute;
+    text-align: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 700%;
+    transform: translate(0%,80%);
 }

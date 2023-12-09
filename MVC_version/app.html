@@ -3,15 +3,21 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="app.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" />
-    <title>KeyLab</title>
-    <link rel="stylesheet" href="app.css">
+    <title>AKC</title>
 </head>
 
 <body>
     <div id="mainFrame">
+        <div id="openLogin" class="openCloseLogin">
+            <div id="simpleCircle2" class="simpleCircle"></div>
+        </div>
+        <div id="loadPreset" class="dbPresets">↓</div>
+        <div id="savePreset" class="dbPresets">↑</div>
+
         <div id="firstRow">
 
             <div class='knob' id="knob0" idx="0">
@@ -223,20 +229,38 @@
         </div>
         <div id='splitDot1' class="splitDot"></div>
     </div>
+    <div id="loginDiv" class="hidden">
+        <div id="closeLogin" class="openCloseLogin">
+            <div id="simpleCircle1" class="simpleCircle"></div>
+        </div>
+        <div id="mainTitle">Analog Key Controller</div>
+        <div id="inputLogin">
+            <div id="loginSubtitle">Log-in to your account.</div>
+            <input type="email" id="email" class="login" placeholder="Email">
+            <input type="password" id="password" class="login" placeholder="Password">
+            <button id="loginConfirm">↵</button>
+        </div>
+    </div>
 
     <div id="knobMenu" class="hidden">
         <select id="pedalOptions" class="menu">
-            <option value="No">No</option>
-            <option value="Direct">Direct</option>
-            <option value="Inverse">Inverse</option>
+            <option value="No">NO</option>
+            <option value="Direct">DIRECT</option>
+            <option value="Inverse">INVERSE</option>
         </select>
-        <button class="selectButton" id="pedalSelect">Select</button>
+        <button class="selectButton" id="pedalSelect">↵</button>
     </div>
 
     <div id="displayMenu" class="hidden">
         <select id="presetOptions" class="menu"></select>
-        <button class="selectButton" id="presetSelect">Select</button>
+        <button class="selectButton" id="presetSelect">↵</button>
     </div>
+
+    <div id="savePresetMenu" class="hidden">
+        <input type="text" id="nameInput" placeholder="insert a name.">
+        <button id="submitButton">↵</button>
+    </div>
+
 
     <script src="audioModel.js"></script>
     <script src="model.js"></script>
@@ -244,7 +268,7 @@
     <script src="controller.js"></script>
     <script src="midiController.js"></script>
     <script src="touchController.js"></script>
-    <script src="app.js"></script>
+    <script type="module" src="main.js"></script>
 
 </body>
 

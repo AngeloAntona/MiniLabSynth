@@ -12,7 +12,7 @@ class View {
         this.centerX = this.canvas.width / 2;
         this.amplitudeHistory = [];
         this.maxHistoryLength = 120;
-        //this.animateSinusoid();
+        console.log('View ok.');
     }
     //lights-----------------------------------------------------------
     flipLed(led) {
@@ -68,33 +68,6 @@ class View {
     updateDisplayVolumeIndicator(VolumeIndicator, value) {
         VolumeIndicator.innerHTML = value.toFixed(0);
     }
-
-    // //Visualizer-----------------------------------------------------------
-    // drawSinusoidalSignal() {
-    //     const width = this.canvas.width;
-    //     const height = this.canvas.height;
-
-    //     this.ctx.clearRect(0, 0, width, height);
-
-    //     this.ctx.beginPath();
-    //     this.ctx.strokeStyle = 'black';
-    //     this.ctx.lineWidth = 20;
-
-    //     for (let x = 0; x < width; x++) {
-    //         const currentAmplitude = this.audioModel.getAmplitude();
-    //         const y = height / 2 + Math.sin(this.frequency * x + this.phase) * 200 * currentAmplitude;
-    //         this.ctx.lineTo(x, y);
-    //     }
-
-    //     this.ctx.stroke();
-    // }
-
-    // animateSinusoid() {
-    //     this.phase += 0.01; // Adjust the animation speed
-    //     this.drawSinusoidalSignal();
-    //     requestAnimationFrame(this.animateSinusoid.bind(this));
-    // }
-
 
     // Visualizer-----------------------------------------------------------
     drawAmplitudePlot(knobElements, displayPads, display, keyOptions, bassOptions, arpOptions, keyVolumeIndicator, bassVolumeIndicator,arpVolumeIndicator, buttons, leds) {

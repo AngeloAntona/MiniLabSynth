@@ -75,6 +75,7 @@ class AudioModel {
         this.attackNote = 0.01;
         this.releaseNote = 0.10;
         this.frequencyValues=[1,1,1];
+        console.log('AudioModel ok.');
     }
 
     getAmplitude() {

@@ -2,6 +2,7 @@
 class Model {
     constructor(audioModel) {
         this.audioModel = audioModel;
+        this.presets=[];
 
         //Preset parameters
         this.knobsLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -53,63 +54,71 @@ class Model {
         this.bassWheel = false;
         this.currentWheel = 0;
 
-        this.defaultPreset = {
-            knobsLevel: [0.5, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.3, 0.3],
-            cntrlPedalLinks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            activateBass: false,
-            activateKey: true,
-            currentOptionKeyIndex: 0,
-            currentOptionBassIndex: 0,
-            currentOptionArpIndex: 0,
-            bassOctave: 1 / 2,
-            keyOctave: 1,
-            bassSustain: true,
-            keySustain: true,
-            bassMono: true,
-            keyMono: false,
-            bassWeel: false,
-            keyWheel: false,
-            split: false,
-            activeArp: false,
-            arpOctave: 1,
-            arpSustain: false,
-            splitArp: false,
-            keyWheel: true,
-            arpWheel: false,
-            bassWheel: false,
+        // this.defaultPreset = {
+        //     knobsLevel: [0.5, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.3, 0.3],
+        //     cntrlPedalLinks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        //     activateBass: false,
+        //     activateKey: true,
+        //     currentOptionKeyIndex: 0,
+        //     currentOptionBassIndex: 0,
+        //     currentOptionArpIndex: 0,
+        //     bassOctave: 0.5,
+        //     keyOctave: 1,
+        //     bassSustain: true,
+        //     keySustain: true,
+        //     bassMono: true,
+        //     keyMono: false,
+        //     bassWeel: false,
+        //     split: false,
+        //     activeArp: false,
+        //     arpOctave: 1,
+        //     arpSustain: false,
+        //     splitArp: false,
+        //     keyWheel: true,
+        //     arpWheel: false,
+        //     bassWheel: false,
 
-        };
+        // };
 
-        this.psychoPreset = {
-            knobsLevel: [0.5, 0.5, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0.14, 0, 0, 0, 0.25, 0.3, 0.75],
-            cntrlPedalLinks: [0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
-            activateBass: true,
-            activateKey: true,
-            currentOptionKeyIndex: 1,
-            currentOptionBassIndex: 2,
-            currentOptionArpIndex: 0,
-            bassOctave: 1 / 4,
-            keyOctave: 1,
-            bassSustain: true,
-            keySustain: false,
-            bassMono: true,
-            keyMono: false,
-            bassWeel: false,
-            keyWheel: false,
-            split: true,
-            activeArp: true,
-            arpOctave: 1 / 2,
-            arpSustain: true,
-            splitArp: false,
-            keyWheel: true,
-            arpWheel: false,
-            bassWheel: false,
-        };
+        // this.psychoPreset = {
+        //     knobsLevel: [0.5, 0.5, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0.14, 0, 0, 0, 0.25, 0.3, 0.75],
+        //     cntrlPedalLinks: [0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
+        //     activateBass: true,
+        //     activateKey: true,
+        //     currentOptionKeyIndex: 1,
+        //     currentOptionBassIndex: 2,
+        //     currentOptionArpIndex: 0,
+        //     bassOctave: 0.25,
+        //     keyOctave: 1,
+        //     bassSustain: true,
+        //     keySustain: false,
+        //     bassMono: true,
+        //     keyMono: false,
+        //     bassWeel: false,
+        //     split: true,
+        //     activeArp: true,
+        //     arpOctave: 0.5,
+        //     arpSustain: true,
+        //     splitArp: false,
+        //     keyWheel: true,
+        //     arpWheel: false,
+        //     bassWheel: false,
+        // };
 
-        // Apply the preset to the model
-        this.setPreset(this.psychoPreset);
-
+        // Apply the  default preset to the model   
         this.refreshAudioParameters();
+    }
+
+    setPresets(presets){
+        this.presets=presets;
+        this.setPreset(this.presets[0]);
+    }
+    getPresetNames(){
+        const names = [];
+        this.presets.forEach(preset => {
+            names.push(preset.name);
+        });
+        return names;
     }
 
     setPreset(preset) {
@@ -143,8 +152,9 @@ class Model {
 
 
     // Function to save the current state as a JSON string
-    async savePreset(presetName) {
+    exportCurrentPreset(name) {
         const preset = {
+            name: name,
             knobsLevel: this.knobsLevel,
             cntrlPedalLinks: this.cntrlPedalLinks,
             activateBass: this.activateBass,
@@ -170,71 +180,7 @@ class Model {
             bassWheel: this.bassWheel,
         };
 
-        const jsonString = JSON.stringify(preset);
-
-        try {
-            // Request file system access
-            const handle = await window.showSaveFilePicker({ suggestedName: `${presetName}.json` });
-
-            // Create a writable stream to the file
-            const writable = await handle.createWritable();
-
-            // Write the JSON string to the file
-            await writable.write(jsonString);
-
-            // Close the writable stream
-            await writable.close();
-
-            console.log('Preset ' + presetName + ' saved successfully.');
-        } catch (error) {
-            console.error('Error saving preset:', error);
-        }
-    }
-
-    // Function to load a preset from a JSON string
-    loadPreset(jsonString) {
-        try {
-            // Parse the JSON string to get the preset object
-            const preset = JSON.parse(jsonString);
-
-            // Apply the preset to the model
-            this.setPreset(preset);
-
-            // Return true if the loading was successful
-            return true;
-        } catch (error) {
-            // Handle errors, e.g., invalid JSON format
-            console.error('Error loading preset:', error);
-            return false;
-        }
-    }
-
-    async getAllPresetNames() {
-        try {
-            const db = await this.openDatabase(); // Assuming you have a method to open the IndexedDB database
-            const transaction = db.transaction(['presets'], 'readonly');
-            const objectStore = transaction.objectStore('presets');
-
-            // Use an array to store the names of presets
-            const presetNames = [];
-
-            // Open a cursor to iterate over the object store
-            const cursor = await objectStore.openCursor();
-
-            while (cursor) {
-                // Retrieve the preset name from the cursor
-                const presetName = cursor.key;
-                presetNames.push(presetName);
-
-                // Move to the next item in the object store
-                cursor.continue();
-            }
-
-            return presetNames;
-        } catch (error) {
-            console.error('Error getting preset names:', error);
-            return [];
-        }
+        return preset;
     }
 
     flipSplitArp() {

@@ -9,6 +9,7 @@ class TouchController {
         this.attachPadsEventListeners();
         this.attachDisplayButtonsEventListeners();
         this.attachDisplaySplitEventListener();
+        console.log('TouchController ok.');
     }
 
     //Knobs

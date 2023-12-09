@@ -1,6 +1,6 @@
 // controller.js
 class Controller {
-    constructor(model, view) {
+    constructor(model, view, presets) {
 
         // Initialize the controller
         this.model = model;
@@ -52,19 +52,15 @@ class Controller {
         this.pedalSelect = document.getElementById('pedalSelect');
 
         this.knobElements = document.querySelectorAll('.knob');
-        this.options = ['Default', 'Psycho', 'Rock', 'Pop'];
         this.ledInterval = null;
         this.renderAll();
         this.attachEventListeners();
+        console.log('Controller ok.');
     }
 
     attachEventListeners() {
         document.addEventListener('DOMContentLoaded', () => {
             this.updateLedClasses();
-            this.preventRightClick();
-            this.displayContextMenu();
-            this.knobContextMenu();
-            this.documentClick();
             this.view.animateAmplitudePlot(
                 this.knobElements,
                 this.displayPads,
@@ -90,97 +86,17 @@ class Controller {
 
     //Menu-----------------------------------------------------------
 
-    createMenu() {
-        this.presetOptions.innerHTML='';
-        this.options.forEach((optionText) => {
-            const option = document.createElement('option');
-            option.value = optionText;
-            option.textContent = optionText;
-            this.presetOptions.appendChild(option);
-        });
-    }
-
-    preventRightClick() {
-        mainFrame.addEventListener('contextmenu', (event) => {
-            event.preventDefault();
-        });
-    }
-
-    displayContextMenu() {
-        this.display.addEventListener('contextmenu', (event) => {
-            this.createMenu();
-            this.handleContextMenu(this.display, event, this.view, this.displayMenu);
-        });
-    }
-
-    knobContextMenu() {
-        this.knobs.forEach((knob) => {
-            knob.addEventListener('contextmenu', (event) => {
-                this.currentKnobIndex = knob.getAttribute('idx');
-                this.handleContextMenu(knob, event, this.view, this.knobMenu);
-            });
-        });
-    }
-
-    presetSelectClick() {
-        this.presetSelect.addEventListener('click', () => {
-            const selectedOption = this.presetOptions.value;
-            if (selectedOption != 'NewPreset') {
-                this.setPreset(selectedOption);
-            }
-            else {
-                alert('New preset: ' + selectedOption);
-            }
-            this.view.hideContextMenu(this.displayMenu);
-        });
-    }
-
+    
     setPreset(selectedOption) {
-        if (selectedOption === 'Default') {
-            this.model.setPreset(this.model.defaultPreset);
-        }
-        else if (selectedOption === 'Psycho') {
-            this.model.setPreset(this.model.psychoPreset);
-        }
-        else {
-            alert('Selected option: ' + selectedOption);
-        }
+        let bool = false;
+        this.model.presets.forEach((preset) => {
+            if (preset.name === selectedOption) {
+                bool = true;
+                this.model.setPreset(preset);
+            }
+        });
+        if (!bool) { alert('Invalid preset'); }
         this.renderAll();
-    }
-
-    pedalSelectClick(knobIdx) {
-        this.pedalSelect.addEventListener('click', () => {
-            if (this.currentKnobIndex === knobIdx) {
-                const selectedOption = this.pedalOptions.value;
-                var choice = 0;
-                if (selectedOption === 'Direct') { choice = 1; }
-                else if (selectedOption === 'Inverse') { choice = -1; }
-                this.model.connectPedalKnobs(knobIdx, choice);
-                this.view.hideContextMenu(this.knobMenu);
-            }
-        });
-    }
-
-    documentClick() {
-        document.addEventListener('click', (e) => {
-            if (!this.displayMenu.contains(e.target) && !this.knobMenu.contains(e.target)) {
-                this.view.hideContextMenu(this.displayMenu);
-                this.view.hideContextMenu(this.knobMenu);
-            }
-        });
-    }
-
-    handleContextMenu(htmlElement, event, view, contextMenu) {
-        const x = event.clientX;
-        const y = event.clientY;
-        this.view.showContextMenu(contextMenu, x, y);
-        if (htmlElement.getAttribute('id') === 'display') {
-            this.presetSelectClick();
-        }
-        else if (htmlElement.classList.value === 'knob') {
-            const idx = htmlElement.getAttribute('idx');
-            this.pedalSelectClick(idx);
-        }
     }
 
     //Knobs-----------------------------------------------------------

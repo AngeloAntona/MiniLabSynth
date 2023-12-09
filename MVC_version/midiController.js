@@ -7,6 +7,7 @@ class MidiController {
         this.cntrlPedalName = "beat bars controller";
 
         this.attachEventListeners();
+        console.log('MidiController ok.');
     }
     attachEventListeners() {
         this.initializeMIDI();
