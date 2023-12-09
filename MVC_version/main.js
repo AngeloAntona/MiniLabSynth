@@ -225,7 +225,7 @@ openLogin.addEventListener('click', () => {
 });
 
 closeLogin.addEventListener('click', () => {
-    if (j >= 90 && !loginDiv.classList.contains('hidden')) {
+    if (j > 90 && !loginDiv.classList.contains('hidden')) {
         opacityIntervals.forEach(interval => {
             clearInterval(interval);
         });
