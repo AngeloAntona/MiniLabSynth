@@ -160,9 +160,9 @@ function createMenu() {
 }
 
 function hideMenu() {
-    view.hideContextMenu(controller.displayMenu);
-    view.hideContextMenu(controller.knobMenu);
-    view.hideContextMenu(controller.saveMenu);
+    hideContextMenu(controller.displayMenu);
+    hideContextMenu(controller.knobMenu);
+    hideContextMenu(controller.saveMenu);
 }
 function preventRightClick() {
     mainFrame.addEventListener('contextmenu', (event) => { event.preventDefault(); });
@@ -182,7 +182,7 @@ function presetSelectClick(operation) {
         const selectedOption = controller.presetOptions.value;
         if (operation === 'choice') { controller.setPreset(selectedOption); }
         else if (operation === 'delete') { deletePreset(selectedOption); }
-        view.hideContextMenu(controller.displayMenu);
+        hideContextMenu(controller.displayMenu);
     });
 }
 
@@ -194,7 +194,7 @@ function pedalSelectClick(knobIdx) {
             if (selectedOption === 'Direct') { choice = 1; }
             else if (selectedOption === 'Inverse') { choice = -1; }
             model.connectPedalKnobs(knobIdx, choice);
-            view.hideContextMenu(controller.knobMenu);
+            hideContextMenu(controller.knobMenu);
         }
     });
 }
@@ -214,20 +214,20 @@ function handleContextMenu(htmlElement, event) {
     const x = event.clientX;
     const y = event.clientY;
     if (htmlElement.getAttribute('id') === 'loadPreset') {
-        view.showContextMenu(controller.displayMenu, x, y - 110);
+        showContextMenu(controller.displayMenu, x, y - 110);
         presetSelectClick('choice');
     }
     else if (htmlElement.classList.value === 'knob') {
-        view.showContextMenu(controller.knobMenu, x, y);
+        showContextMenu(controller.knobMenu, x, y);
         const idx = htmlElement.getAttribute('idx');
         pedalSelectClick(idx);
     }
     else if (htmlElement.getAttribute('id') === 'savePreset') {
         controller.nameInput.value = '';
-        view.showContextMenu(controller.saveMenu, x, y + 10);
+        showContextMenu(controller.saveMenu, x, y + 10);
     }
     else if (htmlElement.getAttribute('id') === 'deletePreset') {
-        view.showContextMenu(controller.displayMenu, x, y);
+        showContextMenu(controller.displayMenu, x, y);
         presetSelectClick('delete');
     }
 }
@@ -304,7 +304,7 @@ function renderLogOut() {
     controller.loginConfirm.style.color = 'black';
     controller.loginConfirm.style.fontSize = '350%'
     controller.simpleCircle2.style.backgroundColor = 'red';
-        controller.simpleCircle1.style.backgroundColor = 'red';
+    controller.simpleCircle1.style.backgroundColor = 'red';
     controller.email.disabled = false;
     controller.password.disabled = false;
     controller.loginSubtitle.innerHTML = 'Log-in to your account.';
@@ -317,27 +317,27 @@ function renderLogOut() {
     });
 }
 
-function renderCloseLogin(){
+function renderCloseLogin() {
     if (j > 90 && !controller.loginDiv.classList.contains('hidden')) {
         opacityIntervals.forEach(interval => { clearInterval(interval); });
         for (let i = 100; i >= 0; i--) {
             console.log(j);
             j = i;
-            const timeout = setTimeout(() => { controller.loginDiv.style.opacity = i + '%' }, (700 - (i*7 )));
+            const timeout = setTimeout(() => { controller.loginDiv.style.opacity = i + '%' }, (700 - (i * 7)));
             opacityIntervals.push(timeout);
         }
         setTimeout(() => controller.loginDiv.classList.add('hidden'), 1000);
     }
 }
 
-function renderOpenLogin(){
+function renderOpenLogin() {
     if (j < 10 && controller.loginDiv.classList.contains('hidden')) {
         opacityIntervals.forEach(interval => { clearInterval(interval); });
         controller.loginDiv.classList.remove('hidden');
         for (let i = 0; i <= 100; i++) {
             console.log(j);
             j = i;
-            const timeout = setTimeout(() => { controller.loginDiv.style.opacity = (i) + '%'; }, i*7 );
+            const timeout = setTimeout(() => { controller.loginDiv.style.opacity = (i) + '%'; }, i * 7);
             opacityIntervals.push(timeout);
         }
     }
@@ -349,14 +349,14 @@ function renderLogIn() {
         controller.email.disabled = true;
         controller.password.disabled = true;
         controller.loginDiv.classList.add('hidden');
-        controller.loginConfirm.innerHTML = 'X';
-        controller.loginConfirm.style.fontSize = '330%'
-        controller.loginConfirm.color = 'rgb(8, 0, 35)'
-        controller.loginConfirm.style.backgroundColor = 'red';
         controller.loginSubtitle.innerHTML = 'Logged in';
         controller.simpleCircle2.style.backgroundColor = 'green';
         controller.simpleCircle1.style.backgroundColor = 'green';
-    }, 1000);
+    }, 700);
+    controller.loginConfirm.innerHTML = 'X';
+    controller.loginConfirm.style.fontSize = '330%'
+    controller.loginConfirm.color = 'rgb(8, 0, 35)'
+    controller.loginConfirm.style.backgroundColor = 'red';
     opacityIntervals.push(interval);
     controller.deletePresetButton.classList.remove('hidden');
     controller.deletePresetButton.classList.add('dbPresets');
@@ -364,4 +364,15 @@ function renderLogIn() {
     document.querySelectorAll('.dbPresets').forEach((element) => {
         element.style.marginTop = '30%';
     })
+}
+
+function hideContextMenu(contextMenu) {
+    contextMenu.classList.add('hidden');
+}
+
+function showContextMenu(contextMenu, x, y) {
+    contextMenu.style.position = 'absolute';
+    contextMenu.style.left = x + 'px';
+    contextMenu.style.top = y + 'px';
+    contextMenu.classList.remove('hidden');
 }

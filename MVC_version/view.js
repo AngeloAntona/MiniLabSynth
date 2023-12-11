@@ -48,18 +48,6 @@ class View {
         }
     }
 
-    //Menu-----------------------------------------------------------
-    hideContextMenu(contextMenu) {
-        contextMenu.classList.add('hidden');
-    }
-
-    showContextMenu(contextMenu, x, y) {
-        contextMenu.style.position = 'absolute';
-        contextMenu.style.left = x + 'px';
-        contextMenu.style.top = y + 'px';
-        contextMenu.classList.remove('hidden');
-    }
-
     //Knobs-----------------------------------------------------------
     rotateKnob(knob, rotation) {
         knob.children[0].style.transform = `rotate(${rotation * 2.7 - 135}deg)`;
