@@ -705,7 +705,7 @@ body {
     height: 60px;
     font-size: 350%;   
     border-radius: 50%;
-    transition: background-color 0.3s;
+    transition: background-color 2s;
     font-weight:bolder;
     transform: translate(1650%,940%);
 }

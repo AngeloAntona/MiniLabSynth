@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { getFirestore, collection, getDocs, doc, getDoc, addDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getFirestore, collection, getDocs, doc, getDoc, addDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 //Create functions.
 const audioModel = new AudioModel();
@@ -9,6 +9,130 @@ const view = new View(audioModel);
 const controller = new Controller(model, view);
 const midiController = new MidiController(controller);
 const touchController = new TouchController(controller);
+
+//Firebase access.
+const firebaseApp = initializeApp({
+    apiKey: "AIzaSyBuBF7NGE3NozDgLmOetor5RhLHIn-t9Wo",
+    authDomain: "analogkeylab.firebaseapp.com",
+    projectId: "analogkeylab",
+    storageBucket: "analogkeylab.appspot.com",
+    messagingSenderId: "488767414188",
+    appId: "1:488767414188:web:31bdaade37455d46ae2409",
+    measurementId: "G-T34VCS71PG"
+});
+const db = getFirestore(firebaseApp);
+const auth = getAuth(firebaseApp);
+
+let defaultPresets = [];
+let userPresets = [];
+
+// Console loginConfirm. 
+onAuthStateChanged(auth, (user) => {
+    if (user != null) {
+        getUserPresets();
+        console.log('Current User:', user);
+    } else {
+        userPresets.length=0;
+        getDefaultPresets();
+        console.log('No user');
+    }
+});
+
+
+
+
+function getDefaultPresets() {
+    const defCollectionRef = collection(db, 'defaultPresets');
+    getDocs(defCollectionRef)
+        .then((querySnapshot) => {
+            defaultPresets.length=0;
+            querySnapshot.forEach((doc) => {
+                const preset = doc.data();
+                defaultPresets.push(preset);
+            });
+            model.setPresets(defaultPresets);
+            controller.renderAll();
+        })
+        .catch((error) => { console.error('Error getting defaultPresets: ', error); });
+}
+
+function getUserPresets() {
+    const user = auth.currentUser;
+    const userId = user ? user.uid : null;
+    const userCollectionRef = collection(db, 'users', 'presets/'+userId);
+    getDocs(userCollectionRef)
+        .then((querySnapshot) => {
+            userPresets.length=0;
+            querySnapshot.forEach((doc) => {
+                const preset = doc.data();
+                userPresets.push(preset);
+            });
+            const presets=[...defaultPresets, ...userPresets];
+            model.setPresets(presets);
+            controller.renderAll();
+        })
+        .catch((error) => { console.error('Error getting userPresets: ', error); });
+}
+
+function loginWithMail() {
+    const emailData = email.value;
+    const passwordData = password.value;
+    console.log(emailData, passwordData);
+    logOut();
+    signInWithEmailAndPassword(auth, emailData, passwordData)
+        .then((userCredential) => {
+            opacityIntervals.forEach(interval => { clearInterval(interval); });
+            const user = userCredential.user;
+            setTimeout(() => {
+                for (let i = 100; i >= 0; i--) {
+                    j = i;
+                    const timeout = setTimeout(() => { loginDiv.style.opacity = i + '%' }, (1000 - (i * 10)));
+                    opacityIntervals.push(timeout);
+                }
+            }, 200)
+            const interval = setTimeout(() => {
+                email.disabled = true;
+                password.disabled = true;
+                loginDiv.classList.add('hidden');
+                loginConfirm.innerHTML='X';
+                loginConfirm.color='rgb(13, 0, 53)'
+                loginConfirm.style.backgroundColor='red';
+                loginSubtitle.innerHTML = 'Logged in';
+                simpleCircle2.style.backgroundColor = 'green';
+                simpleCircle1.style.backgroundColor = 'green';
+            }, 1000);
+            opacityIntervals.push(interval);
+        })
+        .catch((error) => { console.error('Login error:', error.code, error.message); });
+}
+
+function logOut(){
+    signOut(auth);
+    loginConfirm.innerHTML='↵';
+    loginConfirm.style.backgroundColor='white';
+    loginConfirm.style.color='black';
+    email.disabled = false;
+    password.disabled = false;
+}
+
+function pushNewUserPreset(newPreset) {
+    const user = auth.currentUser;
+    const userId = user ? user.uid : null;
+    const userCollectionRef = collection(db, 'users', 'presets/'+userId);
+    addDoc(userCollectionRef, newPreset)
+        .then((docRef) => {
+            console.log('Document written with ID:', docRef.id);
+        })
+        .catch((error) => {
+            console.error('Error adding document:', error);
+        });
+}
+
+function handleNewPreset(newPreset) {
+    // If the user is logged in with email and password
+    pushNewUserPreset(newPreset);
+    getUserPresets();
+}
 
 //Importing HTML elements.
 const loadPresetButton = document.getElementById("loadPreset");
@@ -24,76 +148,9 @@ const loginConfirm = document.getElementById('loginConfirm');
 const loginDiv = document.getElementById('loginDiv');
 const email = document.getElementById('email');
 const password = document.getElementById('password');
+const savePresetButton = document.getElementById("savePreset");
 const opacityIntervals = [];
-
-//Firebase access.
-const firebaseApp = initializeApp({
-    apiKey: "AIzaSyBuBF7NGE3NozDgLmOetor5RhLHIn-t9Wo",
-    authDomain: "analogkeylab.firebaseapp.com",
-    projectId: "analogkeylab",
-    storageBucket: "analogkeylab.appspot.com",
-    messagingSenderId: "488767414188",
-    appId: "1:488767414188:web:31bdaade37455d46ae2409",
-    measurementId: "G-T34VCS71PG"
-});
-const db = getFirestore(firebaseApp);
-const auth = getAuth(firebaseApp);
-onAuthStateChanged(auth, (user) => {
-    if (user != null) {
-        console.log('Logged in.');
-    } else {
-        console.log('No user');
-    }
-});
-
-let collRef = '';
-
-function updatePresets() {
-    collRef = collection(db, 'defaultPresets');
-    getDocs(collRef)
-        .then((querySnapshot) => {
-            const defaultPresets = [];
-            querySnapshot.forEach((doc) => {
-                const presets = doc.data();
-                defaultPresets.push(presets);
-            });
-            model.setPresets(defaultPresets);
-            controller.renderAll();
-        })
-        .catch((error) => { console.error('Error getting documents: ', error); });
-}
-
-function login() {
-    const emailData = email.value;
-    const passwordData = password.value;
-    signInWithEmailAndPassword(auth, emailData, passwordData)
-        .then((userCredential) => {
-            opacityIntervals.forEach(interval => { clearInterval(interval); });
-            loginSubtitle.innerHTML = 'Logged in';
-            const accessIndicatorDot = openLogin.children[0]
-            accessIndicatorDot.style.backgroundColor = 'green';
-            const user = userCredential.user;
-            for (let i = 100; i >= 0; i--) {
-                j = i;
-                const timeout = setTimeout(() => { loginDiv.style.opacity = i + '%' }, (1000 - (i * 10)));
-                opacityIntervals.push(timeout);
-            }
-            const interval = setTimeout(() => loginDiv.classList.add('hidden'), 1000);
-            loginConfirm.classList.add('hidden');
-            simpleCircle2.style.backgroundColor = 'green';
-            simpleCircle1.style.backgroundColor = 'green';
-            opacityIntervals.push(interval);
-            console.log('Logged in:', user);
-        })
-        .catch((error) => {
-            // Handle login errors
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.error('Login error:', errorCode, errorMessage);
-            alert('Login error:', errorCode, errorMessage);
-        });
-}
-
+let j = 0;
 
 //Menu functions.
 function createMenu() {
@@ -107,6 +164,11 @@ function createMenu() {
     });
 }
 
+function hideMenu() {
+    view.hideContextMenu(controller.displayMenu);
+    view.hideContextMenu(controller.knobMenu);
+    view.hideContextMenu(saveMenu);
+}
 function preventRightClick() {
     mainFrame.addEventListener('contextmenu', (event) => { event.preventDefault(); });
 }
@@ -152,15 +214,8 @@ function documentClick() {
     });
 }
 
-function hideMenu() {
-    view.hideContextMenu(controller.displayMenu);
-    view.hideContextMenu(controller.knobMenu);
-    view.hideContextMenu(saveMenu);
-}
-
 function handleContextMenu(htmlElement, event) {
     hideMenu();
-    console.log(event);
     const x = event.clientX;
     const y = event.clientY;
     if (htmlElement.getAttribute('id') === 'loadPreset') {
@@ -174,23 +229,20 @@ function handleContextMenu(htmlElement, event) {
     }
     else if (htmlElement.getAttribute('id') === 'savePreset') {
         nameInput.value = '';
-        console.log(x, y)
         view.showContextMenu(saveMenu, x, y + 10);
     }
 }
 
 function displayLoadMenu() {
     loadPresetButton.addEventListener('click', (event) => {
-        console.log('loadButton');
         createMenu();
         handleContextMenu(loadPresetButton, event);
     });
 }
 
-const savePresetButton = document.getElementById("savePreset");
+
 function displaySaveMenu() {
     savePresetButton.addEventListener('click', (event) => {
-        console.log('saveButton');
         handleContextMenu(savePresetButton, event);
     });
 }
@@ -199,44 +251,57 @@ function savePresetSelectClick() {
     const presetNamesubmit = document.getElementById('submitButton');
     presetNamesubmit.addEventListener('click', () => {
         hideMenu();
-        const newPreset = model.exportCurrentPreset(nameInput.value);
-        addDoc(collRef, newPreset)
-            .then((docRef) => { console.log('Document written with ID: ', docRef.id); })
-            .catch((error) => { console.error('Error adding document: ', error); });
-        updatePresets();
+        const newPreset= model.exportCurrentPreset(nameInput.value);
+        handleNewPreset(newPreset);
     });
 }
 
-loginConfirm.addEventListener('click', () => {
-    login();
-});
-
-let j = 0;
-openLogin.addEventListener('click', () => {
-    if (j < 10 && loginDiv.classList.contains('hidden')) {
-        opacityIntervals.forEach(interval => { clearInterval(interval); });
-        loginDiv.classList.remove('hidden');
-        for (let i = 0; i <= 100; i++) {
-            j = i;
-            const timeout = setTimeout(() => { loginDiv.style.opacity = (i) + '%'; }, i * 10);
-            opacityIntervals.push(timeout);
+//Login functions
+function manageLoginConfirm() {
+    loginConfirm.addEventListener('click', () => {
+        if(loginConfirm.innerHTML==='↵'){
+            loginWithMail();
         }
-    }
-});
-
-closeLogin.addEventListener('click', () => {
-    if (j > 90 && !loginDiv.classList.contains('hidden')) {
-        opacityIntervals.forEach(interval => {
-            clearInterval(interval);
-        });
-        for (let i = 100; i >= 0; i--) {
-            j = i;
-            const timeout = setTimeout(() => { loginDiv.style.opacity = i + '%' }, (1000 - (i * 10)));
-            opacityIntervals.push(timeout);
+        else{
+            logOut();
         }
-        setTimeout(() => loginDiv.classList.add('hidden'), 1000);
-    }
-});
+    });
+}
+
+function openCloseLoginMenu() {
+    openLogin.addEventListener('click', () => {
+        if (j < 10 && loginDiv.classList.contains('hidden')) {
+            opacityIntervals.forEach(interval => { clearInterval(interval); });
+            loginDiv.classList.remove('hidden');
+            for (let i = 0; i <= 100; i++) {
+                j = i;
+                const timeout = setTimeout(() => { loginDiv.style.opacity = (i) + '%'; }, i * 10);
+                opacityIntervals.push(timeout);
+            }
+        }
+    });
+
+    closeLogin.addEventListener('click', () => {
+        if (j > 90 && !loginDiv.classList.contains('hidden')) {
+            opacityIntervals.forEach(interval => {
+                clearInterval(interval);
+            });
+            for (let i = 100; i >= 0; i--) {
+                j = i;
+                const timeout = setTimeout(() => { loginDiv.style.opacity = i + '%' }, (1000 - (i * 10)));
+                opacityIntervals.push(timeout);
+            }
+            setTimeout(() => loginDiv.classList.add('hidden'), 1000);
+        }
+    });
+}
+
+
+
+
+
+
+
 
 savePresetSelectClick();
 preventRightClick();
@@ -244,4 +309,29 @@ knobContextMenu();
 documentClick();
 displaySaveMenu();
 displayLoadMenu();
-updatePresets();
+getDefaultPresets();
+manageLoginConfirm();
+openCloseLoginMenu();
+
+
+
+
+
+
+//function createUserCollection(userCollectionName){
+    //     create a collection named as indicated in userCollectionName
+    // }
+    
+    // function pushNewUserPreset(collectionReference,newPreset){
+    //     push the NewPreset into the collection indicated by the collectionReference.
+    // }
+    
+    // function handleNewPreset(newPreset){
+    //     if (the user is logged with email and passord) {
+    //         userCollectionName = '${userId}-presets';
+    //         if (the collection called userCollectionName = '${userId}-presets' does not exists) { createUserCollection(userCollectionName); }
+    //         collectionReference = getCollectionReference();
+    //         pushNewUserPreset(collectionReference, newPreset);
+    //     }
+    //     else alert('You're not logged in with email.');
+// }
