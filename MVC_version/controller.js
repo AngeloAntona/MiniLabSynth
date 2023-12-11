@@ -8,6 +8,23 @@ class Controller {
         this.currentKnobIndex = -1;
         // Get references to the clickable objects and the context menus
 
+
+        this.loadPresetButton = document.getElementById("loadPreset");
+        this.deletePresetButton = document.getElementById("deletePreset");
+        this.nameInput = document.getElementById('nameInput');
+        this.saveMenu = document.getElementById('savePresetMenu');
+        this.loginSubtitle = document.getElementById('loginSubtitle');
+        this.openLogin = document.getElementById('openLogin');
+        this.simpleCircle1 = document.getElementById('simpleCircle1');
+        this.simpleCircle2 = document.getElementById('simpleCircle2');
+        this.closeLogin = document.getElementById('closeLogin');
+        this.loginConfirm = document.getElementById('loginConfirm');
+        this.loginDiv = document.getElementById('loginDiv');
+        this.email = document.getElementById('email');
+        this.password = document.getElementById('password');
+        this.savePresetButton = document.getElementById("savePreset");
+
+
         this.mainFrame = document.getElementById('mainFrame');
         this.display = document.getElementById('display');
         this.knobs = document.querySelectorAll('.knob');
@@ -86,7 +103,7 @@ class Controller {
 
     //Menu-----------------------------------------------------------
 
-    
+
     setPreset(selectedOption) {
         let bool = false;
         this.model.presets.forEach((preset) => {

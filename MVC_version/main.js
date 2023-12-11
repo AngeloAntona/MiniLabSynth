@@ -2,7 +2,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getFirestore, collection, getDocs, doc, getDoc, addDoc, setDoc, query, where, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-//Create functions.
+//Model.
 const audioModel = new AudioModel();
 const model = new Model(audioModel);
 const view = new View(audioModel);
@@ -10,7 +10,6 @@ const controller = new Controller(model, view);
 const midiController = new MidiController(controller);
 const touchController = new TouchController(controller);
 
-//Firebase access.
 const firebaseApp = initializeApp({
     apiKey: "AIzaSyBuBF7NGE3NozDgLmOetor5RhLHIn-t9Wo",
     authDomain: "analogkeylab.firebaseapp.com",
@@ -23,10 +22,12 @@ const firebaseApp = initializeApp({
 const db = getFirestore(firebaseApp);
 const auth = getAuth(firebaseApp);
 
-let defaultPresets = [];
-let userPresets = [];
+function logOut() {
+    signOut(auth);
+    renderLogOut();
+}
+logOut();
 
-// Console loginConfirm. 
 onAuthStateChanged(auth, (user) => {
     if (user != null) {
         getUserPresets();
@@ -38,8 +39,10 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-
-
+let defaultPresets = [];
+let userPresets = [];
+const opacityIntervals = [];
+let j = 0;
 
 function getDefaultPresets() {
     const defCollectionRef = collection(db, 'defaultPresets');
@@ -59,109 +62,69 @@ function getDefaultPresets() {
 function getUserPresets() {
     const user = auth.currentUser;
     const userId = user ? user.uid : null;
-    const userCollectionRef = collection(db, 'users', 'presets/' + userId);
-    getDocs(userCollectionRef)
-        .then((querySnapshot) => {
-            userPresets.length = 0;
-            querySnapshot.forEach((doc) => {
-                const preset = doc.data();
-                userPresets.push(preset);
-            });
-            const presets = [...defaultPresets, ...userPresets];
-            model.setPresets(presets);
-            controller.renderAll();
-        })
-        .catch((error) => { console.error('Error getting userPresets: ', error); });
+    if (userId) {
+        const userCollectionRef = collection(db, 'users', 'presets/' + userId);
+        getDocs(userCollectionRef)
+            .then((querySnapshot) => {
+                userPresets.length = 0;
+                querySnapshot.forEach((doc) => {
+                    const preset = doc.data();
+                    userPresets.push(preset);
+                });
+                const presets = [...defaultPresets, ...userPresets];
+                model.setPresets(presets);
+                controller.renderAll();
+            })
+            .catch((error) => { console.error('Error getting userPresets: ', error); });
+    }
 }
 
 function loginWithMail() {
-    const emailData = email.value;
-    const passwordData = password.value;
+    const emailData = controller.email.value;
+    const passwordData = controller.password.value;
     console.log(emailData, passwordData);
     logOut();
     signInWithEmailAndPassword(auth, emailData, passwordData)
-        .then((userCredential) => {
-            opacityIntervals.forEach(interval => { clearInterval(interval); });
-            const user = userCredential.user;
-            setTimeout(() => {
-                for (let i = 100; i >= 0; i--) {
-                    j = i;
-                    const timeout = setTimeout(() => { loginDiv.style.opacity = i + '%' }, (1000 - (i * 10)));
-                    opacityIntervals.push(timeout);
-                }
-            }, 200)
-            const interval = setTimeout(() => {
-                email.disabled = true;
-                password.disabled = true;
-                loginDiv.classList.add('hidden');
-                loginConfirm.innerHTML = 'X';
-                loginConfirm.style.fontSize = '330%'
-                loginConfirm.color = 'rgb(8, 0, 35)'
-                loginConfirm.style.backgroundColor = 'red';
-                loginSubtitle.innerHTML = 'Logged in';
-                simpleCircle2.style.backgroundColor = 'green';
-                simpleCircle1.style.backgroundColor = 'green';
-            }, 1000);
-            opacityIntervals.push(interval);
-            deletePresetButton.classList.remove('hidden');
-            deletePresetButton.classList.add('dbPresets');
-            loadPresetButton.style.transform = 'translate(0%,-130%)';
-            document.querySelectorAll('.dbPresets').forEach((element) => {
-                element.style.marginTop = '30%';
-            })
-
+        .then(() => {
+            renderLogIn();
         })
         .catch((error) => { console.error('Login error:', error.code, error.message); });
-}
-
-function logOut() {
-    signOut(auth);
-    loginConfirm.innerHTML = '↵';
-    loginConfirm.style.backgroundColor = 'white';
-    loginConfirm.style.color = 'black';
-    loginConfirm.style.fontSize = '350%'
-    email.disabled = false;
-    password.disabled = false;
-
-    deletePresetButton.classList.remove('dbPresets');
-    deletePresetButton.classList.add('hidden');
-    loadPresetButton.style.transform = 'translate(0%,0%)';
-    document.querySelectorAll('.dbPresets').forEach((element) => {
-        element.style.marginTop = '28%';
-    })
 }
 
 function pushNewUserPreset(newPreset) {
     const user = auth.currentUser;
     const userId = user ? user.uid : null;
-    const userCollectionRef = collection(db, 'users', 'presets/' + userId);
-    addDoc(userCollectionRef, newPreset)
-        .then((docRef) => {
-            console.log('Document written with ID:', docRef.id);
-        })
-        .catch((error) => {
-            console.error('Error adding document:', error);
-        });
+    if (userId) {
+        const userCollectionRef = collection(db, 'users', 'presets/' + userId);
+        addDoc(userCollectionRef, newPreset)
+            .then((docRef) => {
+                console.log('Document written with ID:', docRef.id);
+            })
+            .catch((error) => {
+                console.error('Error adding document:', error);
+            });
+    }
+    else { alert('You must log-in first!'); }
 }
 
 async function deletePreset(preset) {
-    let isDefaultPreset=false;
+    let isDefaultPreset = false;
     defaultPresets.forEach((defaultPreset) => {
         if (defaultPreset.name === preset) {
             alert('Cannot delete a default preset.');
-            isDefaultPreset=true;
+            isDefaultPreset = true;
         }
     });
-    if(!isDefaultPreset){
+    if (!isDefaultPreset) {
         try {
             const user = auth.currentUser;
             const userId = user ? user.uid : null;
             const userCollectionRef = collection(db, 'users', 'presets/' + userId);
-    
+
             // Query for the document with the specified name
             const q = query(userCollectionRef, where('name', '==', preset));
             const querySnapshot = await getDocs(q);
-    
+
             // If the document exists, delete it
             if (querySnapshot.size > 0) {
                 querySnapshot.forEach(async (doc) => {
@@ -184,26 +147,7 @@ function handleNewPreset(newPreset) {
     getUserPresets();
 }
 
-//Importing HTML elements.
-const loadPresetButton = document.getElementById("loadPreset");
-const deletePresetButton = document.getElementById("deletePreset");
-const displayMenu = document.getElementById('displayMenu');
-const nameInput = document.getElementById('nameInput');
-const saveMenu = document.getElementById('savePresetMenu');
-const loginSubtitle = document.getElementById('loginSubtitle');
-const openLogin = document.getElementById('openLogin');
-const simpleCircle1 = document.getElementById('simpleCircle1');
-const simpleCircle2 = document.getElementById('simpleCircle2');
-const closeLogin = document.getElementById('closeLogin');
-const loginConfirm = document.getElementById('loginConfirm');
-const loginDiv = document.getElementById('loginDiv');
-const email = document.getElementById('email');
-const password = document.getElementById('password');
-const savePresetButton = document.getElementById("savePreset");
-const opacityIntervals = [];
-let j = 0;
-
-//Menu functions.
+//Controller: menu functions.
 function createMenu() {
     controller.options = model.getPresetNames();
     controller.presetOptions.innerHTML = '';
@@ -218,7 +162,7 @@ function createMenu() {
 function hideMenu() {
     view.hideContextMenu(controller.displayMenu);
     view.hideContextMenu(controller.knobMenu);
-    view.hideContextMenu(saveMenu);
+    view.hideContextMenu(controller.saveMenu);
 }
 function preventRightClick() {
     mainFrame.addEventListener('contextmenu', (event) => { event.preventDefault(); });
@@ -259,9 +203,9 @@ function documentClick() {
     document.addEventListener('click', (e) => {
         if (!controller.displayMenu.contains(e.target) &&
             !controller.knobMenu.contains(e.target) &&
-            !saveMenu.contains(e.target) &&
-            !savePresetButton.contains(e.target) &&
-            !loadPresetButton.contains(e.target)) { hideMenu(); }
+            !controller.saveMenu.contains(e.target) &&
+            !controller.savePresetButton.contains(e.target) &&
+            !controller.loadPresetButton.contains(e.target)) { hideMenu(); }
     });
 }
 
@@ -279,8 +223,8 @@ function handleContextMenu(htmlElement, event) {
         pedalSelectClick(idx);
     }
     else if (htmlElement.getAttribute('id') === 'savePreset') {
-        nameInput.value = '';
-        view.showContextMenu(saveMenu, x, y + 10);
+        controller.nameInput.value = '';
+        view.showContextMenu(controller.saveMenu, x, y + 10);
     }
     else if (htmlElement.getAttribute('id') === 'deletePreset') {
         view.showContextMenu(controller.displayMenu, x, y);
@@ -289,22 +233,22 @@ function handleContextMenu(htmlElement, event) {
 }
 
 function displayLoadMenu() {
-    loadPresetButton.addEventListener('click', (event) => {
+    controller.loadPresetButton.addEventListener('click', (event) => {
         createMenu();
-        handleContextMenu(loadPresetButton, event);
-    });
-}
-function displayDeleteMenu() {
-    deletePresetButton.addEventListener('contextmenu', (event) => {
-        createMenu();
-        handleContextMenu(deletePresetButton, event);
+        handleContextMenu(controller.loadPresetButton, event);
     });
 }
 
+function displayDeleteMenu() {
+    controller.deletePresetButton.addEventListener('contextmenu', (event) => {
+        createMenu();
+        handleContextMenu(controller.deletePresetButton, event);
+    });
+}
 
 function displaySaveMenu() {
-    savePresetButton.addEventListener('click', (event) => {
-        handleContextMenu(savePresetButton, event);
+    controller.savePresetButton.addEventListener('click', (event) => {
+        handleContextMenu(controller.savePresetButton, event);
     });
 }
 
@@ -312,15 +256,15 @@ function savePresetSelectClick() {
     const presetNamesubmit = document.getElementById('submitButton');
     presetNamesubmit.addEventListener('click', () => {
         hideMenu();
-        const newPreset = model.exportCurrentPreset(nameInput.value);
+        const newPreset = model.exportCurrentPreset(controller.nameInput.value);
         handleNewPreset(newPreset);
     });
 }
 
-//Login functions
+// Controller: login functions.
 function manageLoginConfirm() {
-    loginConfirm.addEventListener('click', () => {
-        if (loginConfirm.innerHTML === '↵') {
+    controller.loginConfirm.addEventListener('click', () => {
+        if (controller.loginConfirm.innerHTML === '↵') {
             loginWithMail();
         }
         else {
@@ -330,44 +274,17 @@ function manageLoginConfirm() {
 }
 
 function openCloseLoginMenu() {
-    openLogin.addEventListener('click', () => {
-        if (j < 10 && loginDiv.classList.contains('hidden')) {
-            opacityIntervals.forEach(interval => { clearInterval(interval); });
-            loginDiv.classList.remove('hidden');
-            for (let i = 0; i <= 100; i++) {
-                j = i;
-                const timeout = setTimeout(() => { loginDiv.style.opacity = (i) + '%'; }, i * 10);
-                opacityIntervals.push(timeout);
-            }
-        }
+    controller.openLogin.addEventListener('click', () => {
+        renderOpenLogin();
     });
 
-    closeLogin.addEventListener('click', () => {
-        if (j > 90 && !loginDiv.classList.contains('hidden')) {
-            opacityIntervals.forEach(interval => {
-                clearInterval(interval);
-            });
-            for (let i = 100; i >= 0; i--) {
-                j = i;
-                const timeout = setTimeout(() => { loginDiv.style.opacity = i + '%' }, (1000 - (i * 10)));
-                opacityIntervals.push(timeout);
-            }
-            setTimeout(() => loginDiv.classList.add('hidden'), 1000);
-        }
+    controller.closeLogin.addEventListener('click', () => {
+        renderCloseLogin();
     });
 }
 
-
-
-
-
-
-
+// Controller: attach event listeners.
 displayDeleteMenu();
-
-
-
-
 savePresetSelectClick();
 preventRightClick();
 knobContextMenu();
@@ -379,6 +296,72 @@ manageLoginConfirm();
 openCloseLoginMenu();
 
 
+// View.
 
+function renderLogOut() {
+    controller.loginConfirm.innerHTML = '↵';
+    controller.loginConfirm.style.backgroundColor = 'white';
+    controller.loginConfirm.style.color = 'black';
+    controller.loginConfirm.style.fontSize = '350%'
+    controller.simpleCircle2.style.backgroundColor = 'red';
+        controller.simpleCircle1.style.backgroundColor = 'red';
+    controller.email.disabled = false;
+    controller.password.disabled = false;
+    controller.loginSubtitle.innerHTML = 'Log-in to your account.';
 
+    controller.deletePresetButton.classList.remove('dbPresets');
+    controller.deletePresetButton.classList.add('hidden');
+    controller.loadPresetButton.style.transform = 'translate(0%,0%)';
+    document.querySelectorAll('.dbPresets').forEach((element) => {
+        element.style.marginTop = '28%';
+    });
+}
 
+function renderCloseLogin(){
+    if (j > 90 && !controller.loginDiv.classList.contains('hidden')) {
+        opacityIntervals.forEach(interval => { clearInterval(interval); });
+        for (let i = 100; i >= 0; i--) {
+            console.log(j);
+            j = i;
+            const timeout = setTimeout(() => { controller.loginDiv.style.opacity = i + '%' }, (700 - (i*7 )));
+            opacityIntervals.push(timeout);
+        }
+        setTimeout(() => controller.loginDiv.classList.add('hidden'), 1000);
+    }
+}
+
+function renderOpenLogin(){
+    if (j < 10 && controller.loginDiv.classList.contains('hidden')) {
+        opacityIntervals.forEach(interval => { clearInterval(interval); });
+        controller.loginDiv.classList.remove('hidden');
+        for (let i = 0; i <= 100; i++) {
+            console.log(j);
+            j = i;
+            const timeout = setTimeout(() => { controller.loginDiv.style.opacity = (i) + '%'; }, i*7 );
+            opacityIntervals.push(timeout);
+        }
+    }
+}
+
+function renderLogIn() {
+    renderCloseLogin();
+    const interval = setTimeout(() => {
+        controller.email.disabled = true;
+        controller.password.disabled = true;
+        controller.loginDiv.classList.add('hidden');
+        controller.loginConfirm.innerHTML = 'X';
+        controller.loginConfirm.style.fontSize = '330%'
+        controller.loginConfirm.color = 'rgb(8, 0, 35)'
+        controller.loginConfirm.style.backgroundColor = 'red';
+        controller.loginSubtitle.innerHTML = 'Logged in';
+        controller.simpleCircle2.style.backgroundColor = 'green';
+        controller.simpleCircle1.style.backgroundColor = 'green';
+    }, 1000);
+    opacityIntervals.push(interval);
+    controller.deletePresetButton.classList.remove('hidden');
+    controller.deletePresetButton.classList.add('dbPresets');
+    controller.loadPresetButton.style.transform = 'translate(0%,-130%)';
+    document.querySelectorAll('.dbPresets').forEach((element) => {
+        element.style.marginTop = '30%';
+    })
+}

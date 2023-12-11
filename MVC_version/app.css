@@ -658,7 +658,7 @@ body {
 .simpleCircle{
     border-radius: 50%;
     background-color: red;
-    transition: background-color 5s;
+    transition: background-color 1.3s;
     width: 30px;
     height: 30px;
 }
@@ -698,6 +698,7 @@ body {
     font-size: 300%;
     border-radius: 50px;
     transform: translate(75%,450%);
+    cursor:text;
 }
 #password{
     margin-top: 5%;
@@ -713,6 +714,7 @@ body {
     transition: background-color 2s;
     font-weight:bolder;
     transform: translate(1650%,940%);
+    cursor:pointer;
 }
 
 #mainTitle{
