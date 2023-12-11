@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { getFirestore, collection, getDocs, doc, getDoc, addDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getFirestore, collection, getDocs, doc, getDoc, addDoc, setDoc, query, where, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 //Create functions.
 const audioModel = new AudioModel();
@@ -32,7 +32,7 @@ onAuthStateChanged(auth, (user) => {
         getUserPresets();
         console.log('Current User:', user);
     } else {
-        userPresets.length=0;
+        userPresets.length = 0;
         getDefaultPresets();
         console.log('No user');
     }
@@ -45,7 +45,7 @@ function getDefaultPresets() {
     const defCollectionRef = collection(db, 'defaultPresets');
     getDocs(defCollectionRef)
         .then((querySnapshot) => {
-            defaultPresets.length=0;
+            defaultPresets.length = 0;
             querySnapshot.forEach((doc) => {
                 const preset = doc.data();
                 defaultPresets.push(preset);
@@ -59,15 +59,15 @@ function getDefaultPresets() {
 function getUserPresets() {
     const user = auth.currentUser;
     const userId = user ? user.uid : null;
-    const userCollectionRef = collection(db, 'users', 'presets/'+userId);
+    const userCollectionRef = collection(db, 'users', 'presets/' + userId);
     getDocs(userCollectionRef)
         .then((querySnapshot) => {
-            userPresets.length=0;
+            userPresets.length = 0;
             querySnapshot.forEach((doc) => {
                 const preset = doc.data();
                 userPresets.push(preset);
             });
-            const presets=[...defaultPresets, ...userPresets];
+            const presets = [...defaultPresets, ...userPresets];
             model.setPresets(presets);
             controller.renderAll();
         })
@@ -94,31 +94,47 @@ function loginWithMail() {
                 email.disabled = true;
                 password.disabled = true;
                 loginDiv.classList.add('hidden');
-                loginConfirm.innerHTML='X';
-                loginConfirm.color='rgb(13, 0, 53)'
-                loginConfirm.style.backgroundColor='red';
+                loginConfirm.innerHTML = 'X';
+                loginConfirm.style.fontSize = '330%'
+                loginConfirm.color = 'rgb(8, 0, 35)'
+                loginConfirm.style.backgroundColor = 'red';
                 loginSubtitle.innerHTML = 'Logged in';
                 simpleCircle2.style.backgroundColor = 'green';
                 simpleCircle1.style.backgroundColor = 'green';
             }, 1000);
             opacityIntervals.push(interval);
+            deletePresetButton.classList.remove('hidden');
+            deletePresetButton.classList.add('dbPresets');
+            loadPresetButton.style.transform = 'translate(0%,-130%)';
+            document.querySelectorAll('.dbPresets').forEach((element) => {
+                element.style.marginTop = '30%';
+            })
+
         })
         .catch((error) => { console.error('Login error:', error.code, error.message); });
 }
 
-function logOut(){
+function logOut() {
     signOut(auth);
-    loginConfirm.innerHTML='↵';
-    loginConfirm.style.backgroundColor='white';
-    loginConfirm.style.color='black';
+    loginConfirm.innerHTML = '↵';
+    loginConfirm.style.backgroundColor = 'white';
+    loginConfirm.style.color = 'black';
+    loginConfirm.style.fontSize = '350%'
     email.disabled = false;
     password.disabled = false;
+
+    deletePresetButton.classList.remove('dbPresets');
+    deletePresetButton.classList.add('hidden');
+    loadPresetButton.style.transform = 'translate(0%,0%)';
+    document.querySelectorAll('.dbPresets').forEach((element) => {
+        element.style.marginTop = '28%';
+    })
 }
 
 function pushNewUserPreset(newPreset) {
     const user = auth.currentUser;
     const userId = user ? user.uid : null;
-    const userCollectionRef = collection(db, 'users', 'presets/'+userId);
+    const userCollectionRef = collection(db, 'users', 'presets/' + userId);
     addDoc(userCollectionRef, newPreset)
         .then((docRef) => {
             console.log('Document written with ID:', docRef.id);
@@ -126,6 +142,40 @@ function pushNewUserPreset(newPreset) {
         .catch((error) => {
             console.error('Error adding document:', error);
         });
+}
+
+async function deletePreset(preset) {
+    let isDefaultPreset=false;
+    defaultPresets.forEach((defaultPreset) => {
+        if (defaultPreset.name === preset) {
+            alert('Cannot delete a default preset.');
+            isDefaultPreset=true;
+        }
+    });
+    if(!isDefaultPreset){
+        try {
+            const user = auth.currentUser;
+            const userId = user ? user.uid : null;
+            const userCollectionRef = collection(db, 'users', 'presets/' + userId);
+    
+            // Query for the document with the specified name
+            const q = query(userCollectionRef, where('name', '==', preset));
+            const querySnapshot = await getDocs(q);
+    
+            // If the document exists, delete it
+            if (querySnapshot.size > 0) {
+                querySnapshot.forEach(async (doc) => {
+                    await deleteDoc(doc.ref);
+                    console.log('Document deleted successfully:', doc.id);
+                });
+                getUserPresets();
+            } else {
+                console.error('Document not found with name:', preset.name);
+            }
+        } catch (error) {
+            console.error('Error deleting document:', error);
+        }
+    }
 }
 
 function handleNewPreset(newPreset) {
@@ -136,6 +186,7 @@ function handleNewPreset(newPreset) {
 
 //Importing HTML elements.
 const loadPresetButton = document.getElementById("loadPreset");
+const deletePresetButton = document.getElementById("deletePreset");
 const displayMenu = document.getElementById('displayMenu');
 const nameInput = document.getElementById('nameInput');
 const saveMenu = document.getElementById('savePresetMenu');
@@ -182,11 +233,11 @@ function knobContextMenu() {
     });
 }
 
-function presetSelectClick() {
+function presetSelectClick(operation) {
     controller.presetSelect.addEventListener('click', () => {
         const selectedOption = controller.presetOptions.value;
-        if (selectedOption != 'NewPreset') { controller.setPreset(selectedOption); }
-        else { alert('New preset: ' + selectedOption); }
+        if (operation === 'choice') { controller.setPreset(selectedOption); }
+        else if (operation === 'delete') { deletePreset(selectedOption); }
         view.hideContextMenu(controller.displayMenu);
     });
 }
@@ -220,7 +271,7 @@ function handleContextMenu(htmlElement, event) {
     const y = event.clientY;
     if (htmlElement.getAttribute('id') === 'loadPreset') {
         view.showContextMenu(controller.displayMenu, x, y - 110);
-        presetSelectClick();
+        presetSelectClick('choice');
     }
     else if (htmlElement.classList.value === 'knob') {
         view.showContextMenu(controller.knobMenu, x, y);
@@ -231,12 +282,22 @@ function handleContextMenu(htmlElement, event) {
         nameInput.value = '';
         view.showContextMenu(saveMenu, x, y + 10);
     }
+    else if (htmlElement.getAttribute('id') === 'deletePreset') {
+        view.showContextMenu(controller.displayMenu, x, y);
+        presetSelectClick('delete');
+    }
 }
 
 function displayLoadMenu() {
     loadPresetButton.addEventListener('click', (event) => {
         createMenu();
         handleContextMenu(loadPresetButton, event);
+    });
+}
+function displayDeleteMenu() {
+    deletePresetButton.addEventListener('contextmenu', (event) => {
+        createMenu();
+        handleContextMenu(deletePresetButton, event);
     });
 }
 
@@ -251,7 +312,7 @@ function savePresetSelectClick() {
     const presetNamesubmit = document.getElementById('submitButton');
     presetNamesubmit.addEventListener('click', () => {
         hideMenu();
-        const newPreset= model.exportCurrentPreset(nameInput.value);
+        const newPreset = model.exportCurrentPreset(nameInput.value);
         handleNewPreset(newPreset);
     });
 }
@@ -259,10 +320,10 @@ function savePresetSelectClick() {
 //Login functions
 function manageLoginConfirm() {
     loginConfirm.addEventListener('click', () => {
-        if(loginConfirm.innerHTML==='↵'){
+        if (loginConfirm.innerHTML === '↵') {
             loginWithMail();
         }
-        else{
+        else {
             logOut();
         }
     });
@@ -302,6 +363,10 @@ function openCloseLoginMenu() {
 
 
 
+displayDeleteMenu();
+
+
+
 
 savePresetSelectClick();
 preventRightClick();
@@ -317,21 +382,3 @@ openCloseLoginMenu();
 
 
 
-
-//function createUserCollection(userCollectionName){
-    //     create a collection named as indicated in userCollectionName
-    // }
-    
-    // function pushNewUserPreset(collectionReference,newPreset){
-    //     push the NewPreset into the collection indicated by the collectionReference.
-    // }
-    
-    // function handleNewPreset(newPreset){
-    //     if (the user is logged with email and passord) {
-    //         userCollectionName = '${userId}-presets';
-    //         if (the collection called userCollectionName = '${userId}-presets' does not exists) { createUserCollection(userCollectionName); }
-    //         collectionReference = getCollectionReference();
-    //         pushNewUserPreset(collectionReference, newPreset);
-    //     }
-    //     else alert('You're not logged in with email.');
-// }

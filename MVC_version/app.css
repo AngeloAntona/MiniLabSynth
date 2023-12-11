@@ -571,6 +571,7 @@ body {
     border-radius: 50%;
     margin: 0.3%;
     margin-top: 28%;
+    /*margin-top: 30%;*/
     margin-left: 1.3%;
     font-size: 200%;
     cursor: pointer;
@@ -592,6 +593,10 @@ body {
 
 #savePreset{
     transform: translate(0%,130%);
+}
+
+#deletePreset{
+    font-family: roboto;
 }
 
 #nameInput{
