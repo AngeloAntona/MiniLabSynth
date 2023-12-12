@@ -34,6 +34,7 @@ onAuthStateChanged(auth, (user) => {
         console.log('Current User:', user);
     } else {
         userPresets.length = 0;
+        renderLogOut();
         getDefaultPresets();
         console.log('No user');
     }
@@ -163,6 +164,7 @@ function hideMenu() {
     hideContextMenu(controller.displayMenu);
     hideContextMenu(controller.knobMenu);
     hideContextMenu(controller.saveMenu);
+    hideContextMenu(controller.deleteMenu);
 }
 function preventRightClick() {
     mainFrame.addEventListener('contextmenu', (event) => { event.preventDefault(); });
@@ -211,7 +213,9 @@ function documentClick() {
         if (!controller.displayMenu.contains(e.target) &&
             !controller.knobMenu.contains(e.target) &&
             !controller.saveMenu.contains(e.target) &&
+            !controller.deleteMenu.contains(e.target) &&
             !controller.savePresetButton.contains(e.target) &&
+            !controller.deletePresetButton.contains(e.target) &&
             !controller.loadPresetButton.contains(e.target)) { hideMenu(); }
     });
 }
