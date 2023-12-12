@@ -148,14 +148,14 @@ function handleNewPreset(newPreset) {
 }
 
 //Controller: menu functions.
-function createMenu() {
+function createMenu(htmlElement) {
     controller.options = model.getPresetNames();
-    controller.presetOptions.innerHTML = '';
+    htmlElement.innerHTML = '';
     controller.options.forEach((optionText) => {
         const option = document.createElement('option');
         option.value = optionText;
         option.textContent = optionText.toUpperCase();
-        controller.presetOptions.appendChild(option);
+        htmlElement.appendChild(option);
     });
 }
 
@@ -177,12 +177,19 @@ function knobContextMenu() {
     });
 }
 
-function presetSelectClick(operation) {
+function presetSelectClick() {
     controller.presetSelect.addEventListener('click', () => {
         const selectedOption = controller.presetOptions.value;
-        if (operation === 'choice') { controller.setPreset(selectedOption); }
-        else if (operation === 'delete') { deletePreset(selectedOption); }
+        controller.setPreset(selectedOption);
         hideContextMenu(controller.displayMenu);
+    });
+}
+
+function presetDeleteClick() {
+    controller.presetDelete.addEventListener('click', () => {
+        const selectedOption = controller.presetDelOptions.value;
+        deletePreset(selectedOption);
+        hideContextMenu(controller.deleteMenu);
     });
 }
 
@@ -210,12 +217,11 @@ function documentClick() {
 }
 
 function handleContextMenu(htmlElement, event) {
-    hideMenu();
     const x = event.clientX;
     const y = event.clientY;
     if (htmlElement.getAttribute('id') === 'loadPreset') {
         showContextMenu(controller.displayMenu, x, y - 110);
-        presetSelectClick('choice');
+        presetSelectClick();
     }
     else if (htmlElement.classList.value === 'knob') {
         showContextMenu(controller.knobMenu, x, y);
@@ -227,21 +233,21 @@ function handleContextMenu(htmlElement, event) {
         showContextMenu(controller.saveMenu, x, y + 10);
     }
     else if (htmlElement.getAttribute('id') === 'deletePreset') {
-        showContextMenu(controller.displayMenu, x, y);
-        presetSelectClick('delete');
+        showContextMenu(controller.deleteMenu, x, y);
+        presetDeleteClick();
     }
 }
 
 function displayLoadMenu() {
     controller.loadPresetButton.addEventListener('click', (event) => {
-        createMenu();
+        createMenu(controller.presetOptions);
         handleContextMenu(controller.loadPresetButton, event);
     });
 }
 
 function displayDeleteMenu() {
     controller.deletePresetButton.addEventListener('contextmenu', (event) => {
-        createMenu();
+        createMenu(controller.presetDelOptions);
         handleContextMenu(controller.deletePresetButton, event);
     });
 }
@@ -321,21 +327,20 @@ function renderCloseLogin() {
     if (j > 90 && !controller.loginDiv.classList.contains('hidden')) {
         opacityIntervals.forEach(interval => { clearInterval(interval); });
         for (let i = 100; i >= 0; i--) {
-            console.log(j);
             j = i;
             const timeout = setTimeout(() => { controller.loginDiv.style.opacity = i + '%' }, (700 - (i * 7)));
             opacityIntervals.push(timeout);
         }
-        setTimeout(() => controller.loginDiv.classList.add('hidden'), 1000);
+        setTimeout(() => controller.loginDiv.classList.add('hidden'), 700);
     }
 }
 
 function renderOpenLogin() {
     if (j < 10 && controller.loginDiv.classList.contains('hidden')) {
+        controller.loginDiv.style.opacity =0;
         opacityIntervals.forEach(interval => { clearInterval(interval); });
         controller.loginDiv.classList.remove('hidden');
         for (let i = 0; i <= 100; i++) {
-            console.log(j);
             j = i;
             const timeout = setTimeout(() => { controller.loginDiv.style.opacity = (i) + '%'; }, i * 7);
             opacityIntervals.push(timeout);
@@ -367,12 +372,15 @@ function renderLogIn() {
 }
 
 function hideContextMenu(contextMenu) {
-    contextMenu.classList.add('hidden');
+    for (let i = 100; i >= 0; i--) { setTimeout(() => { contextMenu.style.opacity = i + '%' }, (300 - (i * 3))); }
+    setTimeout(() => contextMenu.classList.add('hidden'), 300);
 }
 
 function showContextMenu(contextMenu, x, y) {
     contextMenu.style.position = 'absolute';
     contextMenu.style.left = x + 'px';
     contextMenu.style.top = y + 'px';
+    contextMenu.style.opacity =0;
     contextMenu.classList.remove('hidden');
+    for (let i = 0; i <= 100; i++) { setTimeout(() => { contextMenu.style.opacity = (i) + '%'; }, i * 3); }
 }

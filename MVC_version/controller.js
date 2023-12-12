@@ -23,7 +23,11 @@ class Controller {
         this.email = document.getElementById('email');
         this.password = document.getElementById('password');
         this.savePresetButton = document.getElementById("savePreset");
+        this.deleteMenu=document.getElementById('deleteMenu');
+        this.presetDelete=document.getElementById('presetDelete');
+        this.presetDelOptions=document.getElementById('presetDelOptions');
 
+        
 
         this.mainFrame = document.getElementById('mainFrame');
         this.display = document.getElementById('display');
