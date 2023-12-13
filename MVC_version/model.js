@@ -2,7 +2,6 @@
 class Model {
     constructor(audioModel) {
         this.audioModel = audioModel;
-        this.presets=[];
 
         //Preset parameters
         this.knobsLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -29,96 +28,34 @@ class Model {
         this.split = false;
         this.splitArp = false;
 
-        this.waveformOptions = ['sine', 'square', 'sawtooth', 'triangle'];
 
+        this.waveformOptions = ['sine', 'square', 'sawtooth', 'triangle'];
+        this.presets=[];
+        this.presMapKnob1=0;
+        this.presMapKnob2=1;
         this.isSustainPedalDown = false;
         this.pressedBass = {};
         this.sustainedBass = {};
-
-
         this.pressedKeys = {};
         this.sustainedNotes = {};
-
         this.arpeggiatorIndexes = [];
         this.sustainedArp = [];
         this.arpeggiatorNotes = {};
         this.pads = [0, 0, 0, 0, 0, 0, 0, 0];
-
         this.activeArp = false;
         this.arpInterval = null;
         this.currentArpNote = 0;
         this.arpDecay = 80;
-
         this.keyWheel = false;
         this.arpWheel = false;
         this.bassWheel = false;
-        this.currentWheel = 0;
-
-        // this.defaultPreset = {
-        //     knobsLevel: [0.5, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.5, 1, 0, 0, 0, 0, 0, 0, 0.3, 0.3],
-        //     cntrlPedalLinks: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        //     activateBass: false,
-        //     activateKey: true,
-        //     currentOptionKeyIndex: 0,
-        //     currentOptionBassIndex: 0,
-        //     currentOptionArpIndex: 0,
-        //     bassOctave: 0.5,
-        //     keyOctave: 1,
-        //     bassSustain: true,
-        //     keySustain: true,
-        //     bassMono: true,
-        //     keyMono: false,
-        //     bassWeel: false,
-        //     split: false,
-        //     activeArp: false,
-        //     arpOctave: 1,
-        //     arpSustain: false,
-        //     splitArp: false,
-        //     keyWheel: true,
-        //     arpWheel: false,
-        //     bassWheel: false,
-
-        // };
-
-        // this.psychoPreset = {
-        //     knobsLevel: [0.5, 0.5, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0.14, 0, 0, 0, 0.25, 0.3, 0.75],
-        //     cntrlPedalLinks: [0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
-        //     activateBass: true,
-        //     activateKey: true,
-        //     currentOptionKeyIndex: 1,
-        //     currentOptionBassIndex: 2,
-        //     currentOptionArpIndex: 0,
-        //     bassOctave: 0.25,
-        //     keyOctave: 1,
-        //     bassSustain: true,
-        //     keySustain: false,
-        //     bassMono: true,
-        //     keyMono: false,
-        //     bassWeel: false,
-        //     split: true,
-        //     activeArp: true,
-        //     arpOctave: 0.5,
-        //     arpSustain: true,
-        //     splitArp: false,
-        //     keyWheel: true,
-        //     arpWheel: false,
-        //     bassWheel: false,
-        // };
-
-        // Apply the  default preset to the model   
+        this.currentWheel = 0;  
         this.refreshAudioParameters();
     }
 
     setPresets(presets){
         this.presets=presets;
         this.setPreset(this.presets[0]);
-    }
-    getPresetNames(){
-        const names = [];
-        this.presets.forEach(preset => {
-            names.push(preset.name);
-        });
-        return names;
     }
 
     setPreset(preset) {
@@ -150,8 +87,40 @@ class Model {
         this.setWaveform();
     }
 
+    setPresMapKnob(presMapKnob1, presMapKnob2){
+        this.presMapKnob1=presMapKnob1;
+        this.presMapKnob2=presMapKnob2;
+    }
 
-    // Function to save the current state as a JSON string
+    getPresetNames(){
+        const names = [];
+        this.presets.forEach(preset => {
+            names.push(preset.name);
+        });
+        return names;
+    }
+
+    getOctave(inst) {
+        if (inst == 'key') { return Math.log2(this.keyOctave); }
+        else if (inst == 'bass') { return Math.log2(this.bassOctave); }
+        else if (inst == 'arp') { return Math.log2(this.arpOctave); }
+    }
+
+    getKeyShift(note) {
+        const oct = Math.log2(this.keyOctave);
+        return note + (Math.round(oct) * 12);
+    }
+
+    getBassShift(note) {
+        const oct = Math.log2(this.bassOctave);
+        return note + (Math.round(oct) * 12);
+    }
+
+    getArpShift(note) {
+        const arpOct = Math.log2(this.arpOctave);
+        return (Number(note) + Number(Math.round(arpOct) * 12));
+    }
+
     exportCurrentPreset(name) {
         const preset = {
             name: name,
@@ -191,6 +160,33 @@ class Model {
         this.split = !this.split;
     }
 
+    flipMono(inst) {
+        if (inst === 'key') {
+            this.keyMono = !this.keyMono;
+        }
+        else if (inst === 'bass') {
+            this.bassMono = !this.bassMono;
+        }
+    }
+    
+    flipSust(inst) {
+        if (inst === 'key') {
+            this.keySustain = !this.keySustain;
+        }
+        else if (inst === 'bass') {
+            this.bassSustain = !this.bassSustain;
+        }
+        else if (inst === 'arp') {
+            this.arpSustain = !this.arpSustain;
+        }
+    }
+
+    flipWheel(inst) {
+        if (inst === 'key') { this.keyWheel = !this.keyWheel; }
+        else if (inst === 'bass') { this.bassWheel = !this.bassWheel; }
+        else if (inst === 'arp') { this.arpWheel = !this.arpWheel; }
+    }
+
     updateKnobLevel(idx, value) {
         this.knobsLevel[idx] = value;
     }
@@ -213,26 +209,6 @@ class Model {
         if (inst === 'arp') {
             if (direction === '+' && this.arpOctave <= 8) { this.arpOctave = this.arpOctave * 2 }
             else if (direction === '-' && this.arpOctave >= 1 / 8) { this.arpOctave = this.arpOctave / 2 }
-        }
-    }
-
-    flipMono(inst) {
-        if (inst === 'key') {
-            this.keyMono = !this.keyMono;
-        }
-        else if (inst === 'bass') {
-            this.bassMono = !this.bassMono;
-        }
-    }
-    flipSust(inst) {
-        if (inst === 'key') {
-            this.keySustain = !this.keySustain;
-        }
-        else if (inst === 'bass') {
-            this.bassSustain = !this.bassSustain;
-        }
-        else if (inst === 'arp') {
-            this.arpSustain = !this.arpSustain;
         }
     }
 
@@ -262,25 +238,13 @@ class Model {
         }
     }
 
-    getOctave(inst) {
-        if (inst == 'key') { return Math.log2(this.keyOctave); }
-        else if (inst == 'bass') { return Math.log2(this.bassOctave); }
-        else if (inst == 'arp') { return Math.log2(this.arpOctave); }
-    }
-
-    getKeyShift(note) {
-        const oct = Math.log2(this.keyOctave);
-        return note + (Math.round(oct) * 12);
-    }
-
-    getBassShift(note) {
-        const oct = Math.log2(this.bassOctave);
-        return note + (Math.round(oct) * 12);
-    }
-
-    getArpShift(note) {
-        const arpOct = Math.log2(this.arpOctave);
-        return (Number(note) + Number(Math.round(arpOct) * 12));
+    handleWheel(value) {
+        if (this.arpWheel) { this.audioModel.frequencyValues[2] = Math.pow(2, 2 * (value - 64) / (64 * 12)); }
+        else { this.audioModel.frequencyValues[2] = 1; }
+        if (this.keyWheel) { this.audioModel.frequencyValues[0] = Math.pow(2, 2 * (value - 64) / (64 * 12)); }
+        else { this.audioModel.frequencyValues[0] = 1; }
+        if (this.bassWheel) { this.audioModel.frequencyValues[1] = Math.pow(2, 2 * (value - 64) / (64 * 12)); }
+        else { this.audioModel.frequencyValues[1] = 1; }
     }
 
     handleSustain(note) {
@@ -301,23 +265,6 @@ class Model {
             return { display, ledSelector, keySelector };
         }
         return null;
-    }
-
-
-    flipWheel(inst) {
-        if (inst === 'key') { this.keyWheel = !this.keyWheel; }
-        else if (inst === 'bass') { this.bassWheel = !this.bassWheel; }
-        else if (inst === 'arp') { this.arpWheel = !this.arpWheel; }
-    }
-
-
-    handleWheel(value) {
-        if (this.arpWheel) { this.audioModel.frequencyValues[2] = Math.pow(2, 2 * (value - 64) / (64 * 12)); }
-        else { this.audioModel.frequencyValues[2] = 1; }
-        if (this.keyWheel) { this.audioModel.frequencyValues[0] = Math.pow(2, 2 * (value - 64) / (64 * 12)); }
-        else { this.audioModel.frequencyValues[0] = 1; }
-        if (this.bassWheel) { this.audioModel.frequencyValues[1] = Math.pow(2, 2 * (value - 64) / (64 * 12)); }
-        else { this.audioModel.frequencyValues[1] = 1; }
     }
 
     handleNoteOff(note) {
@@ -377,7 +324,6 @@ class Model {
         }
         else if (inst === 'arp') { this.sustainedArp.length = 0; }
     }
-
 
     handleBassSustain(note) {
         if (note && this.isSustainPedalDown) {
@@ -464,7 +410,6 @@ class Model {
         this.arpInterval = setTimeout(() => { this.playArpSequence(currentIndex) }, Math.max(1, Math.max(this.arpDecay, 3 * this.knobsLevel[16] * 120)));
     }
 
-
     handleArpeggioOn(note) {
         if (!this.arpeggiatorIndexes.includes(note)) {
             const indexToInsert = this.arpeggiatorIndexes.findIndex(existingNote => existingNote > note);
@@ -482,7 +427,6 @@ class Model {
             this.arpInterval = null;
         }
     }
-
 
     handlePadOn(note) {
         if (this.pads[note] === 0) {
@@ -517,7 +461,6 @@ class Model {
     }
 
     handleControlChangeEvent(device, controllerNumber, value) {
-
         if ((device === 'midiKey' || device === 'touch') && (this.cntrlPedalLinks[controllerNumber - 19] === 0)) {
             const id = controllerNumber - 19;
             this.knobsLevel[id] = value / 127;
@@ -543,6 +486,11 @@ class Model {
         this.cntrlPedalLinks[knobNumber] = mode;
     }
 
+    handleMidiPresetChange(idx){
+        if(idx===1){this.setPreset(this.presets[this.presMapKnob1]);}
+        else if (idx===2){this.setPreset(this.presets[this.presMapKnob2]);}
+    }
+
     refreshAudioParameters() {
         this.audioModel.setMainGain(this.knobsLevel[0]);
         this.audioModel.setInstGain(this.knobsLevel[1]);
@@ -550,13 +498,13 @@ class Model {
         this.audioModel.setHiPassFilterFrequency(this.knobsLevel[3] * 14990 + 100, 'key');
         this.audioModel.setDelayTime(this.knobsLevel[4], 'key');
         this.audioModel.setDelayFeedback(this.knobsLevel[5], 'key');
+        this.audioModel.setKeyGain(this.knobsLevel[7]);
         this.audioModel.setArpGain(this.knobsLevel[8]);
         this.audioModel.setDrumGain(this.knobsLevel[9]);
         this.audioModel.setLowPassFilterFrequency(this.knobsLevel[10] * 14990 + 100, 'bass');
         this.audioModel.setHiPassFilterFrequency(this.knobsLevel[11] * 14990 + 100, 'bass');
         this.audioModel.setDelayTime(this.knobsLevel[12], 'bass');
         this.audioModel.setDelayFeedback(this.knobsLevel[13], 'bass');
-        this.audioModel.setKeyGain(this.knobsLevel[17]);
-        this.audioModel.setBassGain(this.knobsLevel[18]);
+        this.audioModel.setBassGain(this.knobsLevel[15]);
     }
 }

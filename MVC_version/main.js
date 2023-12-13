@@ -165,7 +165,9 @@ function hideMenu() {
     hideContextMenu(controller.knobMenu);
     hideContextMenu(controller.saveMenu);
     hideContextMenu(controller.deleteMenu);
+    hideContextMenu(controller.presetMappingMenu);
 }
+
 function preventRightClick() {
     mainFrame.addEventListener('contextmenu', (event) => { event.preventDefault(); });
 }
@@ -176,6 +178,20 @@ function knobContextMenu() {
             controller.currentKnobIndex = knob.getAttribute('idx');
             handleContextMenu(knob, event);
         });
+    });
+}
+
+function presetMappingClick() {
+    controller.selectMappingButton.addEventListener('click', () => {
+        let choice1;
+        let choice2;
+        const presets = [...defaultPresets, ...userPresets];
+        presets.forEach((preset, idx) => {
+            if (preset.name === controller.presetMappingOptions1.value) { choice1 = idx; }
+            else if (preset.name === controller.presetMappingOptions2.value) { choice2 = idx; }
+        });
+        controller.handleMidiMappingPresetChange(choice1, choice2);
+        hideContextMenu(controller.presetMappingMenu);
     });
 }
 
@@ -207,15 +223,17 @@ function pedalSelectClick(knobIdx) {
         }
     });
 }
-
+    
 function documentClick() {
     document.addEventListener('click', (e) => {
         if (!controller.displayMenu.contains(e.target) &&
+            !controller.presetMappingMenu.contains(e.target) &&
             !controller.knobMenu.contains(e.target) &&
             !controller.saveMenu.contains(e.target) &&
             !controller.deleteMenu.contains(e.target) &&
             !controller.savePresetButton.contains(e.target) &&
             !controller.deletePresetButton.contains(e.target) &&
+            !controller.selectMappingButton.contains(e.target) &&
             !controller.loadPresetButton.contains(e.target)) { hideMenu(); }
     });
 }
@@ -233,13 +251,30 @@ function handleContextMenu(htmlElement, event) {
         pedalSelectClick(idx);
     }
     else if (htmlElement.getAttribute('id') === 'savePreset') {
-        controller.nameInput.value = '';
-        showContextMenu(controller.saveMenu, x, y + 10);
+        if (!htmlElement.classList.contains('hidden')) {
+            controller.nameInput.value = '';
+            showContextMenu(controller.saveMenu, x, y + 10);
+        }
+        else { hideContextMenu(controller.saveMenu); }
+
     }
     else if (htmlElement.getAttribute('id') === 'deletePreset') {
         showContextMenu(controller.deleteMenu, x, y);
         presetDeleteClick();
     }
+    else if (htmlElement.getAttribute('id') === 'display') {
+        showContextMenu(controller.presetMappingMenu, x, y);
+        presetMappingClick();
+    }
+}
+
+function displayPresetMappingMenu() {
+    controller.display.addEventListener('contextmenu', (event) => {
+        console.log('ok');
+        createMenu(controller.presetMappingOptions1);
+        createMenu(controller.presetMappingOptions2);
+        handleContextMenu(controller.display, event);
+    });
 }
 
 function displayLoadMenu() {
@@ -294,6 +329,7 @@ function openCloseLoginMenu() {
 }
 
 // Controller: attach event listeners.
+displayPresetMappingMenu();
 displayDeleteMenu();
 savePresetSelectClick();
 preventRightClick();
@@ -307,7 +343,6 @@ openCloseLoginMenu();
 
 
 // View.
-
 function renderLogOut() {
     controller.loginConfirm.innerHTML = '↵';
     controller.loginConfirm.style.backgroundColor = 'white';
@@ -341,7 +376,7 @@ function renderCloseLogin() {
 
 function renderOpenLogin() {
     if (j < 10 && controller.loginDiv.classList.contains('hidden')) {
-        controller.loginDiv.style.opacity =0;
+        controller.loginDiv.style.opacity = 0;
         opacityIntervals.forEach(interval => { clearInterval(interval); });
         controller.loginDiv.classList.remove('hidden');
         for (let i = 0; i <= 100; i++) {
@@ -384,7 +419,7 @@ function showContextMenu(contextMenu, x, y) {
     contextMenu.style.position = 'absolute';
     contextMenu.style.left = x + 'px';
     contextMenu.style.top = y + 'px';
-    contextMenu.style.opacity =0;
+    contextMenu.style.opacity = 0;
     contextMenu.classList.remove('hidden');
     for (let i = 0; i <= 100; i++) { setTimeout(() => { contextMenu.style.opacity = (i) + '%'; }, i * 3); }
 }

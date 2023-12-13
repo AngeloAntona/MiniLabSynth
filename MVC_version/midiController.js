@@ -59,8 +59,8 @@ class MidiController {
                     this.controller.handleSustain();
                 }
             }
-            else if (controllerNumber === 113) { this.controller.turnOn('key'); }
-            else if (controllerNumber === 115) { this.controller.turnOn('bass'); }
+            else if (controllerNumber === 113) { this.controller.handleMidiPresetChange(1); }
+            else if (controllerNumber === 115) { this.controller.handleMidiPresetChange(2); }
             else {
                 // Handle MIDI control change events (knob rotations)
                 this.controller.handleControlChangeEvent('midiKey', controllerNumber, value);

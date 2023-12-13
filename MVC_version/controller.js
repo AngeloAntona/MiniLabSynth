@@ -1,14 +1,14 @@
 // controller.js
 class Controller {
-    constructor(model, view, presets) {
-
-        // Initialize the controller
+    constructor(model, view) {
         this.model = model;
         this.view = view;
-        this.currentKnobIndex = -1;
+
         // Get references to the clickable objects and the context menus
-
-
+        this.selectMappingButton=document.getElementById('selectMappingButton');
+        this.presetMappingMenu=document.getElementById('presetMappingMenu');
+        this.presetMappingOptions1=document.getElementById('presetMappingOptions1');
+        this.presetMappingOptions2=document.getElementById('presetMappingOptions2');
         this.loadPresetButton = document.getElementById("loadPreset");
         this.deletePresetButton = document.getElementById("deletePreset");
         this.nameInput = document.getElementById('nameInput');
@@ -23,20 +23,15 @@ class Controller {
         this.email = document.getElementById('email');
         this.password = document.getElementById('password');
         this.savePresetButton = document.getElementById("savePreset");
-        this.deleteMenu=document.getElementById('deleteMenu');
-        this.presetDelete=document.getElementById('presetDelete');
-        this.presetDelOptions=document.getElementById('presetDelOptions');
-
-        
-
+        this.deleteMenu = document.getElementById('deleteMenu');
+        this.presetDelete = document.getElementById('presetDelete');
+        this.presetDelOptions = document.getElementById('presetDelOptions');
         this.mainFrame = document.getElementById('mainFrame');
         this.display = document.getElementById('display');
         this.knobs = document.querySelectorAll('.knob');
         this.displayMenu = document.getElementById('displayMenu');
-
         this.knobMenu = document.getElementById('knobMenu');
         this.leds = document.querySelectorAll('.dot');
-
         this.keySelection = document.getElementById('keySelection');
         this.bassSelection = document.getElementById('bassSelection');
         this.keyOptions = document.getElementById('selectKeyType');
@@ -57,26 +52,21 @@ class Controller {
         this.whoFollow = document.getElementById("whoFollow");
         this.susArp = document.getElementById("susArp");
         this.arpVolumeIndicator = document.getElementById("ArpVolumeIndicator");
-
         this.splitIndicator = document.getElementById('splitIndicator');
         this.splitDot = document.getElementById('splitDot1');
-
-
         this.keys = document.querySelectorAll('.key');
         this.blacKeys = document.querySelectorAll('.blacKey');
         this.displayPads = document.querySelectorAll('.pad');
-
-        // Get references to the selection menu components
         this.presetOptions = document.getElementById('presetOptions');
         this.pedalOptions = document.getElementById('pedalOptions');
         this.presetSelect = document.getElementById('presetSelect');
         this.pedalSelect = document.getElementById('pedalSelect');
-
         this.knobElements = document.querySelectorAll('.knob');
+
         this.ledInterval = null;
+        this.currentKnobIndex = -1;
         this.renderAll();
         this.attachEventListeners();
-        console.log('Controller ok.');
     }
 
     attachEventListeners() {
@@ -99,15 +89,6 @@ class Controller {
         });
     }
 
-    flipPad(idx) {
-        let padRow = document.getElementById('padrow');
-        let pad = padRow.children[idx];
-        this.view.flipPad(pad);
-    }
-
-    //Menu-----------------------------------------------------------
-
-
     setPreset(selectedOption) {
         let bool = false;
         this.model.presets.forEach((preset) => {
@@ -120,20 +101,10 @@ class Controller {
         this.renderAll();
     }
 
-    //Knobs-----------------------------------------------------------
-
     synchronizeKnobs() {
         this.knobElements.forEach((knob, idx) => {
             this.view.rotateKnob(knob, this.model.knobsLevel[idx] * 100);
         });
-    }
-
-    //Play controls
-    handleSustain(note) {
-        this.model.handleSustain(note);
-        this.model.handleBassSustain(note);
-        this.model.handleArpSustain(note);
-        this.renderAll();
     }
 
     handleNoteOn(note) {
@@ -174,6 +145,17 @@ class Controller {
         this.renderAll();
     }
 
+    handleSustain(note) {
+        this.model.handleSustain(note);
+        this.model.handleBassSustain(note);
+        this.model.handleArpSustain(note);
+        this.renderAll();
+    }
+
+    manageChangeMode(inst) {
+        this.model.deleteAllNotes(inst);
+    }
+
     handlePadOn(note) {
         const result = this.model.handlePadOn(note);
         if (result) {
@@ -181,6 +163,7 @@ class Controller {
         }
         this.renderAll();
     }
+
     handlePadOff(note) {
         const result = this.model.handlePadOff(note);
         if (result) {
@@ -196,23 +179,52 @@ class Controller {
         }
     }
 
-    manageChangeMode(inst) {
-        this.model.deleteAllNotes(inst);
-    }
-
-
-    flipWheel(inst) {
-        this.model.flipWheel(inst);
-        this.renderAll();
-    }
-
     handleWheel(value) {
         this.model.handleWheel(value);
         this.renderAll();
     }
+
+    handleArp() {
+        this.model.activateInstrument('arp', '.');
+        if (this.model.activeArp) {
+            this.updateLedClasses();
+        }
+        else {
+            clearInterval(this.ledInterval);
+        }
+        this.renderAll();
+    }
+
+    handleMidiPresetChange(idx){
+        this.model.handleMidiPresetChange(idx);
+        this.renderAll();
+    }
+
+    handleMidiMappingPresetChange(buttonKnob1, buttonKnob2 ){
+        this.model.setPresMapKnob(buttonKnob1, buttonKnob2);
+    }
+
     shiftOctave(inst, direction) {
         this.model.shiftOctave(inst, direction);
         this.manageChangeMode(inst);
+        this.renderAll();
+    }
+
+    waveformChanger(inst) {
+        if (inst === 'key') { this.model.currentOptionKeyIndex = (this.model.currentOptionKeyIndex + 1) % this.model.waveformOptions.length; }
+        if (inst === 'bass') { this.model.currentOptionBassIndex = (this.model.currentOptionBassIndex + 1) % this.model.waveformOptions.length; }
+        if (inst === 'arp') { this.model.currentOptionArpIndex = (this.model.currentOptionArpIndex + 1) % this.model.waveformOptions.length; }
+        this.model.setWaveform();
+        this.renderAll();
+    }
+    
+    splitManager(inst) {
+        if (inst === 'arp') {
+            this.model.flipSplitArp();
+        }
+        else {
+            this.model.flipSplit();
+        }
         this.renderAll();
     }
 
@@ -221,11 +233,9 @@ class Controller {
         else if (inst == 'bass') { this.model.activateBass = !this.model.activateBass; }
         this.renderAll();
     }
-    waveformChanger(inst) {
-        if (inst === 'key') { this.model.currentOptionKeyIndex = (this.model.currentOptionKeyIndex + 1) % this.model.waveformOptions.length; }
-        if (inst === 'bass') { this.model.currentOptionBassIndex = (this.model.currentOptionBassIndex + 1) % this.model.waveformOptions.length; }
-        if (inst === 'arp') { this.model.currentOptionArpIndex = (this.model.currentOptionArpIndex + 1) % this.model.waveformOptions.length; }
-        this.model.setWaveform();
+
+    flipWheel(inst) {
+        this.model.flipWheel(inst);
         this.renderAll();
     }
 
@@ -233,9 +243,16 @@ class Controller {
         this.model.flipMono(inst);
         this.renderAll();
     }
+
     flipSustain(inst) {
         this.model.flipSust(inst);
         this.renderAll();
+    }
+
+    flipPad(idx) {
+        let padRow = document.getElementById('padrow');
+        let pad = padRow.children[idx];
+        this.view.flipPad(pad);
     }
 
     updateKeyClasses() {
@@ -285,34 +302,13 @@ class Controller {
         }, this.model.knobsLevel[4]);
     }
 
-    splitManager(inst) {
-        if (inst === 'arp') {
-            this.model.flipSplitArp();
-        }
-        else {
-            this.model.flipSplit();
-        }
-        this.renderAll();
-    }
-
     connectPedalKnobs(knobNumber, mode) {
         this.model.connectPedalKnobs(knobNumber, mode);
     }
 
-    handleArp() {
-        this.model.activateInstrument('arp', '.');
-        if (this.model.activeArp) {
-            this.updateLedClasses();
-        }
-        else {
-            clearInterval(this.ledInterval);
-        }
-        this.renderAll();
-    }
-
     renderAll() {
-        this.view.updateDisplayVolumeIndicator(this.keyVolumeIndicator, this.model.knobsLevel[17] * 100);
-        this.view.updateDisplayVolumeIndicator(this.bassVolumeIndicator, this.model.knobsLevel[18] * 100);
+        this.view.updateDisplayVolumeIndicator(this.keyVolumeIndicator, this.model.knobsLevel[7] * 100);
+        this.view.updateDisplayVolumeIndicator(this.bassVolumeIndicator, this.model.knobsLevel[15] * 100);
         this.view.updateDisplayVolumeIndicator(this.arpVolumeIndicator, this.model.knobsLevel[8] * 100);
         this.view.flipButton(document.getElementById('susKey'), this.model.keySustain);
         this.view.flipButton(document.getElementById('susBass'), this.model.bassSustain);

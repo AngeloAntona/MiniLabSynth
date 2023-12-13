@@ -14,7 +14,7 @@ class View {
         this.maxHistoryLength = 120;
         console.log('View ok.');
     }
-    //lights-----------------------------------------------------------
+
     flipLed(led) {
         if (led.classList.value === 'dot') {
             led.classList.add('activeDot');
@@ -24,7 +24,6 @@ class View {
             led.classList.toggle('activeDot');
         }
     }
-
 
     flipKey(keyElement, keyType) {
         if (keyElement.classList.value === keyType) {
@@ -48,7 +47,6 @@ class View {
         }
     }
 
-    //Knobs-----------------------------------------------------------
     rotateKnob(knob, rotation) {
         knob.children[0].style.transform = `rotate(${rotation * 2.7 - 135}deg)`;
         knob.children[1].innerHTML = rotation.toFixed(0);
@@ -57,7 +55,6 @@ class View {
         VolumeIndicator.innerHTML = value.toFixed(0);
     }
 
-    // Visualizer-----------------------------------------------------------
     drawAmplitudePlot(knobElements, displayPads, display, keyOptions, bassOptions, arpOptions, keyVolumeIndicator, bassVolumeIndicator,arpVolumeIndicator, buttons, leds) {
         const width = this.canvas.width;
         const height = this.canvas.height;
@@ -145,7 +142,6 @@ class View {
         requestAnimationFrame(() => this.animateAmplitudePlot(knobElements, displayPads, display, keyOptions, bassOptions,arpOptions, keyVolumeIndicator, bassVolumeIndicator,arpVolumeIndicator, buttons, leds));
     }
 
-
     interfaceColorGradient(knobElements, pads, display, keyOptions, bassOptions,arpOptions, keyVolumeIndicator, bassVolumeIndicator, arpVolumeIndicator, buttons, leds) {
         document.body.style.backgroundColor = this.colorBackgound;
         knobElements.forEach(knob => {
@@ -189,8 +185,6 @@ class View {
 
     }
 
-
-    //display-----------------------------------------------------------
     updateDisplayOctave(octave, displayObj) {
         displayObj.innerHTML = octave;
     }
@@ -220,6 +214,7 @@ class View {
             button.classList.toggle('monoActive');
         }
     }
+    
     updateSplitDot(dot, boolean) {
         if (boolean && dot.classList.value === 'splitDot') {
             dot.classList.add('splitDotActive');
