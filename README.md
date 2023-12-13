@@ -12,6 +12,7 @@ This code implements a small keyboard that can be played through mouse clicks or
 | MIDI keyboard input                       | :green_circle:  |
 | Sustain and ControlPedal MIDI input       | :green_circle:  |
 | Mappable control pedal                    | :green_circle:  |
+| Mappable knobButtons presets              | :green_circle:  |
 | Split of the keys                         | :green_circle:  |
 | Sound presets                             | :green_circle:  |
 | Presets write/read/delete on Firebase     | :green_circle:  |
