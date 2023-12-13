@@ -10,12 +10,12 @@ This code implements a small keyboard that can be played through mouse clicks or
 | Mini amplitude display                    | :green_circle:  |
 | Separate volumes for instruments          | :green_circle:  |
 | MIDI keyboard input                       | :green_circle:  |
-| Sustain and ControlPedal MIDI input       | :green_circle:  |
+| Sustain and Control Pedal MIDI input      | :green_circle:  |
 | Mappable control pedal                    | :green_circle:  |
 | Mappable knobButtons presets              | :green_circle:  |
-| Split of the keys                         | :green_circle:  |
+| Keyboard split                            | :green_circle:  |
 | Sound presets                             | :green_circle:  |
-| Presets write/read/delete on Firebase     | :green_circle:  |
+| Write/read/delete presets on Firebase     | :green_circle:  |
 | Playable remotely                         | :red_circle:    |
 | Configurable with other keyboards         | :red_circle:    |
 
