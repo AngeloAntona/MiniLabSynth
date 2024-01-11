@@ -97,7 +97,6 @@ The audio chain is constructed in the AudioModel class following the scheme repr
 
 ![AudioChain](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/AudioChain_(AudioModel).png)
 
-The audio chain is managed by the AudioModel class, which will be discussed in the following paragraph.
 
 ## Status
 | Main objectives                           | State           |
