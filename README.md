@@ -57,7 +57,12 @@ Let's now take a look at the code structure:
 
 ![codeOvrvHiLvl](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/codeStructureHiLvl.png)
 
-* **Main** &rarr; This Main class handles the interaction between the lower level classes and the Firebase server. Inside it, instances of other classes are constructed, and login is managed.
+* **Main** &rarr; This Main class handles the interaction between the lower level classes and the Firebase server. Inside it, instances of other classes are constructed, and login is managed. The main functionalities implemented through this class are:
+    * *Initialization and Controller Setup*: The script sets up various controllers (AudioModel, Model, View, Controller, MidiController, TouchController) for managing different aspects of the application.
+    * *Firebase Integration*: The script initializes Firebase with specific configuration parameters (API keys, domain, etc.). The Firestore database (db) and Firebase Authentication service (auth) are set up for data storage and user authentication.
+    * *User Authentication*: Functions like logOut, onAuthStateChanged, and loginWithMail manage user authentication states. Users can log in with email and password, and their authentication state changes are monitored to load appropriate data.
+    * *Data Retrieval and Management*: Functions getDefaultPresets and getUserPresets retrieve preset data from Firestore. This data is related to user-specific settings or configurations (presets). pushNewUserPreset and deletePreset allow adding and deleting user-specific presets in the Firestore database.
+
 * **MidiController** &rarr; The MidiController class acts as a bridge between MIDI hardware inputs and the software logic of your application. It interprets MIDI messages from a keyboard and a control pedal, translating them into actionable commands or data.
 * **TouchController** &rarr; TouchController provides a touch-based interface for interacting with various elements of the synthesizer. It translates user actions like clicking and dragging on screen elements into meaningful commands that sends to the controller.
 * **Controller** &rarr; the Controller class serves as an intermediary between the other controllers (midi and touch input), the model (data and logic) and the view (UI).
