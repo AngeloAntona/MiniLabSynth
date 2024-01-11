@@ -125,13 +125,13 @@ The audio chain is constructed in the AudioModel class following the scheme repr
 
 ### Database
 
-![FirebaseOverview](ReadmeResources/FirebaseOverview.png)
-
 As previously mentioned, this application uses the Firebase library to communicate with the Firebase server in order to download existing presets and save new ones. The database allows for two types of access:
 * **Anonymous Access**: Users who access anonymously can use all the default presets but cannot save or delete new ones.
 * **Email and Password Access**: Users who identify themselves via email and password have complete access (write, read, and delete) to only the presets they have created. No user can access the presets created by another user.
 
 The access rules specified above have been implemented directly in Firebase to prevent unauthorized access to the database.
+
+![FirebaseOverview](ReadmeResources/FirebaseOverview.png)
 
 # Additional information
 
