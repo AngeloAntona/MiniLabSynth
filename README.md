@@ -8,7 +8,7 @@ https://angeloantona.github.io/MiniLab/
 
 My code implements a 'synthesizer' that allows playing rhythmically and harmonically rich songs even if you're a soloist. This goal is achieved through the use of various oscillators, an arpeggiator, and a set of percussion instruments. Sounds can be combined at will by the user, who can use standard presets or create their own and save them in the cloud (Firebase). More details are provided below.
 
-![Legend](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/Legend.png)
+![Legend](ReadmeResources/Legend.png)
 
 * **Main Display** &rarr; Allows you to select the active instruments. For each instrument, you can modify the following options:
     - the oscillator to be emitted by the instrument;
@@ -45,9 +45,11 @@ My code implements a 'synthesizer' that allows playing rhythmically and harmonic
 
 ## Hardware configuration
 
+![hrdwConfigPic](ReadmeResources/hardwareConfigPic.png)
+
 The hardware required to use all the functionalities of this project includes:
 * **Arturia MiniLab MKII** &rarr; The project was specifically created for this small MIDI keyboard. It's possible to map the device's outputs by applying [this preset](Preset.minilabmk2) using the Arturia Midi Control Center app available [here](https://www.arturia.com/support/downloads&manuals).
-* **Control pedal adapter** &rarr; Typically, control pedals have an analog output. I used [this adapter](https://beatbars.com/en/dual-to-midi.html) to convert that output into a MIDI signal.
+* **Control pedal adapter** &rarr; Typically, control pedals (volume pedals) have an analog output. I used [this adapter](https://beatbars.com/en/dual-to-midi.html) to convert that output into a MIDI signal.
 
 ## Overview of the code structure
 
@@ -56,7 +58,7 @@ In developing the project, I haven't used external libraries except for Firebase
 Let's now take a look at the code structure:
 
 
-![codeOvrvHiLvl](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/codeStructureHiLvl.png)
+![codeOvrvHiLvl](ReadmeResources/codeStructureHiLvl.png)
 
 
 #### **Main** 
@@ -114,7 +116,7 @@ The informations described above are available also in the chart provided [here]
 
 The audio chain is constructed in the AudioModel class following the scheme represented below:
 
-![AudioChain](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/AudioChain_(AudioModel).png)
+![AudioChain](ReadmeResources/AudioChain_(AudioModel).png)
 
 
 ## Status
