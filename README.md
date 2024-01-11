@@ -16,19 +16,19 @@ My code implements a 'synthesizer' that allows playing rhythmically and harmonic
 * **Keyboard Split** &rarr; Allows you to split the keyboard in half, setting one instrument to the left and one to the right. It's possible to select whether the arpeggiator should also be split directly from the Main Display.
 
 * **Knobs Section** &rarr; The knobs make it easy to modify the parameters of the sounds emitted by the synth. Starting from the left and going through each column, the functions of the knobs are as follows:
-    *General gains:
-        -Instruments gain: allows you to manage the overall volume of the instrumental part.
-        -Drum gain: allows you to manage the volume of the drum.
-    *LPF: allows you to choose the cutoff frequency of the LPF.
-    *HPF: allows you to choose the cutoff frequency of the HPF.
-    *Instrument delay time: allows you to lengthen or shorten the time interval between one delay iteration and the next.
-    *Instrument delay volume: allows you to vary the volume of delay iterations. This way, you can create a delay or a reverb.
-    *Two free knobs: are left free for possible project updates.
-    *Single instrument volume: allows you to modify the volume of the individual instrument, in order to equalize the overall sound better.
-    *Arp Knobs:
+    * General gains:
+        - Instruments gain: allows you to manage the overall volume of the instrumental part.
+        - Drum gain: allows you to manage the volume of the drum.
+    * LPF: allows you to choose the cutoff frequency of the LPF.
+    * HPF: allows you to choose the cutoff frequency of the HPF.
+    * Instrument delay time: allows you to lengthen or shorten the time interval between one delay iteration and the next.
+    * Instrument delay volume: allows you to vary the volume of delay iterations. This way, you can create a delay or a reverb.
+    * Two free knobs: are left free for possible project updates.
+    * Single instrument volume: allows you to modify the volume of the individual instrument, in order to equalize the overall sound better.
+    * Arp Knobs:
         - Arp volume: allows you to set the volume of the individual arpeggiator.
         - Arp time: allows you to set the speed at which the arpeggio is executed.
-Each knob can be automated by mapping it to the control pedal. By right-clicking on any of the knobs, you can choose from the following options:
+    Each knob can be automated by mapping it to the control pedal. By right-clicking on any of the knobs, you can choose from the following options:
     - No mapping: the knob will not respond to the control pedal's movement.
     - Direct mapping: when the control pedal's value increases, the knob will increment the controlled parameter.
     - Inverse mapping: when the control pedal's value increases, the knob will decrease the controlled parameter.
