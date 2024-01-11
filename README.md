@@ -6,7 +6,9 @@ https://angeloantona.github.io/MiniLab/
 
 ## Functionalities overview
 
-My code implements a 'synthesizer' that allows playing rhythmically and harmonically rich songs even if you're a soloist. This goal is achieved through the use of various oscillators, an arpeggiator, and a set of percussion instruments. Sounds can be combined at will by the user, who can use standard presets or create their own and save them in the cloud (Firebase). More details are provided below.
+My code implements a 'synthesizer' that allows playing rhythmically and harmonically rich songs even if you're a soloist. This goal is achieved through the use of various oscillators, an arpeggiator, and a set of percussion instruments. Sounds can be combined at will by the user, who can use standard presets or create their own and save them in the cloud (Firebase). 
+You can find a video demonstration [here](youtube.com).
+More details are provided below.
 
 ![Legend](ReadmeResources/Legend.png)
 
@@ -15,6 +17,7 @@ My code implements a 'synthesizer' that allows playing rhythmically and harmonic
     - whether the instrument should play in mono or be polyphonic;
     - which MIDI commands the particular instrument should respond to (e.g., sustain, pitchWheel);
     - the octave at which the instrument should sound.
+    By right-clicking on this section, it is possible to link the pressing of each of the first two knobs on the left to the setting of a preset of your choice. This way, it will be more convenient to change configurations while playing.
 * **Keyboard Split** &rarr; Allows you to split the keyboard in half, setting one instrument to the left and one to the right. It's possible to select whether the arpeggiator should also be split directly from the Main Display.
 
 * **Knobs Section** &rarr; The knobs make it easy to modify the parameters of the sounds emitted by the synth. Starting from the left and going through each column, the functions of the knobs are as follows:
