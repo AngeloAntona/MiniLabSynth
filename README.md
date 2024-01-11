@@ -2,7 +2,7 @@
 
 This is a project developed during the "Advanced Coding Tools And Methodologies" course in the Music Engineering program at the Polytechnic University of Milan. 
 
-The project is available at this page https://angeloantona.github.io/MiniLab/ and you can find a video demonstration [here](youtube.com).
+The project is available at [this page](https://angeloantona.github.io/MiniLab/), and you can find a video demonstration [here](youtube.com).
 
 ## Functionalities overview
 
