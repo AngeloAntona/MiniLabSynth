@@ -4,8 +4,9 @@ This is a project developed during the "Advanced Coding Tools And Methodologies"
 
 It is possible to try my project at [this page](https://angeloantona.github.io/MiniLab/), and you can find a video demonstration [here](youtube.com).
 
+## User instructions
 
-## Hardware configuration
+### Hardware configuration
 
 ![hrdwConfigPic](ReadmeResources/hardwrConfigPic.png)
 
@@ -16,7 +17,7 @@ The hardware required to use all the functionalities of this project includes:
 * **Control Pedal** &rarr; You can use any control/volume pedal.
 
 
-## Functionalities overview
+### Functionalities overview
 
 My code implements a 'synthesizer' that allows playing rhythmically and harmonically rich songs even if you're a soloist. This goal is achieved through the use of various oscillators, an arpeggiator, and a set of percussion instruments. Sounds can be combined at will by the user, who can use standard presets or create their own and save them in the cloud (Firebase). 
 
@@ -64,7 +65,7 @@ It is the section in which the user can:
 
 
 ## Project implementation details
- 
+
 ### Overview of the code structure
 
 In developing the project, I haven't used external libraries except for Firebase, which is useful for database management. The audio part has been implemented using the Web Audio API. 
