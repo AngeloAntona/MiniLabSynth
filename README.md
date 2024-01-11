@@ -48,6 +48,23 @@ The audio chain is constructed as represented in the following diagram:
 
 ![AudioChain](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/AudioChain_(AudioModel).png)
 
+The audio chain is managed by the AudioModel class, which will be discussed in the following paragraph.
+
+## Overview of the code structure
+
+In developing the project, I haven't used external libraries except for Firebase, which is useful for database management. The audio part has been implemented using the Web Audio API. 
+Let's now take a look at the code structure:
+
+![codeOvrvHiLvl](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/codeStructureHiLvl.png)
+
+* **Main** &rarr; This Main class handles the interaction between the lower level classes and the Firebase server. Inside it, instances of other classes are constructed, and login is managed.
+* **MidiController** &rarr; The MidiController class acts as a bridge between MIDI hardware inputs and the software logic of your application. It interprets MIDI messages from a keyboard and a control pedal, translating them into actionable commands or data.
+* **TouchController** &rarr; TouchController provides a touch-based interface for interacting with various elements of the synthesizer. It translates user actions like clicking and dragging on screen elements into meaningful commands that sends to the controller.
+* **Controller** &rarr; the Controller class serves as an intermediary between the other controllers (midi and touch input), the model (data and logic) and the view (UI).
+* **View** &rarr; View class is focused on the visual aspects of the application. It manages the dynamic updating of UI components based on user interactions and audio processing events. This includes visual feedback on controls like knobs and buttons, visualizations of audio signals, and general UI theming and layout adjustments.
+* **Model** &rarr; The Model class acts as the central repository for the application's state, handling the logic for audio parameters, user interactions, and interface changes.
+* **AudioModel** &rarr; AudioModel acts as the audio engine for the application, generating and manipulating sound based on user interactions and control settings. It provides a wide range of functionalities for synthesizing musical notes, applying audio effects like filters and delays, and generating drum sounds.
+
 ## Status
 | Main objectives                           | State           |
 | ----------------------------------------- |:---------------:|
