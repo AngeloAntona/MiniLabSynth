@@ -2,6 +2,8 @@
 
 This is a project developed during the "Advanced Coding Tools And Methodologies" course in the Music Engineering program at the Polytechnic University of Milan. 
 
+https://angeloantona.github.io/MiniLab/
+
 ## Overview
 
 My code implements a 'synthesizer' that allows playing rhythmically and harmonically rich songs even if you're a soloist. This goal is achieved through the use of various oscillators, an arpeggiator, and a set of percussion instruments. Sounds can be combined at will by the user, who can use standard presets or create their own and save them in the cloud (Firebase). More details are provided below.
@@ -44,7 +46,7 @@ My code implements a 'synthesizer' that allows playing rhythmically and harmonic
 
 The audio chain is constructed as represented in the following diagram:
 
-![AudioChain](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/AudioChain_(AudioModel).png)ù
+![AudioChain](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/AudioChain_(AudioModel).png)
 
 ## Status
 | Main objectives                           | State           |
@@ -75,10 +77,6 @@ The audio chain is constructed as represented in the following diagram:
 - :green_circle: Implemented
 - :yellow_circle: Implementing
 - :red_circle: Not Implemented
-
-### Site
-https://angeloantona.github.io/MiniLab/
-
 
 
 ## Maintainer
