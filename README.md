@@ -121,7 +121,7 @@ The informations described above are available also in the chart provided [here]
 
 The audio chain is constructed in the AudioModel class following the scheme represented below:
 
-![AudioChain](ReadmeResources/AudioChain(AudioModel).png)
+![AudioChain](ReadmeResources/AudioChain_(AudioModel).png)
 
 ### Database
 
