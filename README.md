@@ -48,7 +48,9 @@ In developing the project, I haven't used external libraries except for Firebase
 
 Let's now take a look at the code structure:
 
+
 ![codeOvrvHiLvl](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/codeStructureHiLvl.png)
+
 
 * **Main** &rarr; This Main class handles the interaction between the lower level classes and the Firebase server. Inside it, instances of other classes are constructed, and login is managed. The main functionalities implemented through this class are:
     * *Initialization and Controller Setup*: The script sets up various controllers (AudioModel, Model, View, Controller, MidiController, TouchController) for managing different aspects of the application.
