@@ -149,6 +149,7 @@ The access rules specified above have been implemented directly in Firebase to p
 | Implementation of Independent Volume Controls for Each Instrument          | :green_circle:  |
 | Support for MIDI Keyboard Input                                            | :green_circle:  |
 | Inclusion of Sustain and Control Pedal MIDI Inputs                         | :green_circle:  |
+| Implementation of an Arpeggiator Function                                  | :green_circle:  |
 | Configurable Control Pedal                                                 | :green_circle:  |
 | Customizable Knob and Button Presets                                       | :green_circle:  |
 | Keyboard split                                                             | :green_circle:  |
@@ -162,8 +163,6 @@ The access rules specified above have been implemented directly in Firebase to p
 | Implementation of Delay Effect            | :green_circle:  |
 | Low-Pass Filter (LPF) Feature             | :green_circle:  |
 | High-Pass Filter (HPF) Option             | :green_circle:  |
-| Implementation of an Arpeggiator Function | :green_circle:  |
-| Variety of Sound Combination Presets      | :green_circle:  |
 
 ### Legend
 - :green_circle: Implemented
