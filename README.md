@@ -42,14 +42,6 @@ My code implements a 'synthesizer' that allows playing rhythmically and harmonic
     - right click on X &rarr; delete one of the previously saved plugins.
     - left click on ↑ &rarr; save a new plugin.
 
-## Audio Chain
-
-The audio chain is constructed as represented in the following diagram:
-
-![AudioChain](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/AudioChain_(AudioModel).png)
-
-The audio chain is managed by the AudioModel class, which will be discussed in the following paragraph.
-
 ## Overview of the code structure
 
 In developing the project, I haven't used external libraries except for Firebase, which is useful for database management. The audio part has been implemented using the Web Audio API. 
@@ -98,6 +90,14 @@ Let's now take a look at the code structure:
     * *Note Handling and Sound Generation*: playNote creates an OscillatorNode and GainNode to play a musical note. It sets the oscillator frequency based on the note and instrument type and connects it to appropriate audio nodes. stopNote gracefully fades out and stops a playing note.
     * *Drum Sounds*: playKick, playSnare, playClosedHiHat, and playCrashCymbal generate various drum sounds using techniques like white noise generation and filter application.
     * *Amplitude Analysis*: getAmplitude analyzes the audio signal to calculate the amplitude for visualization purposes.
+
+### Audio Chain
+
+The audio chain is constructed in the AudioModel class following the scheme represented below:
+
+![AudioChain](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/AudioChain_(AudioModel).png)
+
+The audio chain is managed by the AudioModel class, which will be discussed in the following paragraph.
 
 ## Status
 | Main objectives                           | State           |
