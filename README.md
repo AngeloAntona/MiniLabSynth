@@ -2,13 +2,11 @@
 
 This is a project developed during the "Advanced Coding Tools And Methodologies" course in the Music Engineering program at the Polytechnic University of Milan. 
 
-https://angeloantona.github.io/MiniLab/
+The project is available at this page https://angeloantona.github.io/MiniLab/ and you can find a video demonstration [here](youtube.com).
 
 ## Functionalities overview
 
 My code implements a 'synthesizer' that allows playing rhythmically and harmonically rich songs even if you're a soloist. This goal is achieved through the use of various oscillators, an arpeggiator, and a set of percussion instruments. Sounds can be combined at will by the user, who can use standard presets or create their own and save them in the cloud (Firebase). 
-
-You can find a video demonstration [here](youtube.com).
 
 More details are provided below.
 
