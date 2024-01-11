@@ -101,6 +101,8 @@ AudioModel acts as the audio engine for the application, generating and manipula
 * *Drum Sounds* &rarr; playKick, playSnare, playClosedHiHat, and playCrashCymbal generate various drum sounds using techniques like white noise generation and filter application.
 * *Amplitude Analysis* &rarr; getAmplitude analyzes the audio signal to calculate the amplitude for visualization purposes.
 
+If it's more convenient, the information described above is available in the chart provided [here](similUML.pdf).
+
 ### Audio Chain
 
 The audio chain is constructed in the AudioModel class following the scheme represented below:
