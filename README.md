@@ -156,7 +156,7 @@ The audio chain is constructed in the AudioModel class following the scheme repr
 - :red_circle: Not Implemented
 
 
-## Maintainer
-| Name                                                  | Email                         |
-| ----------------------------------------------------- |:-----------------------------:|
-| [Angelo Antona](https://github.com/AngeloAntona)      | angelo.antona@mail.polimi.it  | 
+## About me
+| Name                                                  | Email                         | Other links                                   |
+| ----------------------------------------------------- |:-----------------------------:|:---------------------------------------------:|
+| [Angelo Antona](https://github.com/AngeloAntona)      | angelo.antona@mail.polimi.it  | [LinkedIn](https://github.com/AngeloAntona)   |
