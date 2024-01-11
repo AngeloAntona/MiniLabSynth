@@ -59,6 +59,7 @@ The hardware required to use all the functionalities of this project includes:
 * **Arturia MiniLab MKII** &rarr; The project was specifically created for this small MIDI keyboard. It's possible to map the device's outputs by applying [this preset](ReadmeResources/Preset.minilabmk2) using the Arturia Midi Control Center app available [here](https://www.arturia.com/support/downloads&manuals).
 * **Sustain Pedal** &rarr; You can use any sustain pedal.
 * **Control pedal adapter** &rarr; Typically, control pedals (volume pedals) have an analog output. I used [this adapter](https://beatbars.com/en/dual-to-midi.html) to convert that output into a MIDI signal.
+* **Control Pedal** &rarr; You can use any control/volume pedal.
 
 
 ## Overview of the code structure
