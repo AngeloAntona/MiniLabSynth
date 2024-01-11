@@ -63,7 +63,9 @@ It is the section in which the user can:
 - left click on ↑ &rarr; save a new plugin.
 
 
-## Overview of the code structure
+## Project implementation details
+ 
+### Overview of the code structure
 
 In developing the project, I haven't used external libraries except for Firebase, which is useful for database management. The audio part has been implemented using the Web Audio API. 
 
