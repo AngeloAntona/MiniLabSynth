@@ -4,6 +4,18 @@ This is a project developed during the "Advanced Coding Tools And Methodologies"
 
 It is possible to try my project at [this page](https://angeloantona.github.io/MiniLab/), and you can find a video demonstration [here](youtube.com).
 
+
+## Hardware configuration
+
+![hrdwConfigPic](ReadmeResources/hardwrConfigPic.png)
+
+The hardware required to use all the functionalities of this project includes:
+* **Arturia MiniLab MKII** &rarr; The project was specifically created for this small MIDI keyboard. It's possible to map the device's outputs by applying [this preset](ReadmeResources/Preset.minilabmk2) using the Arturia Midi Control Center app available [here](https://www.arturia.com/support/downloads&manuals).
+* **Sustain Pedal** &rarr; You can use any sustain pedal.
+* **Control pedal adapter** &rarr; Typically, control pedals (volume pedals) have an analog output. I used [this adapter](https://beatbars.com/en/dual-to-midi.html) to convert that output into a MIDI signal.
+* **Control Pedal** &rarr; You can use any control/volume pedal.
+
+
 ## Functionalities overview
 
 My code implements a 'synthesizer' that allows playing rhythmically and harmonically rich songs even if you're a soloist. This goal is achieved through the use of various oscillators, an arpeggiator, and a set of percussion instruments. Sounds can be combined at will by the user, who can use standard presets or create their own and save them in the cloud (Firebase). 
@@ -49,17 +61,6 @@ It is the section in which the user can:
 - left click on ↓ &rarr; use one of the previously saved plugins.
 - right click on X &rarr; delete one of the previously saved plugins.
 - left click on ↑ &rarr; save a new plugin.
-
-
-## Hardware configuration
-
-![hrdwConfigPic](ReadmeResources/hardwrConfigPic.png)
-
-The hardware required to use all the functionalities of this project includes:
-* **Arturia MiniLab MKII** &rarr; The project was specifically created for this small MIDI keyboard. It's possible to map the device's outputs by applying [this preset](ReadmeResources/Preset.minilabmk2) using the Arturia Midi Control Center app available [here](https://www.arturia.com/support/downloads&manuals).
-* **Sustain Pedal** &rarr; You can use any sustain pedal.
-* **Control pedal adapter** &rarr; Typically, control pedals (volume pedals) have an analog output. I used [this adapter](https://beatbars.com/en/dual-to-midi.html) to convert that output into a MIDI signal.
-* **Control Pedal** &rarr; You can use any control/volume pedal.
 
 
 ## Overview of the code structure
