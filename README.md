@@ -36,7 +36,7 @@ This code implements a small keyboard that can be played through mouse clicks or
 ### Site
 https://angeloantona.github.io/MiniLab/
 
-![AudioChain](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/AudioChain(AudioModel).png)
+![AudioChain](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/AudioChain_(AudioModel).png)
 ![Legend](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/Legend.png)
 
 ## Maintainer
