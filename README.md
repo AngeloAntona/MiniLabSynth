@@ -40,6 +40,12 @@ My code implements a 'synthesizer' that allows playing rhythmically and harmonic
     - X: delete one of the previously saved plugins.
     - ↑: save a new plugin.
 
+## Audio Chain
+
+The audio chain is constructed as represented in the following diagram:
+
+![AudioChain](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/AudioChain_(AudioModel).png)ù
+
 ## Status
 | Main objectives                           | State           |
 | ----------------------------------------- |:---------------:|
@@ -73,7 +79,7 @@ My code implements a 'synthesizer' that allows playing rhythmically and harmonic
 ### Site
 https://angeloantona.github.io/MiniLab/
 
-![AudioChain](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/AudioChain_(AudioModel).png)
+
 
 ## Maintainer
 | Name                                                  | Email                         |
