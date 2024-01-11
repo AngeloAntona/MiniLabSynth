@@ -52,19 +52,21 @@ Let's now take a look at the code structure:
 ![codeOvrvHiLvl](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/codeStructureHiLvl.png)
 
 
-* **Main** &rarr; This Main class handles the interaction between the lower level classes and the Firebase server. Inside it, instances of other classes are constructed, and login is managed. The main functionalities implemented through this class are:
-    * *Initialization and Controller Setup*: The script sets up various controllers (AudioModel, Model, View, Controller, MidiController, TouchController) for managing different aspects of the application.
-    * *Firebase Integration*: The script initializes Firebase with specific configuration parameters (API keys, domain, etc.). The Firestore database (db) and Firebase Authentication service (auth) are set up for data storage and user authentication.
-    * *User Authentication*: Functions like logOut, onAuthStateChanged, and loginWithMail manage user authentication states. Users can log in with email and password, and their authentication state changes are monitored to load appropriate data.
-    * *Data Retrieval and Management*: Functions getDefaultPresets and getUserPresets retrieve preset data from Firestore. pushNewUserPreset and deletePreset allow adding and deleting user-specific presets in the Firestore database.
+#### **Main** 
+This Main class handles the interaction between the lower level classes and the Firebase server. Inside it, instances of other classes are constructed, and login is managed. The main functionalities implemented through this class are:
+* *Initialization and Controller Setup* &rarr; The script sets up various controllers (AudioModel, Model, View, Controller, MidiController, TouchController) for managing different aspects of the application.
+* *Firebase Integration* &rarr; The script initializes Firebase with specific configuration parameters (API keys, domain, etc.). The Firestore database (db) and Firebase Authentication service (auth) are set up for data storage and user authentication.
+* *User Authentication* &rarr; Functions like logOut, onAuthStateChanged, and loginWithMail manage user authentication states. Users can log in with email and password, and their authentication state changes are monitored to load appropriate data.
+* *Data Retrieval and Management* &rarr; Functions getDefaultPresets and getUserPresets retrieve preset data from Firestore. pushNewUserPreset and deletePreset allow adding and deleting user-specific presets in the Firestore database.
 
-* **MidiController** &rarr; The MidiController class acts as a bridge between MIDI hardware inputs and the software logic of your application. It interprets MIDI messages from a keyboard and a control pedal, translating them into actionable commands or data. The main functionalities that this class manages are:
-    * *MIDI Setup*:
-        * initializeMIDI: Requests access to MIDI devices and, upon success, calls setupMIDIInput to configure MIDI input handling.
-        * setupMIDIInput: Iterates over available MIDI input devices and sets up event handlers for the specified keyboard and control pedal.
-    * *Handling MIDI Messages*:
-        * handleKeyboardMIDIMessage: Processes MIDI messages received from the keyboard. It interprets different types of MIDI messages such as Pitch Bend, Control Change, Note On, and Note Off.
-        * handlecntrlPedalMIDIMessage: Processes MIDI messages from the control pedal. It handles specific control changes based on the pedal's input.
+#### **MidiController**
+The MidiController class acts as a bridge between MIDI hardware inputs and the software logic of your application. It interprets MIDI messages from a keyboard and a control pedal, translating them into actionable commands or data. The main functionalities that this class manages are:
+* *MIDI Setup*:
+    * initializeMIDI &rarr; Requests access to MIDI devices and, upon success, calls setupMIDIInput to configure MIDI input handling.
+    * setupMIDIInput &rarr; Iterates over available MIDI input devices and sets up event handlers for the specified keyboard and control pedal.
+* *Handling MIDI Messages*:
+    * handleKeyboardMIDIMessage &rarr; Processes MIDI messages received from the keyboard. It interprets different types of MIDI messages such as Pitch Bend, Control Change, Note On, and Note Off.
+    * handlecntrlPedalMIDIMessage &rarr; Processes MIDI messages from the control pedal. It handles specific control changes based on the pedal's input.
 * **TouchController** &rarr; TouchController provides a touch-based interface for interacting with various elements of the synthesizer. It translates user actions like clicking and dragging on screen elements into meaningful commands that are sent to the controller. This class manages the following functions:
     * *Touch Interaction*: The methods attachKeysEventListeners, attachPadsEventListeners, attachDisplayButtonsEventListeners and attachDisplaySplitEventListener listen for mouse down, up, and leave events and send the corresponding commands to the controller class.
 * **Controller** &rarr; the Controller class serves as an intermediary between the other controllers (midi and touch input), the model (data and logic) and the view (UI). The mediation between the different classes consists of:
