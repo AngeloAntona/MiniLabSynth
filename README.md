@@ -52,6 +52,7 @@ The hardware required to use all the functionalities of this project includes:
 * **Sustain Pedal** &rarr; You can use any sustain pedal.
 * **Control pedal adapter** &rarr; Typically, control pedals (volume pedals) have an analog output. I used [this adapter](https://beatbars.com/en/dual-to-midi.html) to convert that output into a MIDI signal.
 
+
 ## Overview of the code structure
 
 In developing the project, I haven't used external libraries except for Firebase, which is useful for database management. The audio part has been implemented using the Web Audio API. 
@@ -121,29 +122,28 @@ The audio chain is constructed in the AudioModel class following the scheme repr
 
 
 ## Status
-| Main objectives                           | State           |
-| ----------------------------------------- |:---------------:|
-| Keyboard and Pad Sounds                   | :green_circle:  |
-| Mini amplitude display                    | :green_circle:  |
-| Separate volumes for instruments          | :green_circle:  |
-| MIDI keyboard input                       | :green_circle:  |
-| Sustain and Control Pedal MIDI input      | :green_circle:  |
-| Mappable control pedal                    | :green_circle:  |
-| Mappable knobButtons presets              | :green_circle:  |
-| Keyboard split                            | :green_circle:  |
-| Sound presets                             | :green_circle:  |
-| Write/read/delete presets on Firebase     | :green_circle:  |
-| Playable remotely                         | :green_circle:  |
+| Main Objectives                                                            | State           |
+| ---------------------------------------------------------------------------|:---------------:|
+| Integration of Keyboard and Pad Sounds                                     | :green_circle:  |
+| Development of a Mini Amplitude Display                                    | :green_circle:  |
+| Implementation of Independent Volume Controls for Each Instrument          | :green_circle:  |
+| Support for MIDI Keyboard Input                                            | :green_circle:  |
+| Inclusion of Sustain and Control Pedal MIDI Inputs                         | :green_circle:  |
+| Configurable Control Pedal                                                 | :green_circle:  |
+| Customizable Knob and Button Presets                                       | :green_circle:  |
+| Keyboard split                                                             | :green_circle:  |
+| Creation of Sound Presets                                                  | :green_circle:  |
+| Firebase Integration for Preset Management                                 | :green_circle:  |
 
 | Sound effects                             | State           |
 | ----------------------------------------- |:---------------:|
-| Frequency weel                            | :green_circle:  |
-| Reverb                                    | :green_circle:  |
-| Delay                                     | :green_circle:  |
-| LPF                                       | :green_circle:  |
-| HPF                                       | :green_circle:  |
-| Arpeggiator                               | :green_circle:  |
-| Different presets of sounds combinations  | :green_circle:  |
+| Implementation of a Frequency Wheel       | :green_circle:  |
+| Implementation of Reverb Effect           | :green_circle:  |
+| Implementation of Delay Effect            | :green_circle:  |
+| Low-Pass Filter (LPF) Feature             | :green_circle:  |
+| High-Pass Filter (HPF) Option             | :green_circle:  |
+| Implementation of an Arpeggiator Function | :green_circle:  |
+| Variety of Sound Combination Presets      | :green_circle:  |
 
 ### Legend
 - :green_circle: Implemented
