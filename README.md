@@ -45,6 +45,7 @@ My code implements a 'synthesizer' that allows playing rhythmically and harmonic
 ## Overview of the code structure
 
 In developing the project, I haven't used external libraries except for Firebase, which is useful for database management. The audio part has been implemented using the Web Audio API. 
+
 Let's now take a look at the code structure:
 
 ![codeOvrvHiLvl](https://github.com/AngeloAntona/MiniLab/blob/master/ReadmeResources/codeStructureHiLvl.png)
