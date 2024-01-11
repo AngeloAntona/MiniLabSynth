@@ -28,13 +28,13 @@ My code implements a 'synthesizer' that allows playing rhythmically and harmonic
     * Arp Knobs:
         - Arp volume: allows you to set the volume of the individual arpeggiator.
         - Arp time: allows you to set the speed at which the arpeggio is executed.
-    Each knob can be automated by mapping it to the control pedal. By right-clicking on any of the knobs, you can choose from the following options:
+Each knob can be automated by mapping it to the control pedal. By right-clicking on any of the knobs, you can choose from the following options:
     - No mapping: the knob will not respond to the control pedal's movement.
     - Direct mapping: when the control pedal's value increases, the knob will increment the controlled parameter.
     - Inverse mapping: when the control pedal's value increases, the knob will decrease the controlled parameter.
-* **Login**: allows you to access the login menu.
+* **Login** &rarr; allows you to access the login menu.
 
-* **DB interaction**: is the section in which the user can:
+* **DB interaction** &rarr; is the section in which the user can:
     - ↓: use one of the previously saved plugins.
     - X: delete one of the previously saved plugins.
     - ↑: save a new plugin.
