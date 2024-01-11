@@ -63,7 +63,7 @@ In developing the project, I haven't used external libraries except for Firebase
 Let's now take a look at the code structure:
 
 
-![codeOvrvHiLvl](ReadmeResources/codeStructureHiLvl.png)
+![codeOvrvHiLvl](ReadmeResources/codeStructureHiLevl.png)
 
 
 #### **Main** 
