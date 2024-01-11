@@ -67,14 +67,14 @@ Let's now take a look at the code structure:
 
 
 #### **Main** 
-This Main class handles the interaction between the lower level classes and the Firebase server. Inside it, instances of other classes are constructed, and login is managed. The main functionalities implemented through this class are:
+The Main class handles the interaction between the lower level classes and the Firebase server. Inside it, instances of other classes are constructed, and login is managed. The main functionalities implemented through this class are:
 * *Initialization and Controller Setup* &rarr; The script sets up various controllers (AudioModel, Model, View, Controller, MidiController, TouchController) for managing different aspects of the application.
 * *Firebase Integration* &rarr; The script initializes Firebase with specific configuration parameters (API keys, domain, etc.). The Firestore database (db) and Firebase Authentication service (auth) are set up for data storage and user authentication.
 * *User Authentication* &rarr; Functions like logOut, onAuthStateChanged, and loginWithMail manage user authentication states. Users can log in with email and password, and their authentication state changes are monitored to load appropriate data.
 * *Data Retrieval and Management* &rarr; Functions getDefaultPresets and getUserPresets retrieve preset data from Firestore. pushNewUserPreset and deletePreset allow adding and deleting user-specific presets in the Firestore database.
 
 #### **MidiController**
-The MidiController class acts as a bridge between MIDI hardware inputs and the software logic of your application. It interprets MIDI messages from a keyboard and a control pedal, translating them into actionable commands or data. The main functionalities that this class manages are:
+The MidiController class acts as a bridge between MIDI hardware inputs and the software logic of the application. It interprets MIDI messages from the keyboard and the control pedal, translating them into actionable commands or data. The main functionalities that this class manages are:
 * *MIDI Setup*:
     * initializeMIDI &rarr; Requests access to MIDI devices and, upon success, calls setupMIDIInput to configure MIDI input handling.
     * setupMIDIInput &rarr; Iterates over available MIDI input devices and sets up event handlers for the specified keyboard and control pedal.
@@ -99,7 +99,7 @@ View class is focused on the visual aspects of the application. It manages the d
 *  *User Interface Color Theming* &rarr; interfaceColorGradient adjusts the color scheme of various interface elements like knobs, pads, and buttons based on the audio signal's properties.
 #### **Model** 
 The Model class acts as the central repository for the application's state, handling the logic for audio parameters, user interactions, and interface changes. The main functionalities that this class manages are:
-* *Preset Management* &rarr; setPresets and setPreset are used to manage presets, which are predefined settings for the application. getPresetNames provides a list of available preset names. handleMidiPresetChange changes presets based on MIDI input.
+* *Preset Management* &rarr; setPresets and setPreset are used to manage presets. getPresetNames provides a list of available preset names. handleMidiPresetChange changes presets based on MIDI input.
 * *Instrument Settings* &rarr; Methods like flipSplit, flipMono, flipSust, and flipWheel toggle different modes for instruments (e.g., split mode, mono/polyphonic mode, sustain, wheel control). setWaveform updates the waveform type for different instruments based on user selection.
 * *Knob and Control Pedal Handling* &rarr; updateKnobLevel and handleControlChangeEvent manage changes in knob levels and control changes from the MIDI or touch input. connectPedalKnobs links control pedals to specific knob functions.
 * *Audio Parameter Updates* &rarr; refreshAudioParameters updates the audioModel with the current state of various controls like gain, filter frequencies, delay settings, etc.
@@ -123,6 +123,8 @@ The audio chain is constructed in the AudioModel class following the scheme repr
 
 ![AudioChain](ReadmeResources/AudioChain_(AudioModel).png)
 
+
+# Additional information
 
 ## Status
 | Main Objectives                                                            | State           |
