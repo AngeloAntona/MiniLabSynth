@@ -45,7 +45,7 @@ My code implements a 'synthesizer' that allows playing rhythmically and harmonic
 
 ## Hardware configuration
 
-![hrdwConfigPic](ReadmeResources/hardwareConfigPic.png)
+![hrdwConfigPic](ReadmeResources/hrdwrConfigPic.png)
 
 The hardware required to use all the functionalities of this project includes:
 * **Arturia MiniLab MKII** &rarr; The project was specifically created for this small MIDI keyboard. It's possible to map the device's outputs by applying [this preset](Preset.minilabmk2) using the Arturia Midi Control Center app available [here](https://www.arturia.com/support/downloads&manuals).
