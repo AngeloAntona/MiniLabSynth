@@ -157,6 +157,6 @@ The audio chain is constructed in the AudioModel class following the scheme repr
 
 
 ## About me
-| Name                                                  | Email                         | Other links                                   |
+| LinkedIn                                                  | Email                         | Other links                               |
 | ----------------------------------------------------- |:-----------------------------:|:---------------------------------------------:|
-| [Angelo Antona](https://www.instagram.com/lospettrodiangelo/)      | angelo.antona@mail.polimi.it  | [LinkedIn](https://github.com/AngeloAntona)   |
+| [Angelo Antona](https://www.linkedin.com/in/angeloantona/)       | angelo.antona@mail.polimi.it  | [instagram](https://www.instagram.com/lospettrodiangelo/)   |
