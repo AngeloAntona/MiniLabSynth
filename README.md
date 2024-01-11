@@ -4,7 +4,7 @@ This is a project developed during the "Advanced Coding Tools And Methodologies"
 
 https://angeloantona.github.io/MiniLab/
 
-## Overview
+## Functionalities overview
 
 My code implements a 'synthesizer' that allows playing rhythmically and harmonically rich songs even if you're a soloist. This goal is achieved through the use of various oscillators, an arpeggiator, and a set of percussion instruments. Sounds can be combined at will by the user, who can use standard presets or create their own and save them in the cloud (Firebase). More details are provided below.
 
@@ -28,7 +28,7 @@ My code implements a 'synthesizer' that allows playing rhythmically and harmonic
     * *Two free knobs*: are left free for possible project updates.
     * *Single instrument volume*: allows you to modify the volume of the individual instrument, in order to equalize the overall sound better.
     * *Arp Knobs*:
-        - *Arp volume*: allows you to set the volume of the individual arpeggiator.
+        - *Arp volume*: allows you to set the volume of the arpeggiator.
         - *Arp time*: allows you to set the speed at which the arpeggio is executed.
 
     Each knob can be automated by mapping it to the control pedal. By right-clicking on any of the knobs, you can choose from the following options:
@@ -41,6 +41,13 @@ My code implements a 'synthesizer' that allows playing rhythmically and harmonic
     - left click on ↓ &rarr; use one of the previously saved plugins.
     - right click on X &rarr; delete one of the previously saved plugins.
     - left click on ↑ &rarr; save a new plugin.
+
+
+## Hardware configuration
+
+The hardware required to use all the functionalities of this project includes:
+* **Arturia MiniLab MKII** &rarr; The project was specifically created for this small MIDI keyboard. It's possible to map the device's outputs by applying [this preset](Preset.minilabmk2) using the Arturia Midi Control Center app available [here](https://www.arturia.com/support/downloads&manuals).
+* **Control pedal adapter** &rarr; Typically, control pedals have an analog output. I used [this adapter](https://beatbars.com/en/dual-to-midi.html) to convert that output into a MIDI signal.
 
 ## Overview of the code structure
 
@@ -101,7 +108,7 @@ AudioModel acts as the audio engine for the application, generating and manipula
 * *Drum Sounds* &rarr; playKick, playSnare, playClosedHiHat, and playCrashCymbal generate various drum sounds using techniques like white noise generation and filter application.
 * *Amplitude Analysis* &rarr; getAmplitude analyzes the audio signal to calculate the amplitude for visualization purposes.
 
-If it's more convenient, the information described above is available in the chart provided [here](similUML.pdf).
+The informations described above are available also in the chart provided [here](similUML.pdf).
 
 ### Audio Chain
 
