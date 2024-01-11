@@ -38,9 +38,9 @@ My code implements a 'synthesizer' that allows playing rhythmically and harmonic
 * **Login** &rarr; allows you to access the login menu.
 
 * **DB interaction** &rarr; is the section in which the user can:
-    - left click on ↓ &rarr use one of the previously saved plugins.
-    - right click on X &rarr delete one of the previously saved plugins.
-    - left click on ↑ &rarr save a new plugin.
+    - left click on ↓ &rarr; use one of the previously saved plugins.
+    - right click on X &rarr; delete one of the previously saved plugins.
+    - left click on ↑ &rarr; save a new plugin.
 
 ## Audio Chain
 
