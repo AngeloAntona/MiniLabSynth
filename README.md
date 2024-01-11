@@ -16,7 +16,7 @@ This code implements a small keyboard that can be played through mouse clicks or
 | Keyboard split                            | :green_circle:  |
 | Sound presets                             | :green_circle:  |
 | Write/read/delete presets on Firebase     | :green_circle:  |
-| Playable remotely                         | :red_circle:    |
+| Playable remotely                         | :green_circle:  |
 | Configurable with other keyboards         | :red_circle:    |
 
 | Sound effects                             | State           |

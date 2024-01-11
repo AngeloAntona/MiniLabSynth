@@ -42,11 +42,19 @@ class MidiController {
     }
 
     handleKeyboardMIDIMessage(event) {
-        const statusByte = event.data[0] & 0xf0; // Extract the top 4 bits
-        if (event.data[0] === 224) {
-            if (event.data[1] === 0) { this.controller.handleWheel(event.data[2]); }
+        const statusByte = event.data[0] & 0xf0; // Extract the top 4 bits (11110000 in binary)
+        if (statusByte === 0xE0) { //Frequency Wheel: 224 in decimal
+            const lsb = event.data[1]; // Least Significant Byte
+            const msb = event.data[2]; // Most Significant Byte
+            const pitchBendValue = (msb << 7) | lsb; // Combine MSB and LSB to get a 14-bit value
+
+            // Convert the 14-bit value to a range your application expects (e.g., -8192 to +8191, with 0 being the center)
+            const normalizedValue = pitchBendValue/128;
+
+            console.log('debug wheel:' + normalizedValue);
+            this.controller.handleWheel(normalizedValue);
         }
-        else if (statusByte === 0xB0) {
+        else if (statusByte === 0xB0) { //176 in decimal
             const controllerNumber = event.data[1];
             const value = event.data[2];
             // Control Change message (knob or slider)
@@ -65,7 +73,7 @@ class MidiController {
                 // Handle MIDI control change events (knob rotations)
                 this.controller.handleControlChangeEvent('midiKey', controllerNumber, value);
             }
-        } else if (statusByte === 0x90 || statusByte === 0x80) {
+        } else if (statusByte === 0x90 || statusByte === 0x80) { //144 and 128 in decimal
             // Note On or Note Off message
             const noteNumber = event.data[1];
             const velocity = event.data[2];
