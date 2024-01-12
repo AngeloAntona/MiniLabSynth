@@ -48,7 +48,6 @@ class MidiController {
             const msb = event.data[2]; // Most Significant Byte
             const pitchBendValue = (msb << 7) | lsb; // Combine MSB and LSB to get a 14-bit value
 
-            // Convert the 14-bit value to a range your application expects (e.g., -8192 to +8191, with 0 being the center)
             const normalizedValue = pitchBendValue/128;
 
             console.log('debug wheel:' + normalizedValue);

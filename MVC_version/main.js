@@ -89,7 +89,7 @@ function loginWithMail() {
         .then(() => {
             renderLogIn();
         })
-        .catch((error) => { console.error('Login error:', error.code, error.message); });
+        .catch((error) => { alert('Login error: incorrect email or password.'); });
 }
 
 function pushNewUserPreset(newPreset) {
@@ -223,7 +223,7 @@ function pedalSelectClick(knobIdx) {
         }
     });
 }
-    
+
 function documentClick() {
     document.addEventListener('click', (e) => {
         if (!controller.displayMenu.contains(e.target) &&
@@ -307,6 +307,13 @@ function savePresetSelectClick() {
 }
 
 // Controller: login functions.
+
+function handleEnterKey(e) {
+    if (e.key === 'Enter') {
+        loginWithMail();
+    }
+}
+
 function manageLoginConfirm() {
     controller.loginConfirm.addEventListener('click', () => {
         if (controller.loginConfirm.innerHTML === '↵') {
@@ -316,7 +323,10 @@ function manageLoginConfirm() {
             logOut();
         }
     });
+    controller.email.addEventListener('keypress', handleEnterKey);
+    controller.password.addEventListener('keypress', handleEnterKey);
 }
+
 
 function openCloseLoginMenu() {
     controller.openLogin.addEventListener('click', () => {
