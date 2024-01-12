@@ -31,6 +31,7 @@ Allows you to select the active instruments. For each instrument, you can modify
 - whether the instrument should play in mono or be polyphonic;
 - which MIDI commands the particular instrument should respond to (e.g., sustain, pitchWheel);
 - the octave at which the instrument should sound.
+
 By right-clicking on this section, it is possible to link the pressing of each of the first two knobs on the left to the setting of a preset of your choice. This way, it will be more convenient to change configurations while playing.
 #### **Keyboard Split**
 Allows you to split the keyboard in half, setting one instrument to the left and one to the right. It's possible to select whether the arpeggiator should also be split directly from the Main Display.
