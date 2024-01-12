@@ -242,7 +242,7 @@ function handleContextMenu(htmlElement, event) {
     const x = event.clientX;
     const y = event.clientY;
     if (htmlElement.getAttribute('id') === 'loadPreset') {
-        showContextMenu(controller.displayMenu, x, y - 110);
+        showContextMenu(controller.displayMenu, x, y - 50);
         presetSelectClick();
     }
     else if (htmlElement.classList.value === 'knob') {
@@ -357,7 +357,7 @@ function renderLogOut() {
     controller.loginConfirm.innerHTML = '↵';
     controller.loginConfirm.style.backgroundColor = 'white';
     controller.loginConfirm.style.color = 'black';
-    controller.loginConfirm.style.fontSize = '350%'
+    controller.loginConfirm.style.fontSize = '160%'
     controller.simpleCircle2.style.backgroundColor = 'red';
     controller.simpleCircle1.style.backgroundColor = 'red';
     controller.email.disabled = false;
@@ -408,7 +408,7 @@ function renderLogIn() {
         controller.simpleCircle1.style.backgroundColor = 'green';
     }, 700);
     controller.loginConfirm.innerHTML = 'X';
-    controller.loginConfirm.style.fontSize = '330%'
+    controller.loginConfirm.style.fontSize = '120%'
     controller.loginConfirm.color = 'rgb(8, 0, 35)'
     controller.loginConfirm.style.backgroundColor = 'red';
     opacityIntervals.push(interval);
