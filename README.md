@@ -64,6 +64,9 @@ It is the section in which the user can:
 - right click on X : delete one of the previously saved plugins.
 - left click on ↑ : save a new plugin.
 
+![KeyboardLegend](ReadmeResources/KeyboardLegend.png)
+#### Pitch Wheel
+The pitch wheel is a parameter that does not have an on-screen indicator (since using it with a keyboard and mouse was practically impossible, as you couldn't click on two objects simultaneously), but it's very useful because it allows you to vary the frequency of one or more oscillators while playing, which, when combined with delay and LPF and HPF, allows you to achieve a very pleasant effect (see demonstration video). You can control it by sliding on the touch controller of the keyboard indicated in green.
 
 ## Project implementation details
 
