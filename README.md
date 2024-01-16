@@ -30,6 +30,7 @@ Allows you to select the active instruments. The available instruments are:
 * Arpeggiator;
 * Synth1 (left part of the keyboard when the keyboard is split);
 * Synth2 (left part of the keyboard when the keyboard is split).
+
 For each instrument, you can modify the following options:
 - the oscillator to be emitted by the instrument;
 - whether the instrument should play in mono or be polyphonic;
