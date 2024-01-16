@@ -154,7 +154,9 @@ The access rules specified above have been implemented directly in Firebase to p
 
 ### Possible improvements
 One aspect that could be easily implemented is the selection of the MIDI controller through a choice menu, allowing the user to choose which MIDI controller to use for the keyboard and control pedal. This is a relatively straightforward process because it would involve modifying the content of the variable in the midiController class based on the input value from the choice menu (as shown in the code snippet below).
-![CodeImprovements](ReadmeResources/CodeImprove.png)
+
+![CodeImprovements](ReadmeResources/CodeImprovement.png)
+
 Once the MIDI controller is selected, ideally, a simple guided configuration should begin where the user is shown a programmable element of the interface using an arrow (e.g., knob1) and asked to operate the control on their MIDI device that they want to map to that function. This preset could then be saved on Firebase (in the user's folder once they have logged in) so that the user doesn't have to configure it every time.
 
 Unfortunately, I haven't been able to develop this last objective due to a lack of time, but it's certainly something I'll work on.
