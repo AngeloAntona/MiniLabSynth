@@ -11,7 +11,7 @@ It is possible to try my project at [this page](https://angeloantona.github.io/M
 ![hrdwConfigPic](ReadmeResources/hardwrConfigPic.png)
 
 The hardware required to use all the functionalities of this project includes:
-* **Arturia MiniLab MKII** &rarr; The project was specifically created for this small MIDI keyboard. It's possible to map the device's outputs by applying [this preset](ReadmeResources/Preset.minilabmk2) using the Arturia Midi Control Center app available [here](https://www.arturia.com/support/downloads&manuals).
+* **Arturia MiniLab MKII** &rarr; The project was specifically created for the Arturia MiniLab MKII. It's just a small MIDI controller with no integrated functions except for sending MIDI signals as output. However, it has the advantage of having many MIDI parameters that can be mapped, which has proven to be very useful for the completion of this project. It's possible to map the device's outputs by applying [this preset](ReadmeResources/Preset.minilabmk2) using the Arturia Midi Control Center app available [here](https://www.arturia.com/support/downloads&manuals).
 * **Sustain Pedal** &rarr; You can use any sustain pedal.
 * **Control pedal adapter** &rarr; Typically, control pedals (volume pedals) have an analog output. I used [this adapter](https://beatbars.com/en/dual-to-midi.html) to convert that output into a MIDI signal.
 * **Control Pedal** &rarr; You can use any control/volume pedal.
@@ -26,13 +26,17 @@ More details are provided below.
 ![Legend](ReadmeResources/Legend.png)
 
 #### **Main Display**
-Allows you to select the active instruments. For each instrument, you can modify the following options:
+Allows you to select the active instruments. The available instruments are: 
+* Arpeggiator;
+* Synth1 (left part of the keyboard when the keyboard is split);
+* Synth2 (left part of the keyboard when the keyboard is split).
+For each instrument, you can modify the following options:
 - the oscillator to be emitted by the instrument;
 - whether the instrument should play in mono or be polyphonic;
 - which MIDI commands the particular instrument should respond to (e.g., sustain, pitchWheel);
 - the octave at which the instrument should sound.
+By right-clicking on this section, it is possible to link the pressing of each of the first two knobs on the left on the midi keyboard to the setting of a preset of your choice. This way, it will be more convenient to change configurations while playing.
 
-By right-clicking on this section, it is possible to link the pressing of each of the first two knobs on the left to the setting of a preset of your choice. This way, it will be more convenient to change configurations while playing.
 #### **Keyboard Split**
 Allows you to split the keyboard in half, setting one instrument to the left and one to the right. It's possible to select whether the arpeggiator should also be split directly from the Main Display.
 
@@ -147,6 +151,13 @@ The access rules specified above have been implemented directly in Firebase to p
 
 ![FirebaseOverview](ReadmeResources/FirebaseOverview.png)
 
+### Possible improvements
+One aspect that could be easily implemented is the selection of the MIDI controller through a choice menu, allowing the user to choose which MIDI controller to use for the keyboard and control pedal. This is a relatively straightforward process because it would involve modifying the content of the variable in the midiController class based on the input value from the choice menu (as shown in the code snippet below).
+![CodeImprovements](ReadmeResources/CodeImprove.png)
+Once the MIDI controller is selected, ideally, a simple guided configuration should begin where the user is shown a programmable element of the interface using an arrow (e.g., knob1) and asked to operate the control on their MIDI device that they want to map to that function. This preset could then be saved on Firebase (in the user's folder once they have logged in) so that the user doesn't have to configure it every time.
+
+Unfortunately, I haven't been able to develop this last objective due to a lack of time, but it's certainly something I'll work on.
+
 # Additional information
 
 ## Status
@@ -163,6 +174,7 @@ The access rules specified above have been implemented directly in Firebase to p
 | Keyboard split                                                             | :green_circle:  |
 | Creation of Sound Presets                                                  | :green_circle:  |
 | Firebase Integration for Preset Management                                 | :green_circle:  |
+| Configurable with any keyboard                                             | :red_circle:    |
 
 | Sound effects                             | State           |
 | ----------------------------------------- |:---------------:|
