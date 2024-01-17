@@ -4,7 +4,7 @@ This is a project developed during the "Advanced Coding Tools And Methodologies"
 
 It is possible to try my project at [this page](https://angeloantona.github.io/MiniLab/), and you can find a video demonstration clicking on the thumbnail below.
 
-[![Video](ReadmeResources/videoThmbn.png)](https://www.youtube.com/watch?v=3cz5Wsj6Ues)
+[![Video](ReadmeResources/videoThmbnl.png)](https://www.youtube.com/watch?v=3cz5Wsj6Ues)
 
 ## User instructions
 
