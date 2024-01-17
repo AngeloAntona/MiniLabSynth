@@ -196,6 +196,6 @@ Unfortunately, I haven't been able to develop this last objective due to a lack 
 
 
 ## About me
-| LinkedIn                                                  | Email                         | Other links                               |
-| ----------------------------------------------------- |:-----------------------------:|:---------------------------------------------:|
-| [Angelo Antona](https://www.linkedin.com/in/angeloantona/)       | angelo.antona@mail.polimi.it  | [instagram](https://www.instagram.com/lospettrodiangelo/)   |
+| LinkedIn                                                   | Email                         |
+| ---------------------------------------------------------- |:-----------------------------:|
+| [Angelo Antona](https://www.linkedin.com/in/angeloantona/) | angelo.antona@mail.polimi.it  |
