@@ -1,4 +1,4 @@
-# MiniLab 🎹
+# MiniLab 🎹 - Evaluation of 30 cum laude.
 
 This is a project developed during the "Advanced Coding Tools And Methodologies" course in the Music Engineering program at the Polytechnic University of Milan. 
 
