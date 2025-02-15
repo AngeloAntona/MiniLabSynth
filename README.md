@@ -191,9 +191,9 @@ Unfortunately, I haven't been able to develop this last objective due to a lack 
 | High-Pass Filter (HPF) Option             | :green_circle:  |
 
 ### Legend
-- :green_circle: Implemented
-- :yellow_circle: Implementing
-- :red_circle: Not Implemented
+- :green_circle: Implemented.
+- :yellow_circle: Implementing.
+- :red_circle: Not Implemented.
 
 
 ## About me
